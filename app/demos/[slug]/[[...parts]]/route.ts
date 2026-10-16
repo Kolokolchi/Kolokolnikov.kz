@@ -5,7 +5,7 @@ export const dynamic='force-dynamic';
 async function handle(request:Request,{params}:any){
  const {slug,parts=[]}=await params;if(!validSlug(slug))return new Response('Страница не найдена',{status:404});
  const bindings:any=env,project=await bindings.DB.prepare('SELECT * FROM demo_projects WHERE slug=?').bind(slug).first();
- if(!project){if(bindings.ASSETS){const legacyUrl=new URL(request.url);legacyUrl.pathname=`/_legacy-demos/${slug}/${parts.join('/')}`;return bindings.ASSETS.fetch(new Request(legacyUrl,request));}return new Response('Проект не найден',{status:404});}
+ if(!project)return new Response('Проект не найден',{status:404});
  const explicit=parts[0]==='v',versionId=explicit?parts[1]:project.active_version;
  const version=await bindings.DB.prepare('SELECT id,status,visible FROM demo_versions WHERE id=? AND project=?').bind(versionId||'',slug).first();
  if(!version||version.status!=='ready'||((project.hidden||!version.visible)&&!await authorize(request,bindings)))return new Response('Эта версия пока недоступна',{status:404});

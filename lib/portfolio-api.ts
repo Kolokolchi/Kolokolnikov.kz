@@ -1,6 +1,5 @@
 import {authorize} from './portfolio-auth';
 import {validSlug,validPath,validateManifest,sha256,adaptFile,contentType,LIMITS} from '../lib/demo-format.mjs';
-import legacy from '../public/demos/catalog.json';
 const idPattern=/^[a-f0-9-]{36}$/;
 const json=(data:any,status=200)=>Response.json(data,{status,headers:{'Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff'}});
 function fail(message:string,status=400):never{throw Object.assign(new Error(message),{status});}
@@ -11,8 +10,7 @@ export async function portfolioApi(request:Request,env:any,parts:string[]){
   const [resource,id,action,...rest]=parts,method=request.method;
   if(resource==='catalog'&&method==='GET'){
    const {results}=await env.DB.prepare('SELECT slug,title,description,hidden,active_version FROM demo_projects').all();
-   const overridden=new Set(results.map((p:any)=>p.slug));
-   const catalog=[...legacy.filter(p=>!overridden.has(p.id)),...results.filter((p:any)=>!p.hidden&&p.active_version).map((p:any)=>({id:p.slug,title:p.title,description:p.description,path:`${p.slug}/`}))];
+   const catalog=results.filter((p:any)=>!p.hidden&&p.active_version).map((p:any)=>({id:p.slug,title:p.title,description:p.description,path:`${p.slug}/`}));
    return json(catalog);
   }
   if(!await authorize(request,env))return json({error:'Войдите в аккаунт владельца.',code:'unauthorized'},401);
