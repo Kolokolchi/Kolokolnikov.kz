@@ -2,7 +2,7 @@ import { projects } from './projects.js';
 const project = projects.find(item=>item.id===new URLSearchParams(location.search).get('project'));
 const main = document.querySelector('#case-content');
 function node(tag, className, text) { const el=document.createElement(tag);if(className)el.className=className;if(text)el.textContent=text;return el; }
-function link(text, href, style, external=false) { const a=node('a',style,text);a.href=href;if(external){a.target='_blank';a.rel='noopener noreferrer';}return a; }
+function link(text, href, style, external=false) { const a=node('a',style,text);a.href=href;if(external){a.target='_blank';a.rel='noopener noreferrer';}if(href.startsWith('showcase.html'))a.dataset.accent='lime';return a; }
 main.replaceChildren();
 if(!project) {
   const intro=node('div','page-intro');intro.append(node('h1','','Проект не найден'),node('p','','Возможно, ссылка изменилась. Выберите проект в портфолио.'));main.append(intro,link('Открыть портфолио','./#work','button button-primary'));

@@ -11,6 +11,15 @@ export const projects = [
     gallery:[{src:'assets/projects/rpk.jpg',caption:'Первый экран опубликованной версии RPK'}]
   },
   {
+    id:'ankor', name:'Ankor', category:'website', type:'Сайт с каталогом', status:'Опубликован',
+    summary:'Редизайн бренда: продукты, сравнение и удобная корзина.',
+    description:'Редизайн сайта Ankor с акцентом на природные материалы и спокойную типографику. Каталог объединяет карточки RENOVA и DETOX, подробную информацию, сравнение и корзину. Оформление заказа продолжается в действующем магазине бренда.',
+    features:['Новая визуальная подача и адаптивная вёрстка','Карточки продуктов и сравнение состава','Корзина с сохранением выбранных товаров','Переход к оформлению в магазине Ankor'],
+    tags:['Редизайн','Каталог','Корзина'], image:'assets/projects/ankor.jpg',
+    url:'https://kolokolchi.github.io/ankor-life/', repository:'https://github.com/Kolokolchi/ankor-life',
+    gallery:[{src:'assets/projects/ankor.jpg',caption:'Главный экран опубликованного редизайна Ankor'},{src:'assets/projects/ankor-products.jpg',caption:'Каталог продуктов RENOVA и DETOX'}]
+  },
+  {
     id:'saf', name:'SAF Avenue', category:'product', type:'Интерактивный каталог', status:'Опубликован',
     summary:'Выбор квартир через визуальный каталог и параметры планировок.',
     description:'Рабочее пространство для выбора объекта и планировки. Визуальная навигация дополняется фильтрами и карточками квартир. Публичный каталог планировок отделён от подтверждения наличия и цены.',
