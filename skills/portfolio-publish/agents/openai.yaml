@@ -1,0 +1,4 @@
+interface:
+  display_name: "Публикация в портфолио"
+  short_description: "Загрузка сайтов и новых вариантов в портфолио Корнея"
+  default_prompt: "Используй $portfolio-publish и опубликуй этот сайт в моём портфолио."

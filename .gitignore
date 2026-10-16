@@ -5,3 +5,12 @@ artifacts/
 *.log
 .env*
 !.env.example
+
+/dist/
+/.sites-runtime/
+/.wrangler/
+/.vinext/
+/.next/
+.dev.vars*
+next-env.d.ts
+*.tsbuildinfo

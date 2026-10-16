@@ -3,10 +3,10 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import assert from 'node:assert/strict';
-import { projects } from '../dist/projects.js';
-import { videos } from '../dist/videos.js';
+import { projects } from '../public/projects.js';
+import { videos } from '../public/videos.js';
 
-const root=fileURLToPath(new URL('../dist/',import.meta.url));
+const root=fileURLToPath(new URL('../public/',import.meta.url));
 const files=await readdir(root);
 assert.equal(new Set(videos.map(item=>item.id)).size,videos.length,'Video IDs must be unique');
 for(const video of videos){
@@ -20,7 +20,7 @@ for(const project of projects){
   assert.match(project.id,/^[a-z0-9-]+$/);
   assert.ok(['website','product','presentation'].includes(project.category));
   assert.ok(project.gallery.length);
-  if(project.demoUrl){assert.match(project.demoUrl,/^demos\/[a-z0-9-]+\/$/);assert.ok((await stat(path.join(root,project.demoUrl,'index.html'))).isFile());}
+  if(project.demoUrl)assert.match(project.demoUrl,/^demos\/[a-z0-9-]+\/$/);
   for(const asset of [project.image,...project.gallery.map(item=>item.src)])assert.ok((await stat(path.join(root,asset))).isFile(),asset);
   for(const url of [project.url,project.repository].filter(Boolean))assert.equal(new URL(url).protocol,'https:');
 }
@@ -29,7 +29,7 @@ assert.equal(new Set(demos.map(item=>item.id)).size,demos.length,'Demo IDs must 
 for(const demo of demos){
   assert.match(demo.id,/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
   assert.equal(demo.path,`${demo.id}/`);
-  assert.ok((await stat(path.join(root,'demos',demo.path,'index.html'))).isFile());
+  assert.ok(projects.some(project=>project.id===demo.id),'Seed demo must have a portfolio record');
 }
 for(const name of [...files.filter(name=>name.endsWith('.html')),'demos/index.html']){
   const html=await readFile(path.join(root,name),'utf8');
@@ -37,6 +37,7 @@ for(const name of [...files.filter(name=>name.endsWith('.html')),'demos/index.ht
   assert.match(html,/<meta name="viewport"/);
   for(const [,target] of html.matchAll(/(?:href|src)="([^"?#]+)(?:[?#][^"]*)?"/g)){
     if(/^(https?:|mailto:|tel:)/.test(target)||target==='./')continue;
+    if(target==='/admin/')continue; // Protected server-rendered route.
     let resolved=path.resolve(root,path.dirname(name),target);
     if((await stat(resolved)).isDirectory())resolved=path.join(resolved,'index.html');
     assert.ok((await stat(resolved)).isFile(),`${name}: ${target}`);

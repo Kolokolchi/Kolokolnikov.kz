@@ -1,0 +1,5 @@
+@font-face{font-family:Manrope;src:url('/assets/manrope-400.ttf') format('truetype');font-weight:400;font-display:swap}
+@font-face{font-family:Manrope;src:url('/assets/manrope-600.ttf') format('truetype');font-weight:600;font-display:swap}
+@font-face{font-family:Manrope;src:url('/assets/manrope-700.ttf') format('truetype');font-weight:700;font-display:swap}
+@font-face{font-family:Unbounded;src:url('/assets/unbounded-400.ttf') format('truetype');font-weight:400;font-display:swap}
+*{box-sizing:border-box}body{margin:0;background:#0c1016;color:#edf2f6;font-family:Manrope,Arial,sans-serif}button,input,textarea,select{font:inherit}button,a,input,textarea,select{-webkit-tap-highlight-color:transparent}button,a{touch-action:manipulation}button{cursor:pointer}button:disabled{cursor:wait;opacity:.5}a{color:inherit}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid #b1ed45;outline-offset:4px}button,input,textarea,select{max-width:100%}button{color:inherit}h1,h2,h3,p{margin:0}[hidden]{display:none!important}
