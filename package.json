@@ -7,6 +7,7 @@
     "dev": "node scripts/serve.mjs",
     "start": "node scripts/serve.mjs",
     "build": "node scripts/brand.mjs && node scripts/check.mjs",
-    "check": "node scripts/check.mjs"
+    "check": "node scripts/check.mjs",
+    "demo:import": "node scripts/import-demo.mjs"
   }
 }

@@ -38,3 +38,5 @@
 [hidden]{display:none!important}
 
 @media(min-width:761px) and (max-width:1000px){.main-nav{gap:14px;font-size:11px}.site-header .brand>span{font-size:11px}.main-nav .nav-contact{gap:12px;padding:10px}}
+
+.demo-list{margin-bottom:80px}.demo-row{padding:32px 0;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1.3fr;gap:24px;align-items:center}.demo-row h2{font-size:28px;letter-spacing:-.8px}.demo-row p{font-size:13px;color:var(--muted);max-width:440px;margin-top:10px}.demo-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:flex-end}.demo-actions .button{font-size:12px;padding:12px 18px}.demo-share{grid-column:1/-1;background:var(--surface);color:var(--text);border:1px solid var(--line);padding:12px;width:100%}.demo-actions .text-link{color:var(--accent-bright);min-height:44px}@media(max-width:900px){.demo-row{grid-template-columns:1fr}.demo-actions{justify-content:flex-start}}@media(max-width:480px){.demo-actions{align-items:stretch;flex-direction:column}.demo-actions .text-link{justify-content:center}}

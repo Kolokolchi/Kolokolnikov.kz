@@ -14,6 +14,10 @@ http.createServer(async (req, res) => {
     let target = path.resolve(root, '.' + pathname);
     const relative = path.relative(root, target);
     if (relative.startsWith('..') || path.isAbsolute(relative)) { res.writeHead(403); return res.end(); }
+    if (!pathname.endsWith('/') && (await stat(target)).isDirectory()) {
+      res.writeHead(308, {Location: pathname + '/' + new URL(req.url, 'http://localhost').search});
+      return res.end();
+    }
     if (pathname.endsWith('/')) target = path.join(target, 'index.html');
     const info = await stat(target);
     if (!info.isFile()) throw new Error('Not a file');

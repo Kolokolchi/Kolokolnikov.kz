@@ -17,7 +17,7 @@ if(!project) {
   const details=node('div','case-details');const about=node('section');about.append(node('h2','','О проекте'),node('p','',project.description));
   const features=node('section');const list=node('ul');list.append(...project.features.map(text=>node('li','',text)));features.append(node('h2','','Что внутри'),list);details.append(about,features);
   const actions=node('div','case-actions');actions.append(link('Открыть презентацию ↗',`showcase.html?project=${project.id}`,'button button-primary'));
-  if(project.url)actions.append(link('Открыть сайт ↗',project.url,'button button-outline',true));
+  if(project.demoUrl||project.url)actions.append(link('Открыть сайт ↗',project.demoUrl||project.url,'button button-outline',!project.demoUrl));
   if(project.repository)actions.append(link('Репозиторий GitHub ↗',project.repository,'button button-outline',true));
   main.append(intro,image,caption,details,actions);
 }

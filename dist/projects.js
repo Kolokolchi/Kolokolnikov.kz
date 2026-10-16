@@ -1,5 +1,5 @@
 // Add a project here. Use only public/demo content: this static catalogue is not access control.
-// category: website | product | presentation. url: published website or null for image-only projects.
+// demoUrl: a build hosted here. url: the original publication, kept as a reference.
 export const projects = [
   {
     id:'rpk', name:'RPK', category:'website', type:'Корпоративный сайт', status:'Опубликован',
@@ -13,10 +13,10 @@ export const projects = [
   {
     id:'ankor', name:'Ankor', category:'website', type:'Сайт с каталогом', status:'Опубликован',
     summary:'Редизайн бренда: продукты, сравнение и удобная корзина.',
-    description:'Редизайн сайта Ankor с акцентом на природные материалы и спокойную типографику. Каталог объединяет карточки RENOVA и DETOX, подробную информацию, сравнение и корзину. Оформление заказа продолжается в действующем магазине бренда.',
-    features:['Новая визуальная подача и адаптивная вёрстка','Карточки продуктов и сравнение состава','Корзина с сохранением выбранных товаров','Переход к оформлению в магазине Ankor'],
+    description:'Редизайн сайта Ankor с акцентом на природные материалы и спокойную типографику. Каталог объединяет RENOVA, DETOX, RENOVA+ и NIGELLA S., подробную информацию, сравнение и корзину. Заказ подготавливается для отправки в WhatsApp.',
+    features:['Новая визуальная подача и адаптивная вёрстка','Карточки и сравнение четырёх продуктов','Корзина с сохранением выбранных товаров','Подготовка заказа для WhatsApp'],
     tags:['Редизайн','Каталог','Корзина'], image:'assets/projects/ankor.jpg',
-    url:'https://kolokolchi.github.io/ankor-life/', repository:'https://github.com/Kolokolchi/ankor-life',
+    demoUrl:'demos/ankor/', url:'https://kolokolchi.github.io/ankor-life/', repository:'https://github.com/Kolokolchi/ankor-life',
     gallery:[{src:'assets/projects/ankor.jpg',caption:'Главный экран опубликованного редизайна Ankor'},{src:'assets/projects/ankor-products.jpg',caption:'Каталог продуктов RENOVA и DETOX'}]
   },
   {
@@ -34,7 +34,7 @@ export const projects = [
     description:'Адаптивный сайт строительного оборудования. Посетитель выбирает леса или вышку, меняет размеры, видит схему сборки и передаёт выбранную комплектацию в запрос менеджеру.',
     features:['Каталог лесов и вышек-тур','Интерактивная схема сборки','Настройка высоты, длины и площадки','Заявка с выбранной комплектацией'],
     tags:['Конфигуратор','JavaScript','Адаптив'], image:'assets/projects/lesa.jpg',
-    url:'https://kolokolchi.github.io/lesa-vyshki/', repository:'https://github.com/Kolokolchi/lesa-vyshki',
+    demoUrl:'demos/lesa/', url:'https://kolokolchi.github.io/lesa-vyshki/', repository:'https://github.com/Kolokolchi/lesa-vyshki',
     gallery:[{src:'assets/projects/lesa.jpg',caption:'Главная страница опубликованного сайта'},{src:'assets/projects/lesa-configurator.png',caption:'Конфигуратор строительных лесов'},{src:'assets/projects/lesa-mobile.png',caption:'Первый экран на телефоне'}]
   },
   {
