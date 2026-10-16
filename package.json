@@ -1,0 +1,12 @@
+{
+  "name": "korney-kolokolnikov-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "start": "node scripts/serve.mjs",
+    "build": "node scripts/brand.mjs && node scripts/check.mjs",
+    "check": "node scripts/check.mjs"
+  }
+}
