@@ -4,9 +4,16 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import assert from 'node:assert/strict';
 import { projects } from '../dist/projects.js';
+import { videos } from '../dist/videos.js';
 
 const root=fileURLToPath(new URL('../dist/',import.meta.url));
 const files=await readdir(root);
+assert.equal(new Set(videos.map(item=>item.id)).size,videos.length,'Video IDs must be unique');
+for(const video of videos){
+  assert.ok(Boolean(video.src)!==Boolean(video.youtubeId),'Choose one video source');
+  if(video.youtubeId)assert.match(video.youtubeId,/^[\w-]{11}$/);
+  for(const asset of [video.src,video.poster].filter(item=>item&&!item.startsWith('https://')))assert.ok((await stat(path.join(root,asset))).isFile(),asset);
+}
 for(const name of files.filter(name=>name.endsWith('.js')))execFileSync(process.execPath,['--check',path.join(root,name)]);
 assert.equal(new Set(projects.map(item=>item.id)).size,projects.length,'Project IDs must be unique');
 for(const project of projects){

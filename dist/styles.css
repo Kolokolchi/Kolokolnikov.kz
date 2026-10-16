@@ -36,3 +36,5 @@
 
 @media(max-width:360px){.about-title h2{font-size:32px}.client-copy h2{font-size:27px}}
 [hidden]{display:none!important}
+
+@media(min-width:761px) and (max-width:1000px){.main-nav{gap:14px;font-size:11px}.site-header .brand>span{font-size:11px}.main-nav .nav-contact{gap:12px;padding:10px}}

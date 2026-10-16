@@ -1,5 +1,6 @@
 import http from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
+import { createReadStream } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -16,6 +17,22 @@ http.createServer(async (req, res) => {
     if (pathname.endsWith('/')) target = path.join(target, 'index.html');
     const info = await stat(target);
     if (!info.isFile()) throw new Error('Not a file');
+    if(path.extname(target)==='.mp4'){
+      const headers={'Content-Type':'video/mp4','Accept-Ranges':'bytes','Cache-Control':'no-cache','X-Content-Type-Options':'nosniff'};
+      const range=req.headers.range;
+      let start=0,end=info.size-1;
+      if(range){
+        const match=/^bytes=(\d*)-(\d*)$/.exec(range);
+        if(!match||(!match[1]&&!match[2])){res.writeHead(416,{'Content-Range':`bytes */${info.size}`});return res.end();}
+        if(!match[1])start=Math.max(0,info.size-Number(match[2]));
+        else{start=Number(match[1]);if(match[2])end=Math.min(end,Number(match[2]));}
+        if(start>end||start>=info.size){res.writeHead(416,{'Content-Range':`bytes */${info.size}`});return res.end();}
+        headers['Content-Range']=`bytes ${start}-${end}/${info.size}`;
+      }
+      headers['Content-Length']=end-start+1;res.writeHead(range?206:200,headers);
+      if(req.method==='HEAD')return res.end();
+      createReadStream(target,{start,end}).pipe(res);return;
+    }
     const content = await readFile(target);
     res.writeHead(200, {'Content-Type':types[path.extname(target)] || 'application/octet-stream','Content-Length':content.length,'Cache-Control':'no-cache','X-Content-Type-Options':'nosniff','Referrer-Policy':'strict-origin-when-cross-origin'});
     res.end(req.method === 'HEAD' ? undefined : content);
