@@ -14,11 +14,13 @@
   <link rel="preload" href="assets/manrope-400.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="video.css">
+  <link rel="stylesheet" href="wild.css">
   <script src="theme.js"></script>
   <script type="module" src="app.js"></script>
   <script type="module" src="video-gallery.js"></script>
+  <script type="module" src="wild.js"></script>
 </head>
-<body>
+<body class="wild-home">
   <a class="skip-link" href="#main">К содержимому</a>
   <header class="site-header wrap">
     <a class="brand" href="./" aria-label="Korney Kolokolnikov — главная">
@@ -32,20 +34,26 @@
     </nav>
   </header>
   <main id="main">
-    <section class="hero wrap" aria-labelledby="hero-title">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-landscape" aria-hidden="true"><div class="landscape-lines"></div><div class="landscape-glow"></div><span class="scene-star star-one"></span><span class="scene-star star-two"></span><span class="scene-star star-three"></span></div>
       <div class="hero-copy">
-        <p class="hero-intro"><span class="status-dot"></span> Дизайн · Разработка · Видео</p>
-        <h1 id="hero-title"><span>Korney</span><span>Kolokolnikov<span class="hero-period">.</span></span></h1>
-        <p class="hero-statement">Создаю сайты.<br>Рассказываю истории.</p>
-        <p class="hero-description">Видео, CGI, анимация и цифровые продукты.<br>От работающего интерфейса до кадра на экране.</p>
-        <div class="hero-actions"><a class="button button-primary" href="#work">Смотреть проекты <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16m-6-6 6 6 6-6"/></svg></a><a class="text-link action-link" data-accent="orange" href="#contact">Обсудить идею <span aria-hidden="true">↗</span></a></div>
+        <p class="hero-intro"><span class="status-dot"></span> Независимый дизайнер и разработчик</p>
+        <h1 id="hero-title">Цифровой опыт, <br>который <em>чувствуют.</em></h1>
+        <p class="hero-description">Создаю сайты, видео и интерактивные проекты.<br>Соединяю дизайн, технологии и движение.</p>
+        <div class="hero-actions"><a class="button reel-button" href="video.html?video=cgi-showreel"><span class="play-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m9 6 9 6-9 6Z"/></svg></span>Смотреть шоурил <span class="reel-year">CGI / 2021</span></a><a class="hero-work-link" href="#work">Избранные работы <span aria-hidden="true">↓</span></a></div>
       </div>
-      <div class="hero-art" aria-hidden="true"><div class="hero-orbit"></div><img src="assets/hero-mark.png" alt="" width="1254" height="1254" fetchpriority="high"><span class="art-caption">Идея. Форма. Движение.</span></div>
-      <div class="hero-bottom"><span>Сайты и видео · Казахстан</span><nav class="colour-map" aria-label="Направления работы"><a href="#work" data-accent="blue"><i></i>Смотреть работы</a><a href="#clients" data-accent="lime"><i></i>Работать вместе</a><a href="#contact" data-accent="orange"><i></i>Обсудить идею</a></nav></div>
+      <div class="hero-bottom"><span>Корней Колокольников <span class="hero-location">/ Казахстан</span></span><a class="scroll-cue" href="#intro">Листайте, чтобы познакомиться <span aria-hidden="true">↓</span></a><span class="hero-index" aria-hidden="true">01 — 06</span></div>
+    </section>
+
+    <section class="intro-section wrap" id="intro" aria-labelledby="intro-title">
+      <p class="eyebrow" data-reveal>Идея. Форма. Движение.</p>
+      <h2 id="intro-title" data-reveal>Хорошие идеи заслуживают <br><em>сильного воплощения.</em></h2>
+      <p class="intro-description" data-reveal>От первого эскиза до сайта, которым пользуются. <br>От раскадровки до истории, которую запоминают. <br>Помогаю вашему проекту обрести форму — и характер.</p>
+      <div class="intro-disciplines" aria-label="Направления работы"><span>Веб-дизайн</span><i aria-hidden="true">+</i><span>Разработка</span><i aria-hidden="true">+</i><span>Видео и CGI</span></div>
     </section>
 
     <section class="work-section section wrap" data-accent="blue" id="work" aria-labelledby="work-title">
-      <div class="section-heading"><div><p class="section-kicker section-identity"><img src="assets/brand/mark-blue.svg" width="54" height="32" alt="">От задачи к результату</p><h2 id="work-title">Сайты и продукты<span class="accent">.</span></h2></div><p>Разные задачи.<br>Один подход к деталям.</p></div>
+      <div class="section-heading" data-reveal><div><p class="eyebrow"><span class="section-number">01 /</span> Избранные проекты</p><h2 id="work-title">У каждой задачи —<br><em>своя история.</em></h2></div><p>Сайты, интерфейсы и продукты.<br>От идеи до работающего результата.</p></div>
       <div class="work-toolbar"><div class="filters" role="group" aria-label="Тип проекта"><button class="filter active" data-filter="all" aria-pressed="true">Все <span id="project-count"></span></button><button class="filter" data-filter="website" aria-pressed="false">Сайты</button><button class="filter" data-filter="product" aria-pressed="false">Продукты</button><button class="filter" data-filter="presentation" aria-pressed="false">Презентации</button></div><a class="github-link" href="https://github.com/Kolokolchi" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a></div>
       <div class="projects-grid" id="projects-grid" aria-live="polite"></div>
       <noscript><p>Для фильтрации проектов включите JavaScript. <a href="https://github.com/Kolokolchi">Все проекты на GitHub</a>.</p></noscript>
@@ -53,23 +61,27 @@
     </section>
 
     <section class="video-section section wrap" data-accent="blue" id="video" aria-labelledby="video-title">
-      <div class="section-heading"><div><p class="section-kicker section-identity"><img src="assets/brand/mark-blue.svg" width="54" height="32" alt="">Идеи в движении</p><h2 id="video-title">Видео и анимация<span class="accent">.</span></h2></div><a class="video-heading-link" href="https://www.youtube.com/@korneykolokolnikov5150/videos" target="_blank" rel="noopener noreferrer">Все видео на YouTube ↗</a></div>
+      <div class="section-heading" data-reveal><div><p class="eyebrow"><span class="section-number">02 /</span> Идеи в движении</p><h2 id="video-title">Истории, которые<br><em>оживают.</em></h2></div><a class="video-heading-link" href="https://www.youtube.com/@korneykolokolnikov5150/videos" target="_blank" rel="noopener noreferrer">Мой YouTube <span aria-hidden="true">↗</span></a></div>
+      <div class="motion-stage" data-reveal>
+        <video id="motion-preview" muted loop playsinline preload="none" poster="assets/video/gorilla.jpg" aria-label="Беззвучное превью анимации Gorilla Groove Stage"><source src="assets/video/gorilla.mp4" type="video/mp4"></video>
+        <div class="motion-stage-caption"><div><span class="eyebrow">Motion / сценическая анимация</span><a href="video.html?video=gorilla">Gorilla Groove Stage <span aria-hidden="true">↗</span></a></div><button class="motion-toggle" type="button" aria-label="Воспроизвести превью" aria-pressed="false"><svg class="pause-symbol" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg><svg class="play-symbol" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 9 6-9 6Z"/></svg></button></div>
+      </div>
       <div class="video-toolbar" role="group" aria-label="Тип видеоработы"><button class="filter active" data-video-filter="all" aria-pressed="true">Все видео</button><button class="filter" data-video-filter="film" aria-pressed="false">Фильмы</button><button class="filter" data-video-filter="motion" aria-pressed="false">CGI и анимация</button></div>
       <div class="videos-grid" id="video-grid" aria-live="polite"></div><button class="button button-outline more-projects" id="more-videos">Все видеоработы ↓</button>
       <noscript><p><a href="https://www.youtube.com/@korneykolokolnikov5150/videos">Смотреть видеоработы на YouTube</a></p></noscript>
     </section>
 
     <section class="about-section section wrap" id="about" aria-labelledby="about-title">
-      <div class="about-title"><p class="section-kicker">Лично о работе</p><h2 id="about-title">Красиво —<br>это только<br>начало<span class="accent">.</span></h2><a class="text-link" href="https://www.youtube.com/@korneykolokolnikov5150" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="4"/><path d="m10 9 5 3-5 3Z"/></svg> Мой YouTube <span aria-hidden="true">↗</span></a></div>
+      <div class="about-title" data-reveal><p class="eyebrow"><span class="section-number">03 /</span> Подход и возможности</p><h2 id="about-title">Внимание<br>к деталям.<br><em>И к смыслу.</em></h2><div class="about-signature"><img src="assets/brand/mark-blue.svg" alt="" width="76" height="52"><span>Корней Колокольников<br><small>Дизайнер · Разработчик · Автор видео</small></span></div></div>
       <div class="about-copy"><p class="about-lead">Я Корней Колокольников. Создаю сайты, цифровые продукты и видео. Мне интересны и логика интерфейса, и образ, который остаётся в памяти.</p><p>В веб-проектах работаю с интерфейсами, каталогами и интерактивными решениями. В видео — с фильмами о брендах, CGI, анимацией логотипов и визуалами для экранов.</p><div class="expertise-list"><details open><summary><span>Сайты и интерфейсы</span><span class="details-sign" aria-hidden="true">+</span></summary><p>Лендинги, корпоративные сайты и каталоги. Продуманная структура, адаптивная вёрстка и понятный путь к действию.</p></details><details><summary><span>Видео и анимация</span><span class="details-sign" aria-hidden="true">+</span></summary><p>Фильмы о брендах и местах, компьютерная графика, AI-видео, анимация логотипов и панорамные визуалы для экранов.</p></details><details><summary><span>Цифровые продукты</span><span class="details-sign" aria-hidden="true">+</span></summary><p>Конфигураторы, панели управления и приложения. Интерфейсы, которые помогают решать конкретную задачу.</p></details><details><summary><span>Интерактивные презентации</span><span class="details-sign" aria-hidden="true">+</span></summary><p>Визуальный выбор объектов, демонстрации и веб-презентации, которые можно изучать в своём темпе.</p></details></div></div>
     </section>
 
     <section class="client-section wrap" data-accent="lime" id="clients" aria-labelledby="client-title">
-      <div class="client-copy"><p class="section-kicker section-identity"><img src="assets/brand/mark-lime.svg" width="70" height="41" alt="">Пространство для заказчиков</p><h2 id="client-title">Ваш проект.<br>Всегда под рукой<span class="accent">.</span></h2><p>Открывайте сайты прямо здесь, по своей ссылке. Смотрите работающий результат, проверяйте разные экраны и оставляйте комментарии.</p><a class="button button-primary" href="demos/">Открыть демонстрации <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></a><span class="client-note">Ankor и «Леса-вышки» — отдельные сайты внутри портфолио</span></div>
+      <div class="client-copy" data-reveal><p class="eyebrow"><span class="section-number">04 /</span> Пространство для заказчиков</p><h2 id="client-title">Ваш проект.<br><em>Уже в действии.</em></h2><p>Открывайте сайты по своей ссылке. Изучайте работающий результат, проверяйте разные экраны и оставляйте комментарии.</p><a class="button button-primary" href="demos/">Открыть демонстрации <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14"/></svg></a><span class="client-note">Ankor и «Леса-вышки» — прямо здесь, в портфолио</span></div>
       <a class="client-preview" href="showcase.html?demo=lesa" aria-label="Открыть пример презентации Леса-вышки"><div class="preview-bar"><span class="preview-dots"><i></i><i></i><i></i></span><span>Леса-вышки / Презентация проекта</span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></svg></div><img src="assets/projects/lesa.jpg" alt="Первый экран сайта Леса-вышки в режиме презентации" loading="lazy" width="1440" height="1000"><div class="preview-footer"><span><i class="status-dot"></i> Сайт опубликован</span><span>Открыть просмотр ↗</span></div></a>
     </section>
 
-    <section class="contact-section section wrap" data-accent="orange" id="contact" aria-labelledby="contact-title"><p class="section-kicker section-identity"><img src="assets/brand/mark-orange.svg" width="70" height="41" alt="">Следующий проект может быть вашим</p><div class="contact-heading"><h2 id="contact-title">Есть идея?<br>Давайте сделаем<span class="accent">.</span></h2><a class="contact-arrow" href="mailto:kolokolnikovk@gmail.com" aria-label="Написать Корнею по электронной почте"><svg viewBox="0 0 80 80" aria-hidden="true"><path d="M15 65 65 15M15 15h50v50"/></svg></a></div><div class="contact-links"><a class="email-link" href="mailto:kolokolnikovk@gmail.com">kolokolnikovk@gmail.com</a><div><a href="tel:+77074151715">+7 707 415 17 15</a><a class="subtle-link" href="https://wa.me/77074151715" target="_blank" rel="noopener noreferrer">Написать в WhatsApp ↗</a></div></div></section>
+    <section class="contact-section section wrap" data-accent="orange" id="contact" aria-labelledby="contact-title"><p class="eyebrow" data-reveal><span class="section-number">05 /</span> Следующая история — ваша</p><div class="contact-heading" data-reveal><h2 id="contact-title">Есть идея?<br><em>Давайте создадим.</em></h2><a class="contact-arrow" href="mailto:kolokolnikovk@gmail.com" aria-label="Написать Корнею по электронной почте"><svg viewBox="0 0 80 80" aria-hidden="true"><path d="M15 65 65 15M15 15h50v50"/></svg></a></div><div class="contact-links"><a class="email-link" href="mailto:kolokolnikovk@gmail.com">kolokolnikovk@gmail.com</a><div><a href="tel:+77074151715">+7 707 415 17 15</a><a class="subtle-link" href="https://wa.me/77074151715" target="_blank" rel="noopener noreferrer">Написать в WhatsApp ↗</a></div></div></section>
   </main>
   <footer class="site-footer wrap"><a class="brand footer-brand" href="./"><img src="assets/brand/mark-blue.svg" data-brand-mark alt="" width="43" height="29"><span>Korney Kolokolnikov</span></a><span>© <span data-year>2026</span></span><div><a href="brand.html">Фирменный стиль</a><a href="/admin/">Управление</a><a href="https://github.com/Kolokolchi" target="_blank" rel="noopener noreferrer">GitHub ↗</a><a href="https://www.youtube.com/@korneykolokolnikov5150" target="_blank" rel="noopener noreferrer">YouTube ↗</a></div><a class="back-top" href="#main" aria-label="Наверх">↑</a></footer>
   <div id="toast" role="status" class="toast" hidden></div>
