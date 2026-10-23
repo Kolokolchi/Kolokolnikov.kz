@@ -1,149 +1,94 @@
-// Original vector companion. Each half is rooted behind the same element edge;
-// the placement module supplies its orientation and the element masks the body.
+// One original vector character, shared by the peeking, lounging and falling poses.
+// Support coordinates are fixed: head y96, opposite paws y0, lounge y78.
+const FUR = 'var(--cat-fur, #121c27)';
+const OUTLINE = 'var(--cat-outline, #a9c4d6)';
+const WHITE = '#eef6fa';
 const poses = {
-  top: { tilt: -2, gazeX: 3, gazeY: -1, tail: 'right' },
-  bottom: { tilt: 3, gazeX: -3, gazeY: 2, tail: 'left' },
-  left: { tilt: -4, gazeX: 4, gazeY: 1, tail: 'left' },
-  right: { tilt: 4, gazeX: -4, gazeY: -1, tail: 'right' },
+  top: { tilt: -2, gazeX: 2, gazeY: -1, tail: 'right' },
+  bottom: { tilt: 2, gazeX: -2, gazeY: 1, tail: 'left' },
+  left: { tilt: -3, gazeX: 3, gazeY: 0, tail: 'left' },
+  right: { tilt: 3, gazeX: -3, gazeY: 0, tail: 'right' },
 };
+
+const HEAD = 'M30 44C27 30 29 14 35 7C39 2 45 5 54 14L68 28Q80 25 92 28L107 13C115 5 122 2 126 8C132 19 132 32 130 45C138 54 141 66 137 79C133 96 112 105 80 105C48 105 28 97 23 81C19 66 22 53 30 44Z';
+// The open chin joins the full-body pose without drawing a seam across its neck.
+const JOINED_HEAD_EDGE = 'M62 104C43 102 28 97 23 81C19 66 22 53 30 44C27 30 29 14 35 7C39 2 45 5 54 14L68 28Q80 25 92 28L107 13C115 5 122 2 126 8C132 19 132 32 130 45C138 54 141 66 137 79C133 96 115 103 98 104';
 
 function poseFor(side) {
   return poses[side] || poses.top;
 }
 
-export function catHeadDrawing(side = 'top') {
-  const { tilt, gazeX, gazeY } = poseFor(side);
-  return `<svg class="scroll-cat__drawing scroll-cat__drawing--head" viewBox="0 0 160 112" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-    <g transform="rotate(${tilt} 80 88)" stroke-linecap="round" stroke-linejoin="round">
-      <g fill="var(--cat-fur, #121c27)" stroke="var(--cat-outline, #a9c4d6)" stroke-opacity=".8" stroke-width="1.7">
-        <path d="M30 48C29 34 30 17 37 7C40 2 46 5 53 11L69 29C77 28 86 28 94 30L108 13C115 5 122 2 125 9C132 23 131 38 131 50C139 66 137 85 126 98C105 105 54 105 34 98C22 85 21 65 30 48Z"/>
-        <path d="m29 73-16-3m17 12-17 1m19 6-15 6m113-22 17-3m-18 12 18 1m-20 6 15 6" stroke-width="3.3"/>
-      </g>
-      <g fill="#eef6fa">
-        <path d="M38 30C38 23 39 17 42 13C48 16 54 22 59 28L53 28C49 24 46 21 43 20L42 32Z"/>
-        <path d="M102 29C107 23 113 16 119 13C122 17 123 24 123 31L119 33C119 27 118 23 117 20C113 23 110 26 107 30Z"/>
-        <ellipse cx="59" cy="63" rx="18.5" ry="22.5" transform="rotate(-7 59 63)"/>
-        <ellipse cx="102" cy="63" rx="18.5" ry="22.5" transform="rotate(7 102 63)"/>
-      </g>
-      <g fill="var(--cat-fur, #121c27)">
-        <ellipse cx="${62 + gazeX}" cy="${66 + gazeY}" rx="7.2" ry="10.5"/>
-        <ellipse cx="${99 + gazeX}" cy="${66 + gazeY}" rx="7.2" ry="10.5"/>
-      </g>
-      <g fill="#eef6fa">
-        <ellipse cx="${64 + gazeX}" cy="${62 + gazeY}" rx="2" ry="3.2"/>
-        <ellipse cx="${101 + gazeX}" cy="${62 + gazeY}" rx="2" ry="3.2"/>
-        <path d="M75 78C76 75 85 75 87 78C89 81 84 86 81 86C78 86 73 81 75 78Z"/>
-      </g>
-      <path d="M81 86v3m0 0c-3 4-7 4-9 1m9-1c3 4 7 4 9 1" stroke="var(--cat-outline, #a9c4d6)" stroke-opacity=".8" stroke-width="1.4"/>
-      <g fill="var(--cat-fur, #121c27)" stroke="var(--cat-outline, #a9c4d6)" stroke-opacity=".8" stroke-width="1.7">
-        <path d="M34 89C28 93 28 103 33 108C36 111 40 110 42 107C44 113 50 113 53 108C57 112 63 108 63 102L61 91"/>
-        <path d="M100 91L98 102C98 108 104 112 108 108C111 113 117 113 119 107C121 110 125 111 128 108C133 103 133 93 127 89"/>
-      </g>
-      <path d="m42 100 1 6m9-5 1 6m56-6-1 6m10-7-1 6" stroke="var(--cat-outline, #a9c4d6)" stroke-opacity=".4" stroke-width="1.1"/>
+function svg(kind, viewBox, content) {
+  return `<svg class="scroll-cat__drawing scroll-cat__drawing--${kind}" viewBox="${viewBox}" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><g stroke-linecap="round" stroke-linejoin="round">${content}</g></svg>`;
+}
+
+function shape(d, width = 1.6) {
+  return `<path d="${d}" fill="${FUR}" stroke="${OUTLINE}" stroke-opacity=".64" stroke-width="${width}"/>`;
+}
+
+function line(d, width = 1.5, opacity = .6) {
+  return `<path d="${d}" fill="none" stroke="${OUTLINE}" stroke-opacity="${opacity}" stroke-width="${width}"/>`;
+}
+
+function head({ tilt = 0, gazeX = 0, gazeY = 0, joined = false } = {}) {
+  return `<g transform="rotate(${tilt} 80 74)">
+    <path d="${HEAD}" fill="${FUR}"/>
+    ${line(joined ? JOINED_HEAD_EDGE : HEAD, 1.6, .64)}
+    <path d="M38 29C38 23 39 18 41 15Q48 20 55 29M105 29Q112 20 119 15C122 20 123 25 122 30" stroke="${WHITE}" stroke-opacity=".84" stroke-width="3.6"/>
+    <g fill="${WHITE}">
+      <ellipse cx="58" cy="63" rx="18.5" ry="22.5" transform="rotate(-7 58 63)"/>
+      <ellipse cx="102" cy="63" rx="18.5" ry="22.5" transform="rotate(7 102 63)"/>
     </g>
-  </svg>`;
+    <g fill="${FUR}">
+      <ellipse cx="${62 + gazeX}" cy="${65 + gazeY}" rx="6.8" ry="10.2"/>
+      <ellipse cx="${98 + gazeX}" cy="${65 + gazeY}" rx="6.8" ry="10.2"/>
+    </g>
+    <g fill="${WHITE}">
+      <ellipse cx="${64 + gazeX}" cy="${61 + gazeY}" rx="1.9" ry="2.9"/>
+      <ellipse cx="${100 + gazeX}" cy="${61 + gazeY}" rx="1.9" ry="2.9"/>
+      <path d="M75 80C76 77 84 77 85 80C87 83 83 87 80 87C77 87 73 83 75 80Z"/>
+    </g>
+    ${line('M80 87v3m0 0c-3 3-6 3-8 0m8 0c3 3 6 3 8 0', 1.3, .57)}
+    ${line('m27 72-14-3m14 12-15 2m121-11 14-3m-14 12 15 2', 2, .61)}
+  </g>`;
+}
+
+function frontPaws() {
+  const paw = `${shape('M34 88C34 84 40 81 47 82C54 81 60 84 61 88L62 90C63 94 59 96 55 96Q52 96 51 93Q49 96 45 96Q41 96 40 93C39 95 37 96 35 96C31 96 30 92 33 88Z')}${line('m41 89 1 4m9-4 1 4', 1.2, .34)}`;
+  return `<g>${paw}</g><g transform="translate(160 0) scale(-1 1)">${paw}</g>`;
+}
+
+function backPaw(x, tilt) {
+  return `<g transform="translate(${x} 16) rotate(${tilt})">
+    <ellipse rx="11" ry="15" fill="${FUR}" stroke="${OUTLINE}" stroke-opacity=".64" stroke-width="1.6"/>
+    <g fill="${WHITE}"><ellipse cy="4" rx="4.5" ry="5.4"/><ellipse cx="-5.5" cy="-5.8" rx="2.5" ry="3"/><ellipse cy="-9" rx="2.5" ry="3"/><ellipse cx="5.5" cy="-5.8" rx="2.5" ry="3"/></g>
+  </g>`;
+}
+
+export function catHeadDrawing(side = 'top', variant = 'paired') {
+  const pose = poseFor(side);
+  const peek = variant === 'peek';
+  const facing = pose.tilt < 0 ? -1 : 1;
+  return svg('head', '0 0 160 112', `${head({ ...pose, tilt: pose.tilt + (peek ? facing * 3 : 0), gazeX: pose.gazeX + (peek ? facing : 0) })}${frontPaws()}`);
 }
 
 export function catTailDrawing(side = 'top') {
-  const { tail } = poseFor(side);
-  const curl = tail === 'left'
-    ? 'M74 33C80 54 73 63 56 76C37 91 37 106 51 116C65 126 83 119 83 105C83 93 67 91 68 81C70 68 94 55 90 34Z'
-    : 'M67 34C61 54 69 63 85 77C103 92 103 108 88 118C73 127 55 119 57 105C59 92 74 92 73 81C72 68 49 55 53 34Z';
-  return `<svg class="scroll-cat__drawing scroll-cat__drawing--tail" viewBox="0 0 140 128" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-    <g stroke="var(--cat-outline, #a9c4d6)" stroke-opacity=".8" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="var(--cat-fur, #121c27)">
-      <path d="${curl}"/>
-      <path d="M24-8C25 8 30 27 42 36C52 44 63 43 70 37C78 44 91 45 102 36C115 25 118 8 117-8Z"/>
-      <path d="M28-5C21-4 14 2 13 9C12 17 19 25 28 26C35 28 42 25 42 18C42 10 34-3 28-5Z"/>
-      <path d="M113-5C120-4 127 2 128 9C129 17 122 25 113 26C106 28 99 25 99 18C99 10 107-3 113-5Z"/>
-    </g>
-    <g fill="#eef6fa">
-      <ellipse cx="28" cy="17" rx="5.5" ry="6.3" transform="rotate(-30 28 17)"/>
-      <ellipse cx="20" cy="8" rx="2.8" ry="3.4" transform="rotate(-35 20 8)"/>
-      <ellipse cx="26" cy="3" rx="2.8" ry="3.4" transform="rotate(-20 26 3)"/>
-      <ellipse cx="33" cy="5" rx="2.7" ry="3.3" transform="rotate(-23 33 5)"/>
-      <ellipse cx="113" cy="17" rx="5.5" ry="6.3" transform="rotate(30 113 17)"/>
-      <ellipse cx="121" cy="8" rx="2.8" ry="3.4" transform="rotate(35 121 8)"/>
-      <ellipse cx="115" cy="3" rx="2.8" ry="3.4" transform="rotate(20 115 3)"/>
-      <ellipse cx="108" cy="5" rx="2.7" ry="3.3" transform="rotate(23 108 5)"/>
-    </g>
-  </svg>`;
+  const mirror = poseFor(side).tail === 'left';
+  const tail = shape('M74 34C80 55 49 63 47 85C45 104 60 122 76 120C90 119 96 106 87 100C83 97 78 99 79 104C82 112 72 115 66 108C53 94 85 80 88 60C90 48 87 39 85 34Z');
+  return svg('tail', '0 0 140 128', `<g${mirror ? ' transform="translate(140 0) scale(-1 1)"' : ''}>${tail}</g>${shape('M26-12C25 4 28 20 39 31C48 42 59 43 70 37C80 43 94 42 104 32C116 20 117 4 114-12Z')}${backPaw(28, -30)}${backPaw(112, 30)}`);
 }
 
-// The same companion stretching through open space, with no supporting border.
 export function catSlidingDrawing() {
-  return `<svg class="scroll-cat__drawing scroll-cat__drawing--sliding" viewBox="0 0 160 300" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-    <g stroke-linecap="round" stroke-linejoin="round">
-      <g fill="var(--cat-fur, #121c27)" stroke="var(--cat-outline, #a9c4d6)" stroke-opacity=".8" stroke-width="1.7">
-        <path d="M85 229C82 248 91 258 108 265C126 272 127 283 116 288C107 292 99 284 103 277C105 273 100 269 96 273C83 286 99 302 116 296C138 289 138 271 118 259C102 250 105 237 104 229Z"/>
-        <path d="M57 220C44 226 35 241 35 254C35 262 42 266 48 263L63 251C69 246 73 237 74 229Z"/>
-        <path d="M87 225C92 238 103 246 111 251C117 256 119 265 112 270C105 274 98 269 93 262L76 241Z"/>
-        <path d="M52 147C43 161 43 180 46 199L49 222C52 243 70 251 85 245C104 249 116 233 114 215L111 181C110 164 104 152 98 145Z"/>
-        <path d="M49 163C30 147 19 119 19 95L20 30C14 24 16 15 20 14C18 5 25 3 29 7C32 0 39 4 39 10C45 8 49 14 47 21L42 88C41 107 47 123 63 137L67 157Z"/>
-        <path d="M99 156C118 141 123 118 122 96L116 25C113 17 116 12 122 12C120 5 126 2 130 7C134 1 140 5 139 12C147 10 149 18 144 24L146 88C149 118 139 145 117 166Z"/>
-      </g>
-      <path d="m25 15 1 12m9-13 1 13m89-8 1 11m10-12 1 11m-90 219 4-4m53 18 3 4" stroke="var(--cat-outline, #a9c4d6)" stroke-opacity=".4" stroke-width="1.3"/>
-      <g transform="translate(0 70)">
-        <g fill="var(--cat-fur, #121c27)" stroke="var(--cat-outline, #a9c4d6)" stroke-opacity=".8" stroke-width="1.7">
-          <path d="M30 48C29 34 30 17 37 7C40 2 46 5 53 11L69 29C77 28 86 28 94 30L108 13C115 5 122 2 125 9C132 23 131 38 131 50C139 66 137 85 126 98C105 105 54 105 34 98C22 85 21 65 30 48Z"/>
-          <path d="m29 73-16-3m17 12-17 1m19 6-15 6m113-22 17-3m-18 12 18 1m-20 6 15 6" stroke-width="3.3"/>
-        </g>
-        <g fill="#eef6fa">
-          <path d="M38 30C38 23 39 17 42 13C48 16 54 22 59 28L53 28C49 24 46 21 43 20L42 32Z"/>
-          <path d="M102 29C107 23 113 16 119 13C122 17 123 24 123 31L119 33C119 27 118 23 117 20C113 23 110 26 107 30Z"/>
-          <ellipse cx="59" cy="63" rx="18.5" ry="22.5" transform="rotate(-7 59 63)"/>
-          <ellipse cx="102" cy="63" rx="18.5" ry="22.5" transform="rotate(7 102 63)"/>
-        </g>
-        <g fill="var(--cat-fur, #121c27)">
-          <ellipse cx="63" cy="62" rx="7.2" ry="10.5"/>
-          <ellipse cx="100" cy="62" rx="7.2" ry="10.5"/>
-        </g>
-        <g fill="#eef6fa">
-          <ellipse cx="65" cy="58" rx="2" ry="3.2"/>
-          <ellipse cx="102" cy="58" rx="2" ry="3.2"/>
-          <path d="M75 78C76 75 85 75 87 78C89 81 84 86 81 86C78 86 73 81 75 78Z"/>
-        </g>
-        <path d="M81 86v3m0 0c-3 4-7 4-9 1m9-1c3 4 7 4 9 1" stroke="var(--cat-outline, #a9c4d6)" stroke-opacity=".8" stroke-width="1.4"/>
-      </g>
-    </g>
-  </svg>`;
+  const tail = shape('M78 232C80 252 53 254 47 270C40 289 65 300 89 295C112 290 127 275 120 262C116 254 107 255 105 261C102 268 112 271 109 277C102 291 68 293 60 282C51 269 92 267 95 243L95 233Z');
+  // Forelegs, body and loose hind paws share one contour; only the head overlaps.
+  const body = shape('M53 94C47 78 43 63 44 48L43 32C38 29 36 22 40 19C38 11 45 9 48 14C52 9 58 11 58 17C64 16 67 22 62 27L65 46C67 62 72 72 80 82C88 72 94 62 96 46L97 27C92 22 95 16 101 17C101 10 107 9 111 14C116 9 123 11 121 19C125 22 123 29 118 32L117 48C118 65 112 81 107 95C104 105 107 123 113 143C119 161 117 180 112 196C115 197 120 192 122 184C121 177 126 174 130 178C134 174 139 177 138 183C144 182 146 188 141 192C136 210 129 224 116 231C108 242 95 248 80 248C64 248 52 242 44 231C31 224 24 210 19 192C14 188 16 182 22 183C21 177 26 174 30 178C34 174 39 177 38 184C40 192 45 197 48 196C43 180 41 162 47 143C53 123 56 105 53 94Z');
+  return svg('sliding', '0 0 160 300', `${tail}${body}${line('m48 24 2 7m8-8 1 6m44-6-1 6m10-5-2 7m-82 153 3 5m102-5-3 5', 1.15, .34)}<g transform="translate(10 42) scale(.875)">${head({ tilt: -2, gazeX: 0, gazeY: -4, joined: true })}</g>`);
 }
 
-// A relaxed border pose in the same proportions and palette as the peeking cat.
 export function catLoungeDrawing(side = 'top') {
-  const { tilt, gazeX, gazeY } = poseFor(side);
-  return `<svg class="scroll-cat__drawing scroll-cat__drawing--lounge" viewBox="0 0 260 130" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-    <g stroke-linecap="round" stroke-linejoin="round">
-      <g fill="var(--cat-fur, #121c27)" stroke="var(--cat-outline, #a9c4d6)" stroke-opacity=".8" stroke-width="1.7">
-        <path d="M205 65C221 55 223 43 221 29C219 16 226 5 237 5C249 4 258 13 253 24C250 33 240 36 234 30C230 26 234 21 238 24C244 28 249 21 245 17C237 9 232 20 236 31C241 46 234 67 220 77Z"/>
-        <path d="M99 64C99 79 107 91 106 107C106 115 109 121 102 124C95 127 89 122 90 115L84 84L82 67Z"/>
-        <path d="M192 65C198 79 193 89 196 103C199 111 199 118 192 121C185 123 178 119 180 111L176 83L175 66Z"/>
-        <path d="M81 55C103 43 137 39 169 42C191 42 206 47 216 59C228 73 214 84 198 82L100 81C85 80 76 68 81 55Z"/>
-      </g>
-      <path d="m96 116 1 6m92-8 1 6" stroke="var(--cat-outline, #a9c4d6)" stroke-opacity=".4" stroke-width="1.3"/>
-      <g transform="translate(0 2) scale(.72)">
-        <g transform="rotate(${tilt / 2} 80 88)">
-          <g fill="var(--cat-fur, #121c27)" stroke="var(--cat-outline, #a9c4d6)" stroke-opacity=".8" stroke-width="2">
-            <path d="M30 48C29 34 30 17 37 7C40 2 46 5 53 11L69 29C77 28 86 28 94 30L108 13C115 5 122 2 125 9C132 23 131 38 131 50C139 66 137 85 126 98C105 105 54 105 34 98C22 85 21 65 30 48Z"/>
-            <path d="m29 73-16-3m17 12-17 1m19 6-15 6m113-22 17-3m-18 12 18 1m-20 6 15 6" stroke-width="3.3"/>
-          </g>
-          <g fill="#eef6fa">
-            <path d="M38 30C38 23 39 17 42 13C48 16 54 22 59 28L53 28C49 24 46 21 43 20L42 32Z"/>
-            <path d="M102 29C107 23 113 16 119 13C122 17 123 24 123 31L119 33C119 27 118 23 117 20C113 23 110 26 107 30Z"/>
-            <ellipse cx="59" cy="63" rx="18.5" ry="22.5" transform="rotate(-7 59 63)"/>
-            <ellipse cx="102" cy="63" rx="18.5" ry="22.5" transform="rotate(7 102 63)"/>
-          </g>
-          <g fill="var(--cat-fur, #121c27)">
-            <ellipse cx="${62 + gazeX}" cy="${66 + gazeY}" rx="7.2" ry="10.5"/>
-            <ellipse cx="${99 + gazeX}" cy="${66 + gazeY}" rx="7.2" ry="10.5"/>
-          </g>
-          <g fill="#eef6fa">
-            <ellipse cx="${64 + gazeX}" cy="${62 + gazeY}" rx="2" ry="3.2"/>
-            <ellipse cx="${101 + gazeX}" cy="${62 + gazeY}" rx="2" ry="3.2"/>
-            <path d="M75 78C76 75 85 75 87 78C89 81 84 86 81 86C78 86 73 81 75 78Z"/>
-          </g>
-          <path d="M81 86v3m0 0c-3 4-7 4-9 1m9-1c3 4 7 4 9 1" stroke="var(--cat-outline, #a9c4d6)" stroke-opacity=".8" stroke-width="1.7"/>
-        </g>
-      </g>
-    </g>
-  </svg>`;
+  const pose = poseFor(side);
+  const tail = shape('M205 65C220 58 225 45 223 30C221 17 226 7 236 6C247 4 255 12 254 21C253 31 243 36 236 30C232 27 234 22 238 24C244 28 250 22 246 17C239 9 232 18 236 31C241 47 234 66 220 77Z');
+  const legs = `${shape('M91 69C90 82 99 94 98 109C98 115 101 122 96 125C90 128 85 124 86 116L79 83L78 70Z')}${shape('M188 69C190 82 184 89 186 102C188 110 190 118 184 121C179 124 173 120 174 113L169 85L173 70Z')}`;
+  const body = shape('M79 58C103 45 135 39 165 44C190 45 210 49 220 64C227 75 216 83 199 81L96 80C82 80 74 69 79 58Z');
+  return svg('lounge', '0 0 260 130', `${tail}${legs}${body}${line('m91 118 1 6m87-11 1 6', 1.15, .34)}<g transform="translate(0 7) scale(.68)">${head({ ...pose, tilt: pose.tilt / 2 })}</g>`);
 }

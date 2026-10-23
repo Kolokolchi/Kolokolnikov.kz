@@ -16,6 +16,7 @@ The user also requested one recognizable large-eyed graphite cat with random pos
 - The focal object is actual solid 3D geometry, with a readable silhouette and material depth.
 - All existing content and controls remain usable on desktop and mobile.
 - Cat and visible pawprints never overlap in time. At most three prints form one continuous short trail to the exact future cat destination, with no added edge line. After stopping, finish the route, fade and remove the prints, then reveal the cat behind that same element edge.
+- Every pose uses the shared vector face. Paws stay fixed on the edge while the head may tilt. Both endpoints share one axis and are recomputed from the live anchor's side and fractional position, including during retreat, resizing and reduced-motion scroll. Perspective-rotated cards are excluded from rectangular masking.
 - Cat placement uses a safe real element edge. If the current viewport has no safe edge, defer showing it rather than cover content.
 - User pause, reduced motion, hidden-tab and offscreen states stop nonessential scene animation. Reduced motion retains a static sculpture and cat.
 

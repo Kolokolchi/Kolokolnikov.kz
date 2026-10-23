@@ -138,12 +138,12 @@
       },
       {
         "name": "cat-placement",
-        "value": "top:0deg; bottom:180deg; left:-90deg; right:90deg; random peek/paired/lounge poses; occasional 2200ms empty-corridor glide",
-        "purpose": "One graphite character with large white eyes. Head widths 96px desktop, 84px intermediate, 66px mobile. Both peek and paired poses show the tail at the opposite edge of the same anchor, on exactly the same axis as the head: matching x for top/bottom or matching y for left/right. Each part is clipped behind its edge. Same anchor may get different poses. Keep destination and pose fixed during trail fade. No safe candidate keeps the cat hidden."
+        "value": "top:0deg; bottom:180deg; left:-90deg; right:90deg; random peek/paired poses; lounge on top edges only; occasional 2200ms empty-corridor glide",
+        "purpose": "One graphite character with shared vector face and large white eyes. Head widths 96px desktop, 84px intermediate, 66px mobile. Tilt the face, keep paws fixed. Both peek and paired poses show the tail at the opposite edge of the same anchor on exactly the same axis. Recompute positions and masks from live bounds plus side/fraction during scroll, retreat and layout changes, without rebuilding artwork. Exclude perspective-rotated edges. Same anchor may get different poses. Keep destination and pose fixed during trail fade. No safe candidate keeps the cat hidden."
       },
       {
         "name": "cat-motion-policy",
-        "value": "no scroll activity under reduced motion, document.hidden, open menu or open dialog; clear trail on resize, visibility change and reduced-motion change",
+        "value": "reduced motion follows the anchor statically without prints; no scroll animation under document.hidden, open menu or open dialog; clear trail on resize, visibility change and reduced-motion change",
         "purpose": "Reduced motion retains a static safely anchored cat, disables transitions and hides prints. Menu/dialog CSS hides the companion overlay. Page lifecycle cleanup removes listeners and the overlay when leaving a nonpersisted page."
       },
       {

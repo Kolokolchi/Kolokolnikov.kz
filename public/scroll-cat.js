@@ -9,7 +9,8 @@ const STEP_DISTANCE = 92;
 const FINISH_STEP_DELAY = 120;
 const PRINT_ENTRANCE = 180;
 const TAIL_POSES = new Set(['paired', 'peek']);
-const ANCHOR_SELECTORS = '.project-image-link, .motion-stage, .client-preview, .expertise-list, .reel-button';
+// The perspective-rotated client preview has no straight screen-space edge.
+const ANCHOR_SELECTORS = '.project-image-link, .motion-stage, .expertise-list, .reel-button';
 const OBSTACLE_SELECTORS = 'h1, h2, h3, p, a, button, summary, .project-image-link, .motion-stage, .client-preview, .site-header, .site-footer';
 
 const pawDrawing = `<svg viewBox="0 0 36 42" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
@@ -58,6 +59,8 @@ export function initScrollCat() {
   let plannedPlacement;
   let obstacles = [];
   let obstacleScrollY = window.scrollY;
+  let anchorFrame;
+  let destroyed = false;
 
   function catSize(pose = 'peek') {
     const width = compactScreen.matches ? 66 : window.innerWidth <= 1480 ? 84 : 96;
@@ -78,7 +81,24 @@ export function initScrollCat() {
   }
 
   function headOverlap(pose, height) {
-    return height * (pose === 'lounge' ? .4 : pose === 'peek' ? .31 : 16 / 112);
+    return height * (pose === 'lounge' ? .4 : 16 / 112);
+  }
+
+  // Recompute both attachment points from the live edge, including resized cards.
+  function anchoredCoordinates(placement, rect) {
+    const size = catSize(placement.pose);
+    const tailDimensions = tailSize();
+    const overlap = headOverlap(placement.pose, size.height);
+    const { side, fraction } = placement;
+    let x = rect.left + rect.width * fraction;
+    let y = rect.top + rect.height * fraction;
+    let tailX = x;
+    let tailY = y;
+    if (side === 'left') { x = rect.left - size.height / 2 + overlap; tailX = rect.right + tailDimensions.height / 2 - 4; }
+    if (side === 'right') { x = rect.right + size.height / 2 - overlap; tailX = rect.left - tailDimensions.height / 2 + 4; }
+    if (side === 'top') { y = rect.top - size.height / 2 + overlap; tailY = rect.bottom + tailDimensions.height / 2 - 4; }
+    if (side === 'bottom') { y = rect.bottom + size.height / 2 - overlap; tailY = rect.top - tailDimensions.height / 2 + 4; }
+    return { ...placement, x, y, tailX, tailY };
   }
 
   function intersects(a, b, padding = 0) {
@@ -131,7 +151,7 @@ export function initScrollCat() {
     if (!placement?.element.isConnected) return null;
     const rect = placement.element.getBoundingClientRect();
     if (!rect.width || !rect.height) return null;
-    const resolved = { ...placement, x: rect.left + placement.offsetX, y: rect.top + placement.offsetY, tailX: rect.left + placement.tailOffsetX, tailY: rect.top + placement.tailOffsetY };
+    const resolved = anchoredCoordinates(placement, rect);
     const bounds = placementBounds(resolved);
     if (!safeBounds(bounds, placement.element)) return null;
     if (TAIL_POSES.has(resolved.pose)) {
@@ -188,21 +208,13 @@ export function initScrollCat() {
         [.28, .72].forEach(fraction => {
           for (const pose of ['paired', 'peek', 'lounge']) {
             if (!media && pose !== 'peek') continue;
-            const size = catSize(pose);
-            const tailDimensions = tailSize();
-            const overlap = headOverlap(pose, size.height);
-            let x = rect.left + rect.width * fraction;
-            let y = rect.top + rect.height * fraction;
-            // Opposite ends of the same cat always share a horizontal/vertical axis.
-            let tailX = rect.left + rect.width * fraction;
-            let tailY = rect.top + rect.height * fraction;
-            if (side === 'left') { x = rect.left - size.height / 2 + overlap; tailX = rect.right + tailDimensions.height / 2 - 4; }
-            if (side === 'right') { x = rect.right + size.height / 2 - overlap; tailX = rect.left - tailDimensions.height / 2 + 4; }
-            if (side === 'top') { y = rect.top - size.height / 2 + overlap; tailY = rect.bottom + tailDimensions.height / 2 - 4; }
-            if (side === 'bottom') { y = rect.bottom + size.height / 2 - overlap; tailY = rect.top - tailDimensions.height / 2 + 4; }
+            // A relaxed body rests on a horizontal ledge; side poses use a grip.
+            if (pose === 'lounge' && side !== 'top') continue;
+            const position = anchoredCoordinates({ side, pose, fraction }, rect);
             const repeated = currentPlacement?.anchor === label && currentPlacement?.pose === pose;
-            const score = (media ? 100 : 60) - Math.abs(y - viewportHeight * .55) * .035 - (repeated ? 16 : 0) + Math.random() * 24;
-            const candidate = { x, y, tailX, tailY, side, pose, anchor: label, score, element: anchor, offsetX: x - rect.left, offsetY: y - rect.top, tailOffsetX: tailX - rect.left, tailOffsetY: tailY - rect.top, media, tilt: (Math.random() - .5) * (pose === 'peek' ? 12 : 4) };
+            const score = (media ? 100 : 60) - Math.abs(position.y - viewportHeight * .55) * .035 - (repeated ? 16 : 0) + Math.random() * 24;
+            // Only the face changes angle. Rotating the paws detaches their grip.
+            const candidate = { ...position, anchor: label, score, element: anchor, media, tilt: 0 };
             if (resolvePlacement(candidate)) candidates.push(candidate);
           }
         });
@@ -233,7 +245,7 @@ export function initScrollCat() {
     return null;
   }
 
-  function parkCat(placement) {
+  function parkCat(placement, renderArtwork = true) {
     currentPlacement = placement;
     if (!placement) {
       companion.style.visibility = 'hidden';
@@ -254,6 +266,7 @@ export function initScrollCat() {
       return;
     }
     const rect = placement.element.getBoundingClientRect();
+    currentPlacement.rect = { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
     const angle = { top: 0, bottom: 180, left: -90, right: 90 }[placement.side];
     function placePart(part, x, y, size, edgeSide, drawing) {
       const bounds = partBounds(x, y, size.width, size.height, placement.side);
@@ -269,18 +282,41 @@ export function initScrollCat() {
       const orientation = part.querySelector('.scroll-cat__orientation');
       Object.assign(orientation.style, { width: `${size.width}px`, height: `${size.height}px`, transform: `translate(-50%, -50%) rotate(${angle}deg)` });
       const artwork = orientation.firstElementChild;
-      artwork.innerHTML = drawing;
+      if (renderArtwork) artwork.innerHTML = drawing;
       artwork.style.setProperty('--cat-tilt', `${placement.tilt}deg`);
     }
     const size = catSize(placement.pose);
-    placePart(head, placement.x, placement.y, size, placement.side, placement.pose === 'lounge' ? catLoungeDrawing(placement.side) : catHeadDrawing(placement.side));
+    placePart(head, placement.x, placement.y, size, placement.side, renderArtwork ? (placement.pose === 'lounge' ? catLoungeDrawing(placement.side) : catHeadDrawing(placement.side, placement.pose)) : '');
     if (TAIL_POSES.has(placement.pose)) {
       const opposite = { top: 'bottom', bottom: 'top', left: 'right', right: 'left' }[placement.side];
-      placePart(tail, placement.tailX, placement.tailY, tailSize(), opposite, catTailDrawing(placement.side));
+      placePart(tail, placement.tailX, placement.tailY, tailSize(), opposite, renderArtwork ? catTailDrawing(placement.side) : '');
     }
+    followAnchor();
+  }
+
+  function syncAnchoredCat() {
+    if (!currentPlacement?.element || !['idle', 'hiding'].includes(root.dataset.state)) return;
+    const box = currentPlacement.element.getBoundingClientRect();
+    const previous = currentPlacement.rect;
+    if (previous && ['left', 'top', 'width', 'height'].every(key => Math.abs(box[key] - previous[key]) < .1)) return;
+    collectObstacles();
+    parkCat(resolvePlacement(currentPlacement), false);
+  }
+
+  // One bounds read while visible also follows image loading, layout reveals and
+  // expanding details. Artwork and animations are never recreated by this loop.
+  function followAnchor() {
+    if (anchorFrame || destroyed || document.hidden || !currentPlacement?.element || !['idle', 'hiding'].includes(root.dataset.state)) return;
+    anchorFrame = requestAnimationFrame(() => {
+      anchorFrame = null;
+      syncAnchoredCat();
+      followAnchor();
+    });
   }
 
   function clearTrail() {
+    cancelAnimationFrame(anchorFrame);
+    anchorFrame = null;
     window.clearTimeout(hideTimer);
     window.clearTimeout(idleTimer);
     window.clearTimeout(returnTimer);
@@ -314,6 +350,7 @@ export function initScrollCat() {
     catHidden = false;
     companion.style.visibility = currentPlacement ? '' : 'hidden';
     root.dataset.state = 'idle';
+    followAnchor();
   }
 
   function settle() {
@@ -419,7 +456,16 @@ export function initScrollCat() {
     const currentY = window.scrollY;
     const delta = currentY - lastY;
     lastY = currentY;
-    if (Math.abs(delta) < .5 || reducedMotion.matches || document.hidden || isObscured()) return;
+    if (Math.abs(delta) < .5 || document.hidden || isObscured()) return;
+    // Move the attachment and mask before the 120ms retreat, even on large jumps.
+    syncAnchoredCat();
+    if (reducedMotion.matches) {
+      window.clearTimeout(idleTimer);
+      idleTimer = window.setTimeout(() => {
+        if (!currentPlacement) clearTrail();
+      }, IDLE_DELAY);
+      return;
+    }
 
     const direction = delta > 0 ? 1 : -1;
     const restarting = finishingJourney || root.dataset.state === 'settling' || (previousDirection && direction !== previousDirection);
@@ -467,6 +513,7 @@ export function initScrollCat() {
   }
 
   function destroy() {
+    destroyed = true;
     clearTrail();
     controller.abort();
     menuObserver.disconnect();
