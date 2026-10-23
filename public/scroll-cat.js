@@ -210,7 +210,8 @@ export function initScrollCat() {
     const free = [];
     const width = compactScreen.matches ? 56 : 74;
     const height = width * 300 / 160;
-    for (const x of [width / 2 + 12, window.innerWidth - width / 2 - 12]) {
+    const rotatedWidth = width * Math.cos(Math.PI / 30) + height * Math.sin(Math.PI / 30);
+    for (const x of [rotatedWidth / 2 + 12, window.innerWidth - rotatedWidth / 2 - 12]) {
       for (const fraction of [.28, .52, .74]) {
         const candidate = { x, y: viewportHeight * fraction, width, height, side: 'top', pose: 'glide', anchor: `whitespace:${x}:${fraction}`, score: 20, tilt: x < window.innerWidth / 2 ? -6 : 6 };
         if (resolvePlacement(candidate)) free.push(candidate);
