@@ -128,13 +128,13 @@
       },
       {
         "name": "cat-scroll-settle",
-        "value": "220ms scroll idle delay; 750ms print fade; then remove every print before revealing cat",
+        "value": "220ms scroll idle delay; finish remaining steps 120ms apart; final step entrance 180ms; 750ms print fade; remove every print before revealing cat at the same route destination",
         "purpose": "Visible cat and pawprints are mutually exclusive, including resumed scrolling during a fade."
       },
       {
         "name": "cat-print",
         "value": "180ms entrance; 92px scroll distance per step; maximum 3 prints; 46px desktop / 34px mobile stride with alternating 6px / 4px lateral offset",
-        "purpose": "Prints alternate along the planned journey and are suppressed when no safe point is available."
+        "purpose": "Three steps approach one safely anchored destination, which is shared with the cat reveal. The element edge clips the cat silhouette so the cat appears behind it. Suppress the route if its destination becomes unsafe."
       },
       {
         "name": "cat-placement",

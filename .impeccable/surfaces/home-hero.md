@@ -15,7 +15,7 @@ The user also requested a small outlined cat and pawprints. The cat rests at act
 - Geometry follows the four paths in `scripts/brand.mjs`; the colored contours retain their connection throughout the cycle.
 - The focal object is actual solid 3D geometry, with a readable silhouette and material depth.
 - All existing content and controls remain usable on desktop and mobile.
-- Cat and visible pawprints never overlap in time. At most three prints form one continuous short trail with no added edge line, and stopping the scroll removes them.
+- Cat and visible pawprints never overlap in time. At most three prints form one continuous short trail to the exact future cat destination, with no added edge line. After stopping, finish the route, fade and remove the prints, then reveal the cat behind that same element edge.
 - Cat placement uses a safe real element edge. If the current viewport has no safe edge, defer showing it rather than cover content.
 - User pause, reduced motion, hidden-tab and offscreen states stop nonessential scene animation. Reduced motion retains a static sculpture and cat.
 

@@ -4,6 +4,8 @@ const HIDE_DURATION = 120;
 const IDLE_DELAY = 220;
 const FADE_DURATION = 750;
 const STEP_DISTANCE = 92;
+const FINISH_STEP_DELAY = 120;
+const PRINT_ENTRANCE = 180;
 const ANCHOR_SELECTORS = '.project-image-link, .motion-stage, .client-preview, .expertise-list, .hero-motion-tools, .hero-work-link, .reel-button, main > section, .section-heading, .work-toolbar, .contact-links, .intro-disciplines, .site-footer';
 const OBSTACLE_SELECTORS = 'h1, h2, h3, p, a, button, summary, .project-image-link, .motion-stage, .client-preview, .site-header, .site-footer';
 
@@ -51,19 +53,18 @@ export function initScrollCat() {
   let hideTimer;
   let idleTimer;
   let returnTimer;
+  let finishTimer;
   let lastY = window.scrollY;
   let accumulatedDistance = 0;
   let previousDirection = 0;
-  let steps = 0;
+  let journeyStep = 0;
+  let finishingJourney = false;
   let scrolling = false;
   let catHidden = false;
   let activityVersion = 0;
   let placementCycle = 0;
   let currentPlacement;
   let plannedPlacement;
-  let journeyStart;
-  let journeyHeading = 0;
-  let journeyDirection = 0;
   let obstacles = [];
   let obstacleScrollY = window.scrollY;
 
@@ -105,7 +106,57 @@ export function initScrollCat() {
     return !obstacles.some(obstacle => obstacle.owner !== anchor && intersects(documentBounds, obstacle, padding));
   }
 
-  function choosePlacement() {
+  function placementBounds(placement) {
+    const size = catSize();
+    const horizontal = placement.side === 'top' || placement.side === 'bottom';
+    const width = horizontal ? size.height : size.width;
+    const height = horizontal ? size.width : size.height;
+    return { left: placement.x - width / 2, right: placement.x + width / 2, top: placement.y - height / 2, bottom: placement.y + height / 2 };
+  }
+
+  function resolvePlacement(placement) {
+    if (!placement?.element.isConnected) return null;
+    const rect = placement.element.getBoundingClientRect();
+    if (!rect.width || !rect.height) return null;
+    const resolved = { ...placement, x: rect.left + placement.offsetX, y: rect.top + placement.offsetY };
+    const bounds = placementBounds(resolved);
+    if (bounds.left < 8 || bounds.right > window.innerWidth - 8 || bounds.top < 20 || bounds.bottom > window.innerHeight - 18) return null;
+    return clearOfContent(bounds, placement.element, placement.media ? 2 : 5) ? resolved : null;
+  }
+
+  function approachTo(placement) {
+    const compact = compactScreen.matches;
+    const stride = compact ? 34 : 46;
+    const spread = compact ? 4 : 6;
+    const gap = compact ? 22 : 30;
+    const width = compact ? 15 : 21;
+    const height = compact ? 18 : 25;
+    const heading = { left: 0, right: Math.PI, top: Math.PI / 2, bottom: -Math.PI / 2 }[placement.side];
+    const landingX = -Math.cos(heading) * 8;
+    const landingY = -Math.sin(heading) * 8;
+    // Narrow gaps can be approached along the edge as well as straight toward it.
+    for (const turn of [0, -.3, .3, -.6, .6, -1, 1, -1.3, 1.3, -Math.PI / 2, Math.PI / 2]) {
+      const angle = heading + turn;
+      const dx = Math.cos(angle);
+      const dy = Math.sin(angle);
+      const route = Array.from({ length: MAX_PRINTS }, (_, index) => {
+        const distance = gap + stride * (MAX_PRINTS - 1 - index);
+        const side = index % 2 ? 1 : -1;
+        return { offsetX: landingX - dx * distance - dy * side * spread, offsetY: landingY - dy * distance + dx * side * spread, angle: angle * 180 / Math.PI + 90 + side * 6, width, height };
+      });
+      if (route.every(point => safeStep(placement, point))) return route;
+    }
+    return null;
+  }
+
+  function safeStep(placement, point) {
+    const x = placement.x + point.offsetX - point.width / 2;
+    const y = placement.y + point.offsetY - point.height / 2;
+    if (x < 8 || x + point.width > window.innerWidth - 8 || y < 32 || y + point.height > window.innerHeight - 25) return false;
+    return clearOfContent({ left: x - 3, right: x + point.width + 3, top: y - 3, bottom: y + point.height + 3 }, null, 2);
+  }
+
+  function choosePlacement(withApproach = false) {
     const size = catSize();
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
@@ -138,12 +189,20 @@ export function initScrollCat() {
           if (!clearOfContent(bounds, anchor, media ? 2 : 5)) return;
           const repeated = currentPlacement?.anchor === label && currentPlacement?.side === side;
           const score = (media ? 100 : section ? 25 : 65) - Math.abs(y - viewportHeight * .6) * .035 - (repeated ? 55 : 0);
-          candidates.push({ x, y, side, anchor: label, score });
+          candidates.push({ x, y, side, anchor: label, score, element: anchor, offsetX: x - rect.left, offsetY: y - rect.top, media });
         });
       });
     });
     candidates.sort((a, b) => b.score - a.score);
-    if (candidates.length) return candidates[seed % Math.min(3, candidates.length)];
+    if (candidates.length) {
+      const preferred = seed % Math.min(3, candidates.length);
+      if (!withApproach) return candidates[preferred];
+      const ordered = [candidates[preferred], ...candidates.filter((_, index) => index !== preferred)];
+      for (const candidate of ordered) {
+        const route = approachTo(candidate);
+        if (route) return { ...candidate, route };
+      }
+    }
     return null;
   }
 
@@ -156,21 +215,26 @@ export function initScrollCat() {
       return;
     }
     const size = catSize();
+    const rect = placement.element.getBoundingClientRect();
+    const left = placement.x - size.width / 2;
+    const top = placement.y - size.height / 2;
+    // The anchor edge occludes the silhouette, including its rotated variants.
+    const inset = { top: -200, right: -200, bottom: -200, left: -200 };
+    if (placement.side === 'left') inset.right = size.width - (rect.left - left);
+    if (placement.side === 'right') inset.left = rect.right - left;
+    if (placement.side === 'top') inset.bottom = size.height - (rect.top - top);
+    if (placement.side === 'bottom') inset.top = rect.bottom - top;
+    companion.style.clipPath = `inset(${inset.top}px ${inset.right}px ${inset.bottom}px ${inset.left}px)`;
     root.dataset.side = placement.side;
     root.dataset.anchor = placement.anchor;
     companion.style.transform = `translate3d(${placement.x - size.width / 2}px, ${placement.y - size.height / 2}px, 0)`;
-  }
-
-  function removePrint(print) {
-    const index = prints.indexOf(print);
-    if (index !== -1) prints.splice(index, 1);
-    print.element.remove();
   }
 
   function clearTrail() {
     window.clearTimeout(hideTimer);
     window.clearTimeout(idleTimer);
     window.clearTimeout(returnTimer);
+    window.clearTimeout(finishTimer);
     activityVersion++;
     scrolling = false;
     catHidden = false;
@@ -179,9 +243,10 @@ export function initScrollCat() {
     root.dataset.state = 'idle';
     accumulatedDistance = 0;
     previousDirection = 0;
-    journeyStart = null;
+    finishingJourney = false;
+    journeyStep = 0;
     plannedPlacement = null;
-    journeyDirection = 0;
+    delete root.dataset.destination;
     lastY = window.scrollY;
     collectObstacles();
     parkCat(choosePlacement());
@@ -193,7 +258,10 @@ export function initScrollCat() {
     prints.splice(0).forEach(print => print.element.remove());
     collectObstacles();
     placementCycle++;
-    parkCat(choosePlacement());
+    // Reveal at the same element the final steps approach; never roll a new target.
+    parkCat(resolvePlacement(plannedPlacement));
+    plannedPlacement = null;
+    finishingJourney = false;
     catHidden = false;
     companion.style.visibility = currentPlacement ? '' : 'hidden';
     root.dataset.state = 'idle';
@@ -203,99 +271,92 @@ export function initScrollCat() {
     scrolling = false;
     accumulatedDistance = 0;
     const version = activityVersion;
-    if (!prints.length) {
+    finishingJourney = true;
+    finishJourney(version);
+  }
+
+  function positionPrint(print) {
+    const x = plannedPlacement.x + print.point.offsetX - print.point.width / 2;
+    const y = plannedPlacement.y + print.point.offsetY - print.point.height / 2;
+    print.element.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${print.point.angle}deg)`;
+  }
+
+  function resetJourney() {
+    prints.splice(0).forEach(print => print.element.remove());
+    plannedPlacement = null;
+    journeyStep = 0;
+    delete root.dataset.destination;
+  }
+
+  function planJourney() {
+    resetJourney();
+    plannedPlacement = choosePlacement(true);
+    if (plannedPlacement) root.dataset.destination = plannedPlacement.anchor;
+  }
+
+  function syncJourney() {
+    const resolved = resolvePlacement(plannedPlacement);
+    if (!resolved || !resolved.route.every(point => safeStep(resolved, point))) {
+      resetJourney();
+      return false;
+    }
+    plannedPlacement = resolved;
+    prints.forEach(positionPrint);
+    return true;
+  }
+
+  function leavePrint() {
+    const point = plannedPlacement?.route[journeyStep];
+    if (!point || !catHidden) return false;
+    const element = document.createElement('span');
+    element.className = 'scroll-cat__print';
+    element.innerHTML = pawDrawing;
+    const print = { element, point };
+    journeyStep++;
+    element.dataset.step = String(journeyStep);
+    prints.push(print);
+    trail.append(element);
+    positionPrint(print);
+    prints.forEach((item, index) => { item.element.dataset.age = String(prints.length - 1 - index); });
+    return true;
+  }
+
+  function finishJourney(version) {
+    if (version !== activityVersion || scrolling) return;
+    collectObstacles();
+    if (!syncJourney()) {
       revealCat(version);
       return;
     }
+    if (journeyStep < plannedPlacement.route.length) {
+      root.dataset.state = 'walking';
+      leavePrint();
+      const delay = journeyStep === plannedPlacement.route.length ? PRINT_ENTRANCE : FINISH_STEP_DELAY;
+      finishTimer = window.setTimeout(() => finishJourney(version), delay);
+      return;
+    }
+    finishingJourney = false;
     root.dataset.state = 'settling';
     prints.forEach(print => print.element.classList.add('is-fading'));
     returnTimer = window.setTimeout(() => revealCat(version), FADE_DURATION);
   }
 
-  function positionPrint(print) {
-    const y = print.documentY - window.scrollY;
-    print.element.style.transform = `translate3d(${print.x}px, ${y}px, 0) rotate(${print.angle}deg)`;
-    if (y < -50 || y > window.innerHeight + 50) removePrint(print);
-  }
-
-  function planJourney(direction, fromCat = false) {
-    plannedPlacement = choosePlacement();
-    const origin = fromCat ? currentPlacement || plannedPlacement : plannedPlacement;
-    journeyStart = origin ? { x: origin.x, y: origin.y + window.scrollY } : null;
-    const dx = (plannedPlacement?.x ?? origin?.x ?? 0) - (origin?.x ?? 0);
-    const dy = (plannedPlacement?.y ?? origin?.y ?? 0) - (origin?.y ?? 0);
-    journeyHeading = Math.hypot(dx, dy) > 45 ? Math.atan2(dy, dx) : direction > 0 ? Math.PI / 2 : -Math.PI / 2;
-    journeyDirection = direction;
-    steps = 0;
-  }
-
-  function leavePrint(direction) {
-    const compact = compactScreen.matches;
-    if (Math.abs(window.scrollY - obstacleScrollY) > window.innerHeight * .4) collectObstacles();
-    // Keep a route in document space. Re-seed only after its last steps leave view.
-    const cursorY = journeyStart ? journeyStart.y - window.scrollY : -100;
-    if (!journeyStart || journeyDirection !== direction || cursorY < 28 || cursorY > window.innerHeight - 28) {
-      if (prints.length) return;
-      planJourney(direction);
-    }
-    if (!journeyStart) return;
-    const side = steps % 2 ? 1 : -1;
-    const stride = compact ? 34 : 46;
-    const spread = compact ? 4 : 6;
-    const printWidth = compact ? 15 : 21;
-    const printHeight = compact ? 18 : 25;
-    let safePoint;
-    // Small turns avoid content without jumping to another column or screen edge.
-    for (const turn of [0, -.26, .26, -.52, .52, -.78, .78]) {
-      const heading = journeyHeading + turn;
-      const baseX = journeyStart.x + Math.cos(heading) * stride;
-      const baseY = journeyStart.y + Math.sin(heading) * stride;
-      const centerX = baseX - Math.sin(heading) * side * spread;
-      const centerY = baseY + Math.cos(heading) * side * spread;
-      const x = centerX - printWidth / 2;
-      const y = centerY - window.scrollY - printHeight / 2;
-      if (x < 8 || x + printWidth > window.innerWidth - 8 || y < 32 || y + printHeight > window.innerHeight - 25) continue;
-      const last = prints.at(-1);
-      if (last && Math.hypot(centerX - last.centerX, centerY - last.centerY) < stride * .7) continue;
-      if (clearOfContent({ left: x - 3, right: x + printWidth + 3, top: y - 3, bottom: y + printHeight + 3 }, null, 2)) {
-        safePoint = { x, y, centerX, centerY, baseX, baseY, heading };
-        break;
-      }
-    }
-    if (!safePoint) return;
-    const element = document.createElement('span');
-    element.className = 'scroll-cat__print';
-    element.innerHTML = pawDrawing;
-    const print = {
-      element,
-      x: safePoint.x,
-      documentY: window.scrollY + safePoint.y,
-      centerX: safePoint.centerX,
-      centerY: safePoint.centerY,
-      angle: safePoint.heading * 180 / Math.PI + 90 + side * 6,
-    };
-    journeyStart = { x: safePoint.baseX, y: safePoint.baseY };
-    journeyHeading = safePoint.heading;
-    steps++;
-    prints.push(print);
-    trail.append(element);
-    positionPrint(print);
-    while (prints.length > MAX_PRINTS) removePrint(prints[0]);
-    prints.forEach((item, index) => { item.element.dataset.age = String(prints.length - 1 - index); });
-  }
-
   function hideCat() {
     root.dataset.state = 'hiding';
     collectObstacles();
-    planJourney(previousDirection || 1, true);
+    planJourney();
     hideTimer = window.setTimeout(() => {
       if (!scrolling) return;
       // Explicit visibility prevents a delayed paint from overlapping a paw.
       companion.style.visibility = 'hidden';
       catHidden = true;
       root.dataset.state = 'walking';
+      if (!syncJourney()) {
+        collectObstacles();
+        planJourney();
+      }
       if (accumulatedDistance >= STEP_DISTANCE) {
-        leavePrint(previousDirection);
+        leavePrint();
         accumulatedDistance %= STEP_DISTANCE;
       }
     }, HIDE_DURATION);
@@ -312,14 +373,13 @@ export function initScrollCat() {
     if (Math.abs(delta) < .5 || reducedMotion.matches || document.hidden || isObscured()) return;
 
     const direction = delta > 0 ? 1 : -1;
-    const restarting = root.dataset.state === 'settling' || (previousDirection && direction !== previousDirection);
-    if (restarting) {
-      prints.splice(0).forEach(print => print.element.remove());
-      journeyStart = null;
-    }
+    const restarting = finishingJourney || root.dataset.state === 'settling' || (previousDirection && direction !== previousDirection);
+    if (restarting) resetJourney();
+    finishingJourney = false;
     activityVersion++;
     scrolling = true;
     window.clearTimeout(returnTimer);
+    window.clearTimeout(finishTimer);
     if (root.dataset.state === 'idle') {
       previousDirection = direction;
       hideCat();
@@ -330,11 +390,17 @@ export function initScrollCat() {
     if (direction !== previousDirection) accumulatedDistance = 0;
     previousDirection = direction;
     accumulatedDistance += Math.abs(delta);
-    prints.slice().forEach(positionPrint);
     root.dataset.direction = direction > 0 ? 'down' : 'up';
-    if (catHidden && accumulatedDistance >= STEP_DISTANCE) {
-      leavePrint(direction);
-      accumulatedDistance %= STEP_DISTANCE;
+    if (catHidden) {
+      if (Math.abs(window.scrollY - obstacleScrollY) > window.innerHeight * .25) collectObstacles();
+      if (!syncJourney()) {
+        collectObstacles();
+        planJourney();
+      }
+      if (accumulatedDistance >= STEP_DISTANCE) {
+        leavePrint();
+        accumulatedDistance %= STEP_DISTANCE;
+      }
     }
     window.clearTimeout(idleTimer);
     idleTimer = window.setTimeout(settle, IDLE_DELAY);
