@@ -138,8 +138,8 @@
       },
       {
         "name": "cat-placement",
-        "value": "left:0deg; right:scaleX(-1); top:90deg; bottom:-90deg",
-        "purpose": "Safe candidates come from real design-element edges. Desktop cat 84x132px; 761–1480px cat 68x107px; <=760px cat 55x86px. No safe candidate returns null and keeps the cat hidden."
+        "value": "top:0deg; bottom:180deg; left:-90deg; right:90deg; random peek/paired/lounge poses; occasional 2200ms empty-corridor glide",
+        "purpose": "One graphite character with large white eyes. Head widths 96px desktop, 84px intermediate, 66px mobile. Paired tail appears at the opposite edge of the same anchor; each part is clipped behind its edge. Same anchor may get different poses. Keep destination and pose fixed during trail fade. No safe candidate keeps the cat hidden."
       },
       {
         "name": "cat-motion-policy",

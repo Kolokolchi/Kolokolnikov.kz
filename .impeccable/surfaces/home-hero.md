@@ -8,7 +8,7 @@ The user requested a Dogstudio-style interactive 3D focal object adapted to the 
 
 The desktop composition pairs left-aligned editorial copy with the large sculpture on the right. Mobile places the sculpture above the copy. Materials have real thickness, bevels, reflective metal faces and darker sides. Lighting cycles through the three existing palettes on the same object. Pointer response is small and damped; scroll reframing is restrained.
 
-The user also requested a small outlined cat and pawprints. The cat rests at actual design-element edges and can change location and orientation. During scrolling it hides before pawprints appear. After scrolling stops, the prints fade and disappear before the cat returns. The companion may appear above, below or beside cards and other elements; it must leave copy and controls readable.
+The user also requested one recognizable large-eyed graphite cat with random poses and pawprints. Peeking, lounging and paired head/tail poses may occur at the same element in different orientations. The paired head and tail emerge from opposite edges of that element, clipped behind it. An occasional full-body glide may cross verified empty side whitespace. During scrolling the cat hides before pawprints appear; the short route leads to its exact next head position. Finish the route, fade and remove all prints, then reveal the same planned pose. Keep copy and controls readable.
 
 ## Quality bar
 

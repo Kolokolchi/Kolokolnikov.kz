@@ -1,4 +1,6 @@
-// The companion and its tracks take turns: the cat rests, the paws walk.
+import { catHeadDrawing, catTailDrawing, catSlidingDrawing, catLoungeDrawing } from './cat-drawings.js';
+
+// One character, one destination: the companion and its tracks take turns.
 const MAX_PRINTS = 3;
 const HIDE_DURATION = 120;
 const IDLE_DELAY = 220;
@@ -6,22 +8,8 @@ const FADE_DURATION = 750;
 const STEP_DISTANCE = 92;
 const FINISH_STEP_DELAY = 120;
 const PRINT_ENTRANCE = 180;
-const ANCHOR_SELECTORS = '.project-image-link, .motion-stage, .client-preview, .expertise-list, .hero-motion-tools, .hero-work-link, .reel-button, main > section, .section-heading, .work-toolbar, .contact-links, .intro-disciplines, .site-footer';
+const ANCHOR_SELECTORS = '.project-image-link, .motion-stage, .client-preview, .expertise-list, .reel-button';
 const OBSTACLE_SELECTORS = 'h1, h2, h3, p, a, button, summary, .project-image-link, .motion-stage, .client-preview, .site-header, .site-footer';
-
-const catDrawing = `<svg class="scroll-cat__drawing" viewBox="0 0 112 176" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
-  <g class="scroll-cat__silhouette" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M104 42C99 30 91 23 82 19L75 6C73 2 69 3 68 8L65 28C54 28 44 32 36 39L20 28C16 25 12 27 13 33L16 58C10 70 13 83 20 97L47 154C52 165 61 168 68 157L100 107C111 89 113 61 104 42Z"/>
-    <path d="m22 48-2-11 11 8M74 24l-1-11 7 12"/>
-    <g class="scroll-cat__face">
-      <path d="M35 65c-1-9 7-11 10-2M70 49c-1-9 7-11 10-2"/>
-      <path d="M56 70c1 4 3 7 7 8m-1-10 1 10m0 0c5 1 8-1 10-5"/>
-      <path d="M55 64c2-4 8-6 11-3 2 3-1 7-4 8-3 0-7-2-7-5Z" fill="currentColor" stroke="none"/>
-      <path d="m28 80 8-3m42-14 8-3" stroke-opacity=".38"/>
-    </g>
-    <path d="M103 82c-7-4-12-1-12 5s6 8 13 7M104 101c-7-4-12-1-12 5s6 8 13 7"/>
-  </g>
-</svg>`;
 
 const pawDrawing = `<svg viewBox="0 0 36 42" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
   <g stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
@@ -41,11 +29,14 @@ export function initScrollCat() {
   root.dataset.scrollCat = '';
   root.dataset.state = 'idle';
   root.setAttribute('aria-hidden', 'true');
-  root.innerHTML = `<div class="scroll-cat__trail"></div><div class="scroll-cat__companion"><div class="scroll-cat__orientation"><div class="scroll-cat__peek">${catDrawing}</div></div></div>`;
+  root.innerHTML = `<div class="scroll-cat__trail"></div><div class="scroll-cat__companion"><div class="scroll-cat__part scroll-cat__head"><div class="scroll-cat__orientation"><div class="scroll-cat__peek"></div></div></div><div class="scroll-cat__part scroll-cat__tail"><div class="scroll-cat__orientation"><div class="scroll-cat__tail-peek"></div></div></div><div class="scroll-cat__slider"></div></div>`;
   document.body.append(root);
 
   const trail = root.querySelector('.scroll-cat__trail');
   const companion = root.querySelector('.scroll-cat__companion');
+  const head = root.querySelector('.scroll-cat__head');
+  const tail = root.querySelector('.scroll-cat__tail');
+  const slider = root.querySelector('.scroll-cat__slider');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const compactScreen = window.matchMedia('(max-width: 760px)');
   const prints = [];
@@ -62,15 +53,31 @@ export function initScrollCat() {
   let scrolling = false;
   let catHidden = false;
   let activityVersion = 0;
-  let placementCycle = 0;
   let currentPlacement;
   let plannedPlacement;
   let obstacles = [];
   let obstacleScrollY = window.scrollY;
 
-  function catSize() {
-    if (compactScreen.matches) return { width: 55, height: 86 };
-    return window.innerWidth <= 1480 ? { width: 68, height: 107 } : { width: 84, height: 132 };
+  function catSize(pose = 'peek') {
+    const width = compactScreen.matches ? 66 : window.innerWidth <= 1480 ? 84 : 96;
+    if (pose === 'lounge') return { width: width * 1.65, height: width * .825 };
+    return { width, height: width * .7 };
+  }
+
+  function partBounds(x, y, width, height, side) {
+    const sideways = side === 'left' || side === 'right';
+    const w = sideways ? height : width;
+    const h = sideways ? width : height;
+    return { left: x - w / 2, right: x + w / 2, top: y - h / 2, bottom: y + h / 2 };
+  }
+
+  function tailSize() {
+    const width = compactScreen.matches ? 52 : window.innerWidth <= 1480 ? 66 : 76;
+    return { width, height: width * 128 / 140 };
+  }
+
+  function headOverlap(pose, height) {
+    return height * (pose === 'lounge' ? .4 : pose === 'peek' ? .31 : 16 / 112);
   }
 
   function intersects(a, b, padding = 0) {
@@ -107,21 +114,30 @@ export function initScrollCat() {
   }
 
   function placementBounds(placement) {
-    const size = catSize();
-    const horizontal = placement.side === 'top' || placement.side === 'bottom';
-    const width = horizontal ? size.height : size.width;
-    const height = horizontal ? size.width : size.height;
-    return { left: placement.x - width / 2, right: placement.x + width / 2, top: placement.y - height / 2, bottom: placement.y + height / 2 };
+    const tilt = Math.abs((placement.tilt || 0) * Math.PI / 180);
+    const size = placement.pose === 'glide'
+      ? { width: placement.width * Math.cos(tilt) + placement.height * Math.sin(tilt), height: placement.height * Math.cos(tilt) + placement.width * Math.sin(tilt) + 60 }
+      : catSize(placement.pose);
+    return partBounds(placement.x, placement.y, size.width, size.height, placement.pose === 'glide' ? 'top' : placement.side);
+  }
+
+  function safeBounds(bounds, element = null) {
+    return bounds.left >= 8 && bounds.right <= window.innerWidth - 8 && bounds.top >= 20 && bounds.bottom <= window.innerHeight - 18 && clearOfContent(bounds, element, 4);
   }
 
   function resolvePlacement(placement) {
+    if (placement?.pose === 'glide') return safeBounds(placementBounds(placement)) ? placement : null;
     if (!placement?.element.isConnected) return null;
     const rect = placement.element.getBoundingClientRect();
     if (!rect.width || !rect.height) return null;
-    const resolved = { ...placement, x: rect.left + placement.offsetX, y: rect.top + placement.offsetY };
+    const resolved = { ...placement, x: rect.left + placement.offsetX, y: rect.top + placement.offsetY, tailX: rect.left + placement.tailOffsetX, tailY: rect.top + placement.tailOffsetY };
     const bounds = placementBounds(resolved);
-    if (bounds.left < 8 || bounds.right > window.innerWidth - 8 || bounds.top < 20 || bounds.bottom > window.innerHeight - 18) return null;
-    return clearOfContent(bounds, placement.element, placement.media ? 2 : 5) ? resolved : null;
+    if (!safeBounds(bounds, placement.element)) return null;
+    if (resolved.pose === 'paired') {
+      const size = tailSize();
+      if (!safeBounds(partBounds(resolved.tailX, resolved.tailY, size.width, size.height, resolved.side), placement.element)) return null;
+    }
+    return resolved;
   }
 
   function approachTo(placement) {
@@ -157,45 +173,53 @@ export function initScrollCat() {
   }
 
   function choosePlacement(withApproach = false) {
-    const size = catSize();
-    const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
     const candidates = [];
-    const seed = Math.abs(Math.round(window.scrollY / 137)) + placementCycle;
     let visibleAnchors = 0;
     [...document.querySelectorAll(ANCHOR_SELECTORS)].forEach((anchor, index) => {
       if (visibleAnchors >= 36) return;
       const rect = anchor.getBoundingClientRect();
       if (rect.width < 35 || rect.height < 12 || rect.bottom < 0 || rect.top > viewportHeight) return;
       visibleAnchors++;
-      const section = anchor.matches('section');
       const media = anchor.matches('.project-image-link, .motion-stage, .client-preview');
-      const overlap = media ? 14 : 0;
-      const gap = media ? 0 : 6;
       const label = `${anchor.closest('section')?.id || 'hero'}:${anchor.className.split(' ')[0] || 'section'}:${index}`;
       ['left', 'right', 'top', 'bottom'].forEach(side => {
-        const horizontal = side === 'top' || side === 'bottom';
-        const width = horizontal ? size.height : size.width;
-        const height = horizontal ? size.width : size.height;
         [.28, .72].forEach(fraction => {
-          let x = rect.left + rect.width * fraction;
-          let y = rect.top + rect.height * fraction;
-          if (side === 'left') x = rect.left - width / 2 + overlap - gap;
-          if (side === 'right') x = rect.right + width / 2 - overlap + gap;
-          if (side === 'top') y = rect.top - height / 2 + overlap - gap;
-          if (side === 'bottom') y = rect.bottom + height / 2 - overlap + gap;
-          const bounds = { left: x - width / 2, right: x + width / 2, top: y - height / 2, bottom: y + height / 2 };
-          if (bounds.left < 8 || bounds.right > viewportWidth - 8 || bounds.top < 20 || bounds.bottom > viewportHeight - 18) return;
-          if (!clearOfContent(bounds, anchor, media ? 2 : 5)) return;
-          const repeated = currentPlacement?.anchor === label && currentPlacement?.side === side;
-          const score = (media ? 100 : section ? 25 : 65) - Math.abs(y - viewportHeight * .6) * .035 - (repeated ? 55 : 0);
-          candidates.push({ x, y, side, anchor: label, score, element: anchor, offsetX: x - rect.left, offsetY: y - rect.top, media });
+          for (const pose of ['paired', 'peek', 'lounge']) {
+            if (!media && pose !== 'peek') continue;
+            const size = catSize(pose);
+            const tailDimensions = tailSize();
+            const overlap = headOverlap(pose, size.height);
+            let x = rect.left + rect.width * fraction;
+            let y = rect.top + rect.height * fraction;
+            let tailX = rect.left + rect.width * (1 - fraction);
+            let tailY = rect.top + rect.height * (1 - fraction);
+            if (side === 'left') { x = rect.left - size.height / 2 + overlap; tailX = rect.right + tailDimensions.height / 2 - 4; }
+            if (side === 'right') { x = rect.right + size.height / 2 - overlap; tailX = rect.left - tailDimensions.height / 2 + 4; }
+            if (side === 'top') { y = rect.top - size.height / 2 + overlap; tailY = rect.bottom + tailDimensions.height / 2 - 4; }
+            if (side === 'bottom') { y = rect.bottom + size.height / 2 - overlap; tailY = rect.top - tailDimensions.height / 2 + 4; }
+            const repeated = currentPlacement?.anchor === label && currentPlacement?.pose === pose;
+            const score = (media ? 100 : 60) - Math.abs(y - viewportHeight * .55) * .035 - (repeated ? 16 : 0) + Math.random() * 24;
+            const candidate = { x, y, tailX, tailY, side, pose, anchor: label, score, element: anchor, offsetX: x - rect.left, offsetY: y - rect.top, tailOffsetX: tailX - rect.left, tailOffsetY: tailY - rect.top, media, tilt: (Math.random() - .5) * (pose === 'peek' ? 12 : 4) };
+            if (resolvePlacement(candidate)) candidates.push(candidate);
+          }
         });
       });
     });
+    // A single occasional glide uses an empty side corridor, never the content.
+    const free = [];
+    const width = compactScreen.matches ? 56 : 74;
+    const height = width * 300 / 160;
+    for (const x of [width / 2 + 12, window.innerWidth - width / 2 - 12]) {
+      for (const fraction of [.28, .52, .74]) {
+        const candidate = { x, y: viewportHeight * fraction, width, height, side: 'top', pose: 'glide', anchor: `whitespace:${x}:${fraction}`, score: 20, tilt: x < window.innerWidth / 2 ? -6 : 6 };
+        if (resolvePlacement(candidate)) free.push(candidate);
+      }
+    }
+    if (free.length && (!candidates.length || Math.random() < .16)) candidates.push({ ...free[Math.floor(Math.random() * free.length)], score: 140 });
     candidates.sort((a, b) => b.score - a.score);
     if (candidates.length) {
-      const preferred = seed % Math.min(3, candidates.length);
+      const preferred = candidates[0].pose === 'glide' ? 0 : Math.floor(Math.random() * Math.min(6, candidates.length));
       if (!withApproach) return candidates[preferred];
       const ordered = [candidates[preferred], ...candidates.filter((_, index) => index !== preferred)];
       for (const candidate of ordered) {
@@ -214,20 +238,43 @@ export function initScrollCat() {
       delete root.dataset.anchor;
       return;
     }
-    const size = catSize();
-    const rect = placement.element.getBoundingClientRect();
-    const left = placement.x - size.width / 2;
-    const top = placement.y - size.height / 2;
-    // The anchor edge occludes the silhouette, including its rotated variants.
-    const inset = { top: -200, right: -200, bottom: -200, left: -200 };
-    if (placement.side === 'left') inset.right = size.width - (rect.left - left);
-    if (placement.side === 'right') inset.left = rect.right - left;
-    if (placement.side === 'top') inset.bottom = size.height - (rect.top - top);
-    if (placement.side === 'bottom') inset.top = rect.bottom - top;
-    companion.style.clipPath = `inset(${inset.top}px ${inset.right}px ${inset.bottom}px ${inset.left}px)`;
     root.dataset.side = placement.side;
     root.dataset.anchor = placement.anchor;
-    companion.style.transform = `translate3d(${placement.x - size.width / 2}px, ${placement.y - size.height / 2}px, 0)`;
+    root.dataset.pose = placement.pose;
+    if (placement.pose === 'glide') {
+      slider.innerHTML = catSlidingDrawing();
+      slider.style.width = `${placement.width}px`;
+      slider.style.height = `${placement.height}px`;
+      slider.style.left = `${placement.x - placement.width / 2}px`;
+      slider.style.top = `${placement.y - placement.height / 2}px`;
+      slider.style.setProperty('--cat-tilt', `${placement.tilt}deg`);
+      return;
+    }
+    const rect = placement.element.getBoundingClientRect();
+    const angle = { top: 0, bottom: 180, left: -90, right: 90 }[placement.side];
+    function placePart(part, x, y, size, edgeSide, drawing) {
+      const bounds = partBounds(x, y, size.width, size.height, placement.side);
+      const width = bounds.right - bounds.left;
+      const height = bounds.bottom - bounds.top;
+      Object.assign(part.style, { width: `${width}px`, height: `${height}px`, transform: `translate3d(${bounds.left}px, ${bounds.top}px, 0)` });
+      const inset = { top: -200, right: -200, bottom: -200, left: -200 };
+      if (edgeSide === 'left') inset.right = width - (rect.left - bounds.left);
+      if (edgeSide === 'right') inset.left = rect.right - bounds.left;
+      if (edgeSide === 'top') inset.bottom = height - (rect.top - bounds.top);
+      if (edgeSide === 'bottom') inset.top = rect.bottom - bounds.top;
+      part.style.clipPath = `inset(${inset.top}px ${inset.right}px ${inset.bottom}px ${inset.left}px)`;
+      const orientation = part.querySelector('.scroll-cat__orientation');
+      Object.assign(orientation.style, { width: `${size.width}px`, height: `${size.height}px`, transform: `translate(-50%, -50%) rotate(${angle}deg)` });
+      const artwork = orientation.firstElementChild;
+      artwork.innerHTML = drawing;
+      artwork.style.setProperty('--cat-tilt', `${placement.tilt}deg`);
+    }
+    const size = catSize(placement.pose);
+    placePart(head, placement.x, placement.y, size, placement.side, placement.pose === 'lounge' ? catLoungeDrawing(placement.side) : catHeadDrawing(placement.side));
+    if (placement.pose === 'paired') {
+      const opposite = { top: 'bottom', bottom: 'top', left: 'right', right: 'left' }[placement.side];
+      placePart(tail, placement.tailX, placement.tailY, tailSize(), opposite, catTailDrawing(placement.side));
+    }
   }
 
   function clearTrail() {
@@ -257,7 +304,6 @@ export function initScrollCat() {
     // Removing every print first makes the visible states mutually exclusive.
     prints.splice(0).forEach(print => print.element.remove());
     collectObstacles();
-    placementCycle++;
     // Reveal at the same element the final steps approach; never roll a new target.
     parkCat(resolvePlacement(plannedPlacement));
     plannedPlacement = null;

@@ -1,4 +1,4 @@
-/* A page companion that rests on real block edges and walks through whitespace. */
+/* One cat uses the element as cover; its short trail owns a separate phase. */
 .scroll-cat {
   position: fixed;
   z-index: 4;
@@ -7,99 +7,56 @@
   pointer-events: none;
   user-select: none;
   color: #cfdfeb;
+  --cat-fur: #121c27;
+  --cat-outline: #a9c4d6;
   transition: opacity 200ms var(--ease-out, cubic-bezier(.23, 1, .32, 1));
   contain: layout style;
 }
-
-.scroll-cat__companion {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 84px;
-  height: 132px;
-  opacity: .61;
-  transition: opacity 200ms var(--ease-out, cubic-bezier(.23, 1, .32, 1));
-}
-
-.scroll-cat__orientation {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  transform-origin: 50% 50%;
-}
-.scroll-cat[data-side="left"] .scroll-cat__orientation { transform: rotate(0deg); }
-.scroll-cat[data-side="right"] .scroll-cat__orientation { transform: scaleX(-1); }
-.scroll-cat[data-side="top"] .scroll-cat__orientation { transform: rotate(90deg); }
-.scroll-cat[data-side="bottom"] .scroll-cat__orientation { transform: rotate(-90deg); }
-
-.scroll-cat__peek {
-  position: absolute;
-  inset: 0;
-  transform: translateX(24px) rotate(-9deg);
-  transform-origin: 100% 50%;
+.scroll-cat__companion { position: absolute; inset: 0; opacity: .92; transition: opacity 200ms var(--ease-out, cubic-bezier(.23, 1, .32, 1)); }
+.scroll-cat__part { position: absolute; top: 0; left: 0; }
+.scroll-cat__orientation { position: absolute; left: 50%; top: 50%; transform-origin: center; }
+.scroll-cat__peek, .scroll-cat__tail-peek {
+  width: 100%; height: 100%;
+  transform: translateY(0) rotate(var(--cat-tilt, 0deg));
+  transform-origin: 50% 86%;
   transition: transform 200ms var(--ease-out, cubic-bezier(.23, 1, .32, 1));
 }
-
-.scroll-cat .scroll-cat__drawing {
-  display: block;
-  width: 84px;
-  height: 132px;
-  overflow: visible;
-}
-
-.scroll-cat:not([data-state="idle"]) .scroll-cat__companion {
-  opacity: 0;
-  transition-duration: 120ms;
-}
-.scroll-cat:not([data-state="idle"]) .scroll-cat__peek {
-  transform: translateX(110px) rotate(-4deg);
-  transition-duration: 120ms;
-}
-
+.scroll-cat__tail-peek { transform-origin: 50% 0; }
+.scroll-cat .scroll-cat__drawing { display: block; width: 100%; height: 100%; overflow: visible; }
+.scroll-cat__tail { display: none; }
+.scroll-cat[data-pose="paired"] .scroll-cat__tail { display: block; }
+.scroll-cat__slider { display: none; position: absolute; }
+.scroll-cat[data-pose="glide"] .scroll-cat__part { display: none; }
+.scroll-cat[data-pose="glide"] .scroll-cat__slider { display: block; }
+.scroll-cat[data-pose="glide"][data-state="idle"] .scroll-cat__slider { animation: scroll-cat-glide 2200ms linear both; }
+.scroll-cat:not([data-state="idle"]) .scroll-cat__companion { opacity: 0; transition-duration: 120ms; }
+.scroll-cat:not([data-state="idle"]) .scroll-cat__peek { transform: translateY(90%) rotate(var(--cat-tilt, 0deg)); transition-duration: 120ms; }
+.scroll-cat:not([data-state="idle"]) .scroll-cat__tail-peek { transform: translateY(-90%) rotate(var(--cat-tilt, 0deg)); transition-duration: 120ms; }
 .scroll-cat__print {
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: block;
-  width: 21px;
-  height: 25px;
-  color: #a9d2ec;
-  opacity: .29;
+  position: absolute; top: 0; left: 0; display: block;
+  width: 21px; height: 25px; color: #a9d2ec; opacity: .29;
   transition: opacity 750ms var(--ease-out, cubic-bezier(.23, 1, .32, 1));
   animation: scroll-cat-track-in 180ms var(--ease-out, cubic-bezier(.23, 1, .32, 1));
 }
-
 .scroll-cat__print svg { display: block; width: 100%; height: 100%; stroke-width: initial; }
 .scroll-cat__print[data-age="1"] { opacity: .19; }
 .scroll-cat__print[data-age="2"] { opacity: .1; }
 .scroll-cat__print.is-fading { opacity: 0; }
-
-body.menu-open .scroll-cat,
-body:has(dialog[open]) .scroll-cat { opacity: 0; }
-
+body.menu-open .scroll-cat, body:has(dialog[open]) .scroll-cat { opacity: 0; }
 @keyframes scroll-cat-track-in { from { opacity: 0; } }
-
-@media (min-width: 761px) and (max-width: 1480px) {
-  .scroll-cat__companion,
-  .scroll-cat .scroll-cat__drawing { width: 68px; height: 107px; }
+@keyframes scroll-cat-glide {
+  0% { opacity: 0; transform: translate3d(0, -20px, 0) rotate(var(--cat-tilt, 0deg)); }
+  15% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translate3d(0, 28px, 0) rotate(var(--cat-tilt, 0deg)); }
 }
-
 @media (max-width: 760px) {
-  .scroll-cat__companion { width: 55px; height: 86px; opacity: .48; }
-  .scroll-cat .scroll-cat__drawing { width: 55px; height: 86px; }
-  .scroll-cat__peek { transform: translateX(19px) rotate(-9deg); }
-  .scroll-cat:not([data-state="idle"]) .scroll-cat__peek { transform: translateX(75px) rotate(-4deg); }
+  .scroll-cat__companion { opacity: .88; }
   .scroll-cat__print { width: 15px; height: 18px; }
 }
-
 @media (prefers-reduced-motion: reduce) {
-  .scroll-cat,
-  .scroll-cat__companion,
-  .scroll-cat__peek { transition: none; }
+  .scroll-cat, .scroll-cat__companion, .scroll-cat__peek, .scroll-cat__tail-peek { transition: none; }
   .scroll-cat__print { display: none; animation: none; }
-  .scroll-cat:not([data-state="idle"]) .scroll-cat__peek { transform: translateX(24px) rotate(-9deg); }
-}
-
-@media (prefers-reduced-motion: reduce) and (max-width: 760px) {
-  .scroll-cat:not([data-state="idle"]) .scroll-cat__peek { transform: translateX(19px) rotate(-9deg); }
+  .scroll-cat:not([data-state="idle"]) .scroll-cat__peek, .scroll-cat:not([data-state="idle"]) .scroll-cat__tail-peek { transform: rotate(var(--cat-tilt, 0deg)); }
+  .scroll-cat[data-pose="glide"][data-state="idle"] .scroll-cat__slider { animation: none; opacity: .85; transform: rotate(var(--cat-tilt, 0deg)); }
 }
