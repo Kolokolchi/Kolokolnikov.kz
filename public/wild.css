@@ -19,14 +19,15 @@
 .wild-home .main-nav a { color: #c3cad4; }
 .wild-home .main-nav a:hover { color: var(--accent-bright); }
 .wild-home .main-nav .nav-contact { border-radius: 30px; padding: 11px 20px; gap: 27px; color: var(--accent-bright); }
-.wild-home .hero { min-height: min(860px, calc(100svh - 100px)); padding: 55px 24px 100px; display: grid; place-items: center; text-align: center; position: relative; overflow: hidden; background: #0c1016; }
-.wild-home .hero-copy { width: 100%; max-width: 1200px; pointer-events: auto; }
-.wild-home .hero-intro { justify-content: center; color: var(--accent-bright); font-size: 10px; letter-spacing: 2.2px; text-transform: uppercase; margin-bottom: 27px; }
+.wild-home .hero { min-height: min(920px, calc(100svh - 100px)); padding: 55px clamp(24px, 5.5vw, 88px) 110px; display: grid; align-items: center; text-align: left; position: relative; overflow: hidden; background: #0c1016; }
+.wild-home .hero-copy { width: 57%; max-width: 780px; pointer-events: auto; }
+.wild-home .hero-intro { justify-content: flex-start; color: var(--muted); font-size: 10px; letter-spacing: 1.6px; text-transform: uppercase; margin-bottom: 27px; }
 .wild-home .hero-intro .status-dot { width: 5px; height: 5px; }
-.wild-home .hero h1 { font-family: var(--display); font-size: clamp(53px, 7vw, 108px); line-height: 1.03; letter-spacing: -4px; font-weight: 400; margin: 0; text-wrap: balance; }
+.wild-home .hero h1 { font-family: var(--display); font-size: clamp(53px, 6.4vw, 104px); line-height: 1.02; letter-spacing: -.035em; font-weight: 400; margin: 0; text-wrap: balance; }
+.wild-home .hero h1 > span, .wild-home .hero h1 > span + span, .wild-home .hero h1 em { display: block; font-size: inherit; letter-spacing: inherit; margin: 0; }
 .wild-home .hero h1 em { font-weight: 400; color: var(--accent-bright); }
 .wild-home .hero-description { margin-top: 23px; font-size: 14px; line-height: 1.8; color: #aebcca; }
-.wild-home .hero-actions { justify-content: center; flex-direction: column; gap: 15px; margin-top: 29px; }
+.wild-home .hero-actions { justify-content: flex-start; flex-direction: row; flex-wrap: wrap; gap: 22px; margin-top: 29px; }
 .wild-home .button { border-radius: 32px; min-height: 54px; padding: 13px 25px; font-size: 12px; transition: background 200ms ease, border-color 200ms ease, color 200ms ease, transform 140ms var(--ease-out); }
 .wild-home .button:active, .wild-home .motion-toggle:active { transform: scale(.98); }
 .wild-home .reel-button { border: 1px solid #4aafff55; background: #4aafff15; color: var(--text); font-weight: 400; gap: 16px; padding: 11px 24px 11px 12px; }
@@ -42,14 +43,12 @@
 .wild-home .scroll-cue { display: flex; align-items: center; gap: 18px; min-height: 44px; }
 .wild-home .scroll-cue span { color: var(--accent); font-size: 16px; }
 .wild-home .hero-index { color: #708499; font-variant-numeric: tabular-nums; }
-.wild-home .hero-landscape { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
-/* One folded metal ribbon: the mark's ascending gesture becomes a moving material. */
-.wild-home .hero-ribbon, .wild-home .ribbon-fallback { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
-.wild-home .ribbon-fallback { stroke: none; }
-.wild-home .hero-ribbon { opacity: 0; }
-.wild-home .ribbon-ready .hero-ribbon { opacity: 1; }
-.wild-home .ribbon-ready .ribbon-fallback { visibility: hidden; }
-.wild-home .landscape-shade { position: absolute; inset: 0; background: radial-gradient(ellipse at 43% 40%, #0c1016e6 0%, #0c1016a6 29%, #0c101600 67%), linear-gradient(0deg, #0c1016, #0c101600 13%, #0c101600 94%, #0c101626); }
+.wild-home .hero-landscape { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; background: radial-gradient(ellipse at 77% 43%, #132432, #0c1016 66%); }
+.wild-home .hero-scene { position: absolute; inset: 0; display: block; width: 100%; height: 100%; opacity: 0; }
+.wild-home .scene-fallback { position: absolute; width: 49%; height: auto; right: 2%; top: 18%; opacity: .75; transform: rotate(-9deg); }
+.wild-home .scene-ready .hero-scene { opacity: 1; }
+.wild-home .scene-ready .scene-fallback { visibility: hidden; }
+.wild-home .landscape-shade { position: absolute; inset: 0; background: linear-gradient(90deg, #0c10164d, #0c101626 32%, #0c101600 54%), linear-gradient(0deg, #0c1016, #0c101600 17%); }
 .wild-home .hero-motion-tools { display: flex; align-items: center; gap: 25px; }
 .wild-home .hero-motion-toggle { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; padding: 0 9px; color: #a3afbd; font-size: 11px; transition: color 180ms ease; }
 .wild-home .hero-motion-toggle svg { width: 14px; height: 14px; }
@@ -164,7 +163,7 @@
   .wild-home .main-nav { gap: 19px; font-size: 10px; }
   .wild-home .main-nav .nav-contact { gap: 15px; padding: 10px 15px; }
   .wild-home .hero { min-height: min(800px, calc(100svh - 100px)); }
-  .wild-home .hero h1 { font-size: clamp(61px, 7.7vw, 85px); }
+  .wild-home .hero h1 { font-size: clamp(48px, 6.1vw, 74px); }
   .wild-home .about-section { gap: 8%; }
   .wild-home .client-section { gap: 6%; }
   .wild-home .video-info { flex-direction: column; gap: 6px; }
@@ -177,17 +176,19 @@
   .wild-home .brand > span { font-size: 10px; }
   .wild-home .main-nav { inset: 84px 0 0; padding: 40px 28px; gap: 17px; font-size: 28px; }
   .wild-home .main-nav .nav-contact { font-size: 19px; padding: 15px 20px; margin-top: 20px; }
-  .wild-home .hero { min-height: min(850px, calc(100svh - 84px)); padding: 95px 24px 140px; }
-  .wild-home .hero-intro { font-size: 8px; letter-spacing: 1.3px; margin-bottom: 28px; gap: 8px; }
-  .wild-home .hero h1 { font-size: clamp(45px, 8.6vw, 65px); letter-spacing: -2px; line-height: 1.1; }
-  .wild-home .hero-description { font-size: 12px; line-height: 1.9; margin-top: 23px; }
-  .wild-home .hero-actions { margin-top: 29px; gap: 15px; }
+  .wild-home .hero { min-height: max(790px, calc(100svh - 84px)); padding: 305px 24px 115px; align-items: end; }
+  .wild-home .hero-copy { width: 100%; max-width: 600px; }
+  .wild-home .hero-intro { font-size: 8px; letter-spacing: 1.2px; margin-bottom: 19px; gap: 8px; }
+  .wild-home .hero h1 { font-size: clamp(45px, 8.6vw, 60px); letter-spacing: -.035em; line-height: 1.03; }
+  .wild-home .hero-description { font-size: 12px; line-height: 1.9; margin-top: 20px; }
+  .wild-home .hero-actions { margin-top: 24px; gap: 6px; flex-direction: column; align-items: flex-start; }
+  .wild-home .scene-fallback { width: 74%; right: 13%; top: 25px; }
   .wild-home .hero-bottom { bottom: 18px; flex-wrap: wrap; gap: 2px 20px; font-size: 8px; }
   .wild-home .hero-bottom > span { display: block; }
   .wild-home .hero-bottom > span:first-child { width: 100%; }
   .wild-home .hero-motion-tools { margin-left: auto; gap: 12px; }
   .wild-home .scroll-cue { font-size: 8px; gap: 10px; }
-  .wild-home .landscape-shade { background: radial-gradient(ellipse at 42% 40%, #0c1016ed, #0c1016a6 31%, #0c101600 78%), linear-gradient(0deg, #0c1016, #0c101600 13%); }
+  .wild-home .landscape-shade { background: linear-gradient(0deg, #0c1016 4%, #0c10164d 46%, #0c101600 68%); }
   .wild-home .intro-section { padding-top: 90px; padding-bottom: 125px; }
   .wild-home .intro-section h2 { font-size: 39px; letter-spacing: -1.2px; }
   .wild-home .intro-description { font-size: 12px; }
@@ -239,9 +240,8 @@
   .wild-home .site-footer > div { width: 100%; order: 5; flex-wrap: wrap; gap: 20px; }
 }
 @media (max-width: 480px) {
-  .wild-home .hero { min-height: 690px; padding-top: 77px; padding-bottom: 140px; }
-  .wild-home .hero h1 { font-size: clamp(38px, 10.1vw, 49px); letter-spacing: -1.8px; }
-  .wild-home .hero-intro { font-size: 7px; letter-spacing: 1.15px; }
+  .wild-home .hero h1 { font-size: clamp(38px, 10.6vw, 49px); letter-spacing: -.035em; }
+  .wild-home .hero-intro { font-size: 8px; letter-spacing: .8px; }
   .wild-home .hero-description { font-size: 11px; }
   .wild-home .reel-button { font-size: 11px; }
   .wild-home .reel-year { font-size: 8px; }

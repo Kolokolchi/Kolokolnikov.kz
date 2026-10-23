@@ -1,0 +1,114 @@
+/* A page companion that rests on real block edges and walks through whitespace. */
+.scroll-cat {
+  position: fixed;
+  z-index: 4;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+  color: #cfdfeb;
+  transition: opacity 200ms var(--ease-out, cubic-bezier(.23, 1, .32, 1));
+  contain: layout style;
+}
+
+.scroll-cat__companion {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 84px;
+  height: 132px;
+  opacity: .61;
+  transition: opacity 200ms var(--ease-out, cubic-bezier(.23, 1, .32, 1));
+}
+
+.scroll-cat__orientation {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  transform-origin: 50% 50%;
+}
+.scroll-cat[data-side="left"] .scroll-cat__orientation { transform: rotate(0deg); }
+.scroll-cat[data-side="right"] .scroll-cat__orientation { transform: scaleX(-1); }
+.scroll-cat[data-side="top"] .scroll-cat__orientation { transform: rotate(90deg); }
+.scroll-cat[data-side="bottom"] .scroll-cat__orientation { transform: rotate(-90deg); }
+
+.scroll-cat__peek {
+  position: absolute;
+  inset: 0;
+  transform: translateX(24px) rotate(-9deg);
+  transform-origin: 100% 50%;
+  transition: transform 200ms var(--ease-out, cubic-bezier(.23, 1, .32, 1));
+}
+
+.scroll-cat .scroll-cat__drawing {
+  display: block;
+  width: 84px;
+  height: 132px;
+  overflow: visible;
+}
+
+.scroll-cat__edge {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  bottom: -2px;
+  width: 1px;
+  background: currentColor;
+  opacity: .4;
+}
+
+.scroll-cat:not([data-state="idle"]) .scroll-cat__companion {
+  opacity: 0;
+  transition-duration: 120ms;
+}
+.scroll-cat:not([data-state="idle"]) .scroll-cat__peek {
+  transform: translateX(110px) rotate(-4deg);
+  transition-duration: 120ms;
+}
+
+.scroll-cat__print {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 21px;
+  height: 25px;
+  color: #a9d2ec;
+  opacity: .29;
+  transition: opacity 750ms var(--ease-out, cubic-bezier(.23, 1, .32, 1));
+  animation: scroll-cat-track-in 180ms var(--ease-out, cubic-bezier(.23, 1, .32, 1));
+}
+
+.scroll-cat__print svg { display: block; width: 100%; height: 100%; stroke-width: initial; }
+.scroll-cat__print.is-fading { opacity: 0; }
+
+body.menu-open .scroll-cat,
+body:has(dialog[open]) .scroll-cat { opacity: 0; }
+
+@keyframes scroll-cat-track-in { from { opacity: 0; } to { opacity: .29; } }
+
+@media (min-width: 761px) and (max-width: 1480px) {
+  .scroll-cat__companion,
+  .scroll-cat .scroll-cat__drawing { width: 68px; height: 107px; }
+}
+
+@media (max-width: 760px) {
+  .scroll-cat__companion { width: 55px; height: 86px; opacity: .48; }
+  .scroll-cat .scroll-cat__drawing { width: 55px; height: 86px; }
+  .scroll-cat__peek { transform: translateX(19px) rotate(-9deg); }
+  .scroll-cat__edge { right: 3px; top: 5px; }
+  .scroll-cat:not([data-state="idle"]) .scroll-cat__peek { transform: translateX(75px) rotate(-4deg); }
+  .scroll-cat__print { width: 15px; height: 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cat,
+  .scroll-cat__companion,
+  .scroll-cat__peek { transition: none; }
+  .scroll-cat__print { display: none; animation: none; }
+  .scroll-cat:not([data-state="idle"]) .scroll-cat__peek { transform: translateX(24px) rotate(-9deg); }
+}
+
+@media (prefers-reduced-motion: reduce) and (max-width: 760px) {
+  .scroll-cat:not([data-state="idle"]) .scroll-cat__peek { transform: translateX(19px) rotate(-9deg); }
+}

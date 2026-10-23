@@ -1,0 +1,248 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-23T13:43:12.148Z",
+  "title": "Design System: Korney Kolokolnikov portfolio",
+  "extensions": {
+    "colorMeta": {
+      "blue": {
+        "role": "primary",
+        "displayName": "Blue — exploration"
+      },
+      "blue-bright": {
+        "role": "primary",
+        "displayName": "Bright blue — emphasis"
+      },
+      "lime": {
+        "role": "secondary",
+        "displayName": "Lime — client demonstrations"
+      },
+      "orange": {
+        "role": "tertiary",
+        "displayName": "Orange — contact"
+      },
+      "bg": {
+        "role": "neutral",
+        "displayName": "Charcoal canvas"
+      },
+      "home-muted": {
+        "role": "neutral",
+        "displayName": "Home secondary text"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Home hero",
+        "purpose": "Georgia hero headline on .wild-home; italic emphasis remains part of the composition."
+      },
+      "headline": {
+        "displayName": "Home section heading",
+        "purpose": "Home serif headings; individual sections retain their implemented overrides."
+      },
+      "page-display": {
+        "displayName": "Other-page heading",
+        "purpose": "Unbounded page-intro heading outside the home serif override."
+      }
+    },
+    "shadows": [
+      {
+        "name": "client-preview",
+        "value": "0 20px 80px #070c0b88",
+        "purpose": "Home client preview; desktop perspective(1000px) rotateY(-7deg) rotateZ(1deg), hover rotateY(-2deg) rotateZ(0); transforms removed on mobile and reduced motion."
+      },
+      {
+        "name": "base-toast",
+        "value": "0 10px 40px #0005",
+        "purpose": "Existing shared toast surface."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(.23, 1, .32, 1)",
+        "purpose": "Home entrances, reveals, hover image scale and cat transitions."
+      },
+      {
+        "name": "ease-in-out",
+        "value": "cubic-bezier(.77, 0, .175, 1)",
+        "purpose": "Scene assembly and palette transitions; implemented by assemblyEase()."
+      },
+      {
+        "name": "hero-copy-enter",
+        "value": "850ms; delays 0ms, 60ms, 120ms, 180ms; translateY(15px) to 0",
+        "purpose": "Initial hero copy entrance. Disabled under reduced motion."
+      },
+      {
+        "name": "content-reveal",
+        "value": "650ms; opacity and translateY(22px) to 0; intersection threshold 0.12",
+        "purpose": "Home content reveals once; items already in the viewport remain readable. Reduced motion removes pending reveals and transitions."
+      },
+      {
+        "name": "home-controls",
+        "value": "200ms color/background/border; 140ms active scale(.98)",
+        "purpose": "Home buttons; active scale also applies to the motion preview toggle."
+      },
+      {
+        "name": "hero-motion-control",
+        "value": "180ms color",
+        "purpose": "Hero pause control; aria-pressed reflects explicit user pause. Hidden when reduced motion is active or no scene exists."
+      },
+      {
+        "name": "project-hover",
+        "value": "650ms; scale(1.04)",
+        "purpose": "Fine-pointer image hover; reduced motion removes scaling."
+      },
+      {
+        "name": "hero-pointer",
+        "value": "mass 1; stiffness 100; damping 20; integration step <= 0.016s",
+        "purpose": "Fine-pointer response only. Pointer contribution: x translation 0.07, y rotation 0.12, x rotation 0.075 in scene units/radians."
+      },
+      {
+        "name": "hero-ambient",
+        "value": "12s vertical breathing; 18s x/z rotational variation; 16s y rotational variation",
+        "purpose": "Small ambient movement of the single sculpture."
+      },
+      {
+        "name": "hero-layers",
+        "value": "18s cycle; opening starts 4.2s + stage*0.18s and lasts 1.7s; closing starts 7.3s + stage*0.13s and lasts 2.1s; stage=min(contourIndex,2)",
+        "purpose": "Gentle separation. Both colored contours use identical translation (0.015, 0.025, 0.07), zero independent tilt, and the same stage so their connection persists."
+      },
+      {
+        "name": "hero-palette",
+        "value": "8s per palette: 6s hold + 2s eased blend; 24s complete blue/lime/orange cycle",
+        "purpose": "Changes sculpture material and rim lighting. UI semantic accents remain stable."
+      },
+      {
+        "name": "hero-scroll",
+        "value": "damping 4; vertical -0.22; y rotation +0.13; scale reduction 0.035 at full scroll progress",
+        "purpose": "Restrained scene reframing with clamped hero scroll progress from 0 to 1."
+      },
+      {
+        "name": "hero-pause-policy",
+        "value": "cancel requestAnimationFrame when user-paused, reduced-motion, hero offscreen, document.hidden or WebGL context lost",
+        "purpose": "Preserve elapsed state without a catch-up jump on resume. Reduced motion retains a static sculpture; paused resize can render one updated frame. Initialization failure/context loss exposes the SVG fallback."
+      },
+      {
+        "name": "cat-hide",
+        "value": "120ms opacity/peek transition; 120ms hide gate",
+        "purpose": "Explicit visibility:hidden is applied before prints can be created. Default/return transition is 200ms."
+      },
+      {
+        "name": "cat-scroll-settle",
+        "value": "220ms scroll idle delay; 750ms print fade; then remove every print before revealing cat",
+        "purpose": "Visible cat and pawprints are mutually exclusive, including resumed scrolling during a fade."
+      },
+      {
+        "name": "cat-print",
+        "value": "180ms entrance; 126px scroll distance per step; maximum 6 prints",
+        "purpose": "Prints alternate along the planned journey and are suppressed when no safe point is available."
+      },
+      {
+        "name": "cat-placement",
+        "value": "left:0deg; right:scaleX(-1); top:90deg; bottom:-90deg",
+        "purpose": "Safe candidates come from real design-element edges. Desktop cat 84x132px; 761–1480px cat 68x107px; <=760px cat 55x86px. No safe candidate returns null and keeps the cat hidden."
+      },
+      {
+        "name": "cat-motion-policy",
+        "value": "no scroll activity under reduced motion, document.hidden, open menu or open dialog; clear trail on resize, visibility change and reduced-motion change",
+        "purpose": "Reduced motion retains a static safely anchored cat, disables transitions and hides prints. Menu/dialog CSS hides the companion overlay. Page lifecycle cleanup removes listeners and the overlay when leaving a nonpersisted page."
+      },
+      {
+        "name": "preview-playback-policy",
+        "value": "intersection threshold 0.2; pause while hidden, offscreen or user-paused",
+        "purpose": "Motion preview autoplay also respects reduced motion; explicit user play can opt in under reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "home-intermediate",
+        "value": "max-width: 1100px"
+      },
+      {
+        "name": "home-mobile",
+        "value": "max-width: 760px"
+      },
+      {
+        "name": "home-narrow",
+        "value": "max-width: 480px"
+      },
+      {
+        "name": "cat-medium",
+        "value": "min-width: 761px and max-width: 1480px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Local primary button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Existing client action inherits its section accent; the client section supplies lime.",
+      "html": "<a class=\"ds-primary\" href=\"demos/\">Открыть демонстрации <svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M5 19 19 5M5 5h14v14\"/></svg></a>",
+      "css": ".ds-primary{display:inline-flex;align-items:center;justify-content:center;gap:24px;min-height:54px;padding:13px 25px;border:1px solid transparent;border-radius:32px;font-family:Manrope,Arial,sans-serif;font-size:12px;font-weight:600;line-height:1.7;text-decoration:none;cursor:pointer;transition:background 200ms ease,border-color 200ms ease,color 200ms ease,transform 140ms cubic-bezier(.23,1,.32,1);background:var(--accent, #b1ed45);color:#08111a}.ds-primary:hover{background:var(--accent-bright, #daff98)}.ds-primary:active{transform:scale(.98)}.ds-primary:focus-visible { outline:2px solid var(--accent, #4aafff); outline-offset:6px; }.ds-primary svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}"
+    },
+    {
+      "name": "Outlined button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Home project-list action with a fine outline.",
+      "html": "<button class=\"ds-outline\" type=\"button\">Все проекты <span aria-hidden=\"true\">↓</span></button>",
+      "css": ".ds-outline{display:inline-flex;align-items:center;justify-content:center;gap:24px;min-height:54px;padding:13px 25px;border:1px solid transparent;border-radius:32px;font-family:Manrope,Arial,sans-serif;font-size:12px;font-weight:600;line-height:1.7;text-decoration:none;cursor:pointer;transition:background 200ms ease,border-color 200ms ease,color 200ms ease,transform 140ms cubic-bezier(.23,1,.32,1);background:none;color:var(--text, #edf2f7);border-color:#a9d9ff45;font-weight:400;min-width:215px}.ds-outline:hover{border-color:var(--accent, #4aafff);background:rgba(var(--accent-rgb, 74,175,255),.05)}.ds-outline:active{transform:scale(.98)}.ds-outline:focus-visible { outline:2px solid var(--accent, #4aafff); outline-offset:6px; }"
+    },
+    {
+      "name": "Hero reel link",
+      "kind": "button",
+      "description": "Existing showreel action with circular play symbol and year detail.",
+      "html": "<a class=\"ds-reel\" href=\"video.html?video=cgi-showreel\"><span class=\"ds-play\" aria-hidden=\"true\"><svg viewBox=\"0 0 24 24\"><path d=\"m9 6 9 6-9 6Z\"/></svg></span>Смотреть шоурил <span class=\"ds-year\">CGI / 2021</span></a>",
+      "css": ".ds-reel{display:inline-flex;align-items:center;justify-content:center;gap:24px;min-height:54px;padding:13px 25px;border:1px solid transparent;border-radius:32px;font-family:Manrope,Arial,sans-serif;font-size:12px;font-weight:600;line-height:1.7;text-decoration:none;cursor:pointer;transition:background 200ms ease,border-color 200ms ease,color 200ms ease,transform 140ms cubic-bezier(.23,1,.32,1);background:#4aafff15;border-color:#4aafff55;color:var(--text, #edf2f7);font-weight:400;gap:16px;padding:11px 24px 11px 12px}.ds-reel:hover{background:#4aafff28;border-color:var(--accent, #4aafff)}.ds-reel:active{transform:scale(.98)}.ds-reel:focus-visible { outline:2px solid var(--accent, #4aafff); outline-offset:6px; }.ds-play{display:grid;place-items:center;width:33px;height:33px;border:1px solid var(--accent, #4aafff);border-radius:50%;color:var(--accent-bright, #a9d9ff)}.ds-play svg{width:15px;height:15px;fill:currentColor;stroke:none}.ds-year{border-left:1px solid #4aafff35;padding-left:16px;font-size:9px;letter-spacing:1px;color:var(--muted, #a3afbd)}"
+    },
+    {
+      "name": "Project filter",
+      "kind": "chip",
+      "refersTo": "filter-active",
+      "description": "Home filter with the source-selected aria state.",
+      "html": "<button class=\"ds-filter\" type=\"button\" aria-pressed=\"true\">Все</button>",
+      "css": ".ds-filter{padding:9px 18px;border:1px solid transparent;border-radius:30px;font-family:Manrope,Arial,sans-serif;font-size:11px;line-height:1.7;min-height:44px;color:var(--muted, #a3afbd);background:none;cursor:pointer}.ds-filter[aria-pressed='true']{border-color:#a9d9ff50;background:#4aafff15;color:var(--accent-bright, #a9d9ff)}.ds-filter:hover{color:var(--accent-bright, #a9d9ff)}.ds-filter:focus-visible { outline:2px solid var(--accent, #4aafff); outline-offset:6px; }"
+    },
+    {
+      "name": "Home navigation link",
+      "kind": "nav",
+      "description": "Compact desktop navigation uses Manrope; source markup assigns local semantic accents to actions.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Главная навигация\"><a class=\"ds-nav-link\" href=\"#work\">Проекты</a><a class=\"ds-nav-link\" href=\"#video\">Видео</a><a class=\"ds-nav-link\" href=\"#about\">Обо мне</a></nav>",
+      "css": ".ds-nav{display:flex;align-items:center;gap:30px;font-family:Manrope,Arial,sans-serif;font-size:11px;line-height:1.7}.ds-nav-link{color:#c3cad4;text-decoration:none;transition:color .15s}.ds-nav-link:hover{color:var(--accent-bright, #a9d9ff)}.ds-nav-link:focus-visible { outline:2px solid var(--accent, #4aafff); outline-offset:6px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Идея. Форма. Движение.",
+    "overview": "The existing home eyebrow supplies this phrase. Preserve the KK mark, Russian copy, dark surfaces and spacious editorial composition. Serif headings and italic emphasis give the home page its voice; Manrope carries navigation, descriptions and controls.\n\nThis records the incumbent identity and the approved home extension. The hero pairs copy with one solid KK sculpture; the outlined cat adds a small, independent companion. The detailed surface contract remains in `.impeccable/surfaces/home-hero.md`.",
+    "keyCharacteristics": [
+      "Charcoal surfaces with clear type and generous space.",
+      "Stable blue, lime and orange roles.",
+      "Original KK geometry with metal depth and restrained movement.",
+      "Decorative motion that yields to content, user pause and reduced motion."
+    ],
+    "rules": [
+      {
+        "name": "The Semantic Color Rule",
+        "body": "Keep blue for exploration, lime for client demonstrations and orange for starting a conversation. Section and action accents are local; sculpture lighting cycles do not change the page theme. `public/theme.js` removes the legacy saved theme attribute.",
+        "section": "colors"
+      },
+      {
+        "name": "The Home Type Rule",
+        "body": "Scope the serif display treatment to `.wild-home`. Other existing pages retain Unbounded headings; `page-display` records their page-intro role.",
+        "section": "typography"
+      }
+    ],
+    "dos": [
+      "**Do** preserve the original four KK contours and the connected colored portion.",
+      "**Do** keep existing Russian copy and controls readable on desktop and mobile.",
+      "**Do** retain the SVG fallback and a static reduced-motion sculpture.",
+      "**Do** defer the cat when a safe real element edge is unavailable."
+    ],
+    "donts": [
+      "**Don't** turn semantic section accents into a global theme cycle.",
+      "**Don't** spread the home serif override to other pages.",
+      "**Don't** show the cat and visible pawprints together.",
+      "**Don't** cover text or controls with decorative elements."
+    ]
+  }
+}

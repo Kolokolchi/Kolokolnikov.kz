@@ -15,10 +15,12 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="video.css">
   <link rel="stylesheet" href="wild.css">
+  <link rel="stylesheet" href="scroll-cat.css">
   <script src="theme.js"></script>
   <script type="module" src="app.js"></script>
   <script type="module" src="video-gallery.js"></script>
   <script type="module" src="wild.js"></script>
+  <script type="module" src="scroll-cat.js"></script>
 </head>
 <body class="wild-home">
   <a class="skip-link" href="#main">К содержимому</a>
@@ -36,16 +38,13 @@
   <main id="main">
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-landscape" aria-hidden="true">
-        <svg class="ribbon-fallback" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" focusable="false">
-          <defs><linearGradient id="ribbon-fallback-metal" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#8ce900" stop-opacity=".16"/><stop offset=".36" stop-color="#57e3ff" stop-opacity=".2"/><stop offset=".62" stop-color="#0094ff" stop-opacity=".35"/><stop offset=".8" stop-color="#ff690b" stop-opacity=".2"/><stop offset="1" stop-color="#57e3ff" stop-opacity=".3"/></linearGradient></defs>
-          <path d="M-130 910C330 980 780 905 1080 655C1330 445 1060 428 1160 245C1250 85 1470 10 1700-160" fill="none" stroke="url(#ribbon-fallback-metal)" stroke-width="105"/>
-        </svg>
-        <canvas class="hero-ribbon" data-hero-ribbon></canvas>
+        <img class="scene-fallback" src="assets/brand/mark-blue.svg" width="1140" height="770" alt="">
+        <canvas class="hero-scene" data-hero-scene></canvas>
         <div class="landscape-shade"></div>
       </div>
       <div class="hero-copy">
         <p class="hero-intro"><span class="status-dot"></span> Независимый дизайнер и разработчик</p>
-        <h1 id="hero-title">Цифровой опыт, <br>который <em>чувствуют.</em></h1>
+        <h1 id="hero-title"><span>Цифровой опыт,</span><span>который</span><em>чувствуют.</em></h1>
         <p class="hero-description">Создаю сайты, видео и интерактивные проекты.<br>Соединяю дизайн, технологии и движение.</p>
         <div class="hero-actions"><a class="button reel-button" href="video.html?video=cgi-showreel"><span class="play-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m9 6 9 6-9 6Z"/></svg></span>Смотреть шоурил <span class="reel-year">CGI / 2021</span></a><a class="hero-work-link" href="#work">Избранные работы <span aria-hidden="true">↓</span></a></div>
       </div>

@@ -1,4 +1,4 @@
-import { createHeroRibbon } from './hero-ribbon.js';
+import { createHeroScene } from './hero-scene.js';
 
 // Decorative motion is optional: the complete page remains readable without JS.
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -19,16 +19,16 @@ if (!reducedMotion.matches) {
 }
 
 const hero = document.querySelector('.hero');
-const heroRibbon = createHeroRibbon(document.querySelector('[data-hero-ribbon]'));
+const heroScene = createHeroScene(document.querySelector('[data-hero-scene]'), { hero });
 const heroMotionToggle = document.querySelector('[data-hero-motion-toggle]');
 let heroMotionUserPaused = false;
 let heroVisible = true;
 function syncHeroMotion() {
   hero.classList.toggle('motion-paused', heroMotionUserPaused || reducedMotion.matches);
-  heroRibbon?.setPaused(heroMotionUserPaused || reducedMotion.matches || !heroVisible || document.hidden);
+  heroScene?.setPaused(heroMotionUserPaused || reducedMotion.matches || !heroVisible || document.hidden);
   if (!heroMotionToggle) return;
   const label = heroMotionUserPaused ? 'Продолжить анимацию' : 'Приостановить анимацию';
-  heroMotionToggle.hidden = reducedMotion.matches || !heroRibbon;
+  heroMotionToggle.hidden = reducedMotion.matches || !heroScene;
   heroMotionToggle.setAttribute('aria-pressed', String(heroMotionUserPaused));
   heroMotionToggle.setAttribute('aria-label', label);
   heroMotionToggle.title = label;
