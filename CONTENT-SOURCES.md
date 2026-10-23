@@ -58,19 +58,22 @@ Ankor: локальный проект `D:\Anti-Gravity\Ankor\ankor-redesign`, R
 
 ## Сборка проектов при прокрутке
 
-`public/project-assembly-data.js` размечает каждый из девяти принятых скриншотов по смысловым блокам: шапка, заголовок, изображение, действия и дополнительные панели. Маски используют исходный скриншот; после сборки поверх них появляется точное цельное изображение, закрывающее субпиксельные стыки. Исходные медиа проявляются под собирающимися слоями и загружаются только рядом с проектом.
+`public/assembly-scenes/*.html` содержит девять настоящих композиций из исходных проектов: HTML-текст, кнопки, SVG-логотипы, прозрачные иллюстрации и цельные фотографии. Каждый документ сохраняет собственные стили и оригинальные локальные шрифты. Внутри сцен нет скриптов и ссылок на скриншоты портфолио.
 
-Скопированные публичные изображения в `public/assets/assembly/`:
+`public/project-assembly-data.js` задаёт только размер холста и адрес сцены. `public/project-assembly.js` привязывает движение элементов с `data-assembly-layer` к прокрутке через приостановленные WAAPI-анимации. Цельные фоны остаются неподвижными. Скриншот в родительской странице используется только на время загрузки или при ошибке загрузки сцены; после загрузки он скрыт и не участвует в анимации или её завершении.
 
-| Файл | Локальный источник |
+Сцены следуют обычному потоку документа с коротким отступом после подписи. Закрепления и дополнительного экранного запаса для скролла нет.
+
+Медиа и шрифты скопированы в `public/assets/assembly/{id}/` из исходных проектов:
+
+| Сцена | Источник |
 |---|---|
-| `rpk.webp` | `D:\Anti-Gravity\RPK\public\assets\brand\brand-hero-1600.webp` |
-| `ankor.webp` | `D:\Anti-Gravity\Ankor\ankor-redesign\dist\assets\hero.webp` |
-| `saf.jpeg` | `D:\Anti-Gravity\Sansata\src\assets\saf-avenue\c589aa09a1bed158.jpeg` |
-| `lesa.webp` | `D:\Anti-Gravity\Constructor_Wood_Tower_Site\dist\assets\scaffolding-hero.webp` |
-| `killdez.webp` | `D:\Anti-Gravity\Site_Disinfection\public\images\brand\skullbug.webp` |
-| `patrol.png` | `D:\Anti-Gravity\Patrol Control\public\offroad_car.png` |
-| `aral.png` | `D:\Anti-Gravity\Presentation Aral Dune\public\assets\images\double_sprint_hero.png` |
-| `saf-landing.jpeg` | `D:\Anti-Gravity\SAF_Landing\assets\static.tildacdn.pro\tild3730-3865-4164-b332-323637353438\freepik__img1-make-t.jpeg` |
-| `dis-cleaning.jpg` | `D:\Anti-Gravity\DisCleaning_2026-10-13\public\images\hero-business.jpg` |
-
+| RPK | `D:\Anti-Gravity\RPK\src\components\site` и `public\assets` |
+| Ankor | `D:\Anti-Gravity\Ankor\ankor-redesign\dist` |
+| Леса-вышки | `D:\Anti-Gravity\Constructor_Wood_Tower_Site\dist` |
+| KILL DEZ | `D:\Anti-Gravity\Site_Disinfection\components` и `public\images\brand` |
+| Dis Cleaning | `D:\Anti-Gravity\DisCleaning_2026-10-13` |
+| SAF Avenue — лендинг | `D:\Anti-Gravity\SAF_Landing` |
+| SAF Avenue — каталог | `D:\Anti-Gravity\Sansata\src` (ночная панорама `18719179b2f40831.jpeg`) |
+| Patrol Control | `D:\Anti-Gravity\Patrol Control\src` и `public` |
+| ARAL DUNE | `D:\Anti-Gravity\Presentation Aral Dune\src` и `public\assets` |

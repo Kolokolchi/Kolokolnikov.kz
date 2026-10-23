@@ -20,11 +20,13 @@ assert.equal(new Set(projects.map(item=>item.id)).size,projects.length,'Project 
 for(const project of projects){
   const assembly=assemblyDesigns[project.id];
   assert.ok(assembly,`Missing assembly: ${project.id}`);
-  assert.ok(assembly.pieces.length>=6,`Missing content layers: ${project.id}`);
-  assert.ok((await stat(path.join(root,assembly.source.src))).isFile(),assembly.source.src);
-  for(const piece of assembly.pieces){
-    const points=piece.poly||[[piece.rect[0],piece.rect[1]],[piece.rect[0]+piece.rect[2],piece.rect[1]+piece.rect[3]]];
-    assert.ok(points.flat().every(value=>value>=0&&value<=100),`${project.id}: ${piece.name} is outside the image`);
+  const scene=await readFile(path.join(root,assembly.scene),'utf8');
+  assert.ok([...scene.matchAll(/data-assembly-layer\b/g)].length>=6,`Missing native layers: ${project.id}`);
+  assert.doesNotMatch(scene,/(?:assets\/projects\/|<script\b|<iframe\b|clipPath)/i,`Scene must use native source layers: ${project.id}`);
+  for(const match of scene.matchAll(/(?:src|href)=["']([^"'#]+)["']|url\(["']?([^\s)'"#]+)["']?\)/g)){
+    const asset=match[1]||match[2];
+    if(!asset||/^(?:https?:|data:)/.test(asset))continue;
+    assert.ok((await stat(path.resolve(root,path.dirname(assembly.scene),asset))).isFile(),`${project.id}: ${asset}`);
   }
   assert.match(project.id,/^[a-z0-9-]+$/);
   assert.ok(['website','product','presentation'].includes(project.category));

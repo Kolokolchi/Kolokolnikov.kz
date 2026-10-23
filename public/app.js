@@ -18,6 +18,7 @@ function renderProjects() {
     const sequence = create('div','project-sequence');
     sequence.append(create('span','',`${String(index + 1).padStart(2,'0')} / ${String(matching.length).padStart(2,'0')}`),create('span','',project.type));
     const link = createProjectAssembly(project);
+    presentation.style.setProperty('--preview-ratio', link.style.getPropertyValue('--preview-ratio'));
     const caption = create('div','project-caption');
     const meta = create('div','project-meta');
     const titleLink = create('a'); titleLink.href = link.href;
