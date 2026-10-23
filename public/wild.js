@@ -17,6 +17,22 @@ if (!reducedMotion.matches) {
 }
 
 const hero = document.querySelector('.hero');
+const heroMotionToggle = document.querySelector('[data-hero-motion-toggle]');
+let heroMotionUserPaused = false;
+function syncHeroMotion() {
+  hero.classList.toggle('motion-paused', heroMotionUserPaused || reducedMotion.matches);
+  if (!heroMotionToggle) return;
+  const label = heroMotionUserPaused ? 'Продолжить анимацию' : 'Приостановить анимацию';
+  heroMotionToggle.hidden = reducedMotion.matches;
+  heroMotionToggle.setAttribute('aria-pressed', String(heroMotionUserPaused));
+  heroMotionToggle.setAttribute('aria-label', label);
+  heroMotionToggle.title = label;
+}
+heroMotionToggle?.addEventListener('click', () => {
+  heroMotionUserPaused = !heroMotionUserPaused;
+  syncHeroMotion();
+});
+syncHeroMotion();
 let heroVisible = true;
 new IntersectionObserver(entries => {
   heroVisible = entries[0].isIntersecting;
@@ -55,6 +71,7 @@ document.addEventListener('visibilitychange', () => {
   syncPlayback();
 });
 reducedMotion.addEventListener('change', () => {
+  syncHeroMotion();
   if (reducedMotion.matches) {
     revealObserver.disconnect();
     revealItems.forEach(item => item.classList.remove('reveal-pending'));
