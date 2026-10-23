@@ -1,9 +1,9 @@
 // The companion and its tracks take turns: the cat rests, the paws walk.
-const MAX_PRINTS = 6;
+const MAX_PRINTS = 3;
 const HIDE_DURATION = 120;
 const IDLE_DELAY = 220;
 const FADE_DURATION = 750;
-const STEP_DISTANCE = 126;
+const STEP_DISTANCE = 92;
 const ANCHOR_SELECTORS = '.project-image-link, .motion-stage, .client-preview, .expertise-list, .hero-motion-tools, .hero-work-link, .reel-button, main > section, .section-heading, .work-toolbar, .contact-links, .intro-disciplines, .site-footer';
 const OBSTACLE_SELECTORS = 'h1, h2, h3, p, a, button, summary, .project-image-link, .motion-stage, .client-preview, .site-header, .site-footer';
 
@@ -62,7 +62,8 @@ export function initScrollCat() {
   let currentPlacement;
   let plannedPlacement;
   let journeyStart;
-  let journeyStep = 0;
+  let journeyHeading = 0;
+  let journeyDirection = 0;
   let obstacles = [];
   let obstacleScrollY = window.scrollY;
 
@@ -178,6 +179,9 @@ export function initScrollCat() {
     root.dataset.state = 'idle';
     accumulatedDistance = 0;
     previousDirection = 0;
+    journeyStart = null;
+    plannedPlacement = null;
+    journeyDirection = 0;
     lastY = window.scrollY;
     collectObstacles();
     parkCat(choosePlacement());
@@ -214,43 +218,49 @@ export function initScrollCat() {
     if (y < -50 || y > window.innerHeight + 50) removePrint(print);
   }
 
+  function planJourney(direction, fromCat = false) {
+    plannedPlacement = choosePlacement();
+    const origin = fromCat ? currentPlacement || plannedPlacement : plannedPlacement;
+    journeyStart = origin ? { x: origin.x, y: origin.y + window.scrollY } : null;
+    const dx = (plannedPlacement?.x ?? origin?.x ?? 0) - (origin?.x ?? 0);
+    const dy = (plannedPlacement?.y ?? origin?.y ?? 0) - (origin?.y ?? 0);
+    journeyHeading = Math.hypot(dx, dy) > 45 ? Math.atan2(dy, dx) : direction > 0 ? Math.PI / 2 : -Math.PI / 2;
+    journeyDirection = direction;
+    steps = 0;
+  }
+
   function leavePrint(direction) {
     const compact = compactScreen.matches;
-    const side = steps++ % 2 ? 1 : -1;
-    if (Math.abs(window.scrollY - obstacleScrollY) > window.innerHeight * .4) {
-      collectObstacles();
-      plannedPlacement = choosePlacement();
-      journeyStep = 0;
-      const lastPrint = prints.at(-1);
-      const origin = currentPlacement || plannedPlacement;
-      journeyStart = lastPrint ? { x: lastPrint.x, y: lastPrint.documentY } : origin ? { x: origin.x, y: origin.y + window.scrollY } : null;
+    if (Math.abs(window.scrollY - obstacleScrollY) > window.innerHeight * .4) collectObstacles();
+    // Keep a route in document space. Re-seed only after its last steps leave view.
+    const cursorY = journeyStart ? journeyStart.y - window.scrollY : -100;
+    if (!journeyStart || journeyDirection !== direction || cursorY < 28 || cursorY > window.innerHeight - 28) {
+      if (prints.length) return;
+      planJourney(direction);
     }
-    if (!journeyStart || !plannedPlacement) return;
-    const start = { x: journeyStart.x, y: Math.max(60, Math.min(window.innerHeight - 40, journeyStart.y - window.scrollY)) };
-    const destination = plannedPlacement;
-    const progress = Math.min(1, ++journeyStep / 8);
-    const dx = destination.x - start.x;
-    const dy = destination.y - start.y;
-    const length = Math.max(1, Math.hypot(dx, dy));
-    const stride = compact ? 6 : 9;
-    const point = {
-      x: start.x + dx * progress + Math.sin(progress * Math.PI) * Math.min(65, window.innerWidth * .06) - dy / length * side * stride,
-      y: start.y + dy * progress + dx / length * side * stride,
-    };
+    if (!journeyStart) return;
+    const side = steps % 2 ? 1 : -1;
+    const stride = compact ? 34 : 46;
+    const spread = compact ? 4 : 6;
     const printWidth = compact ? 15 : 21;
     const printHeight = compact ? 18 : 25;
-    const lanes = [point.x, point.x - 28, point.x + 28, window.innerWidth * .5, window.innerWidth * .25, window.innerWidth * .75, 18, window.innerWidth - printWidth - 18];
     let safePoint;
-    for (const offset of [0, -35, 35, -70, 70]) {
-      for (const lane of lanes) {
-        const x = Math.max(8, Math.min(window.innerWidth - printWidth - 8, lane));
-        const y = Math.max(32, Math.min(window.innerHeight - printHeight - 25, point.y + offset));
-        if (clearOfContent({ left: x - 3, right: x + printWidth + 3, top: y - 3, bottom: y + printHeight + 3 }, null, 2)) {
-          safePoint = { x, y };
-          break;
-        }
+    // Small turns avoid content without jumping to another column or screen edge.
+    for (const turn of [0, -.26, .26, -.52, .52, -.78, .78]) {
+      const heading = journeyHeading + turn;
+      const baseX = journeyStart.x + Math.cos(heading) * stride;
+      const baseY = journeyStart.y + Math.sin(heading) * stride;
+      const centerX = baseX - Math.sin(heading) * side * spread;
+      const centerY = baseY + Math.cos(heading) * side * spread;
+      const x = centerX - printWidth / 2;
+      const y = centerY - window.scrollY - printHeight / 2;
+      if (x < 8 || x + printWidth > window.innerWidth - 8 || y < 32 || y + printHeight > window.innerHeight - 25) continue;
+      const last = prints.at(-1);
+      if (last && Math.hypot(centerX - last.centerX, centerY - last.centerY) < stride * .7) continue;
+      if (clearOfContent({ left: x - 3, right: x + printWidth + 3, top: y - 3, bottom: y + printHeight + 3 }, null, 2)) {
+        safePoint = { x, y, centerX, centerY, baseX, baseY, heading };
+        break;
       }
-      if (safePoint) break;
     }
     if (!safePoint) return;
     const element = document.createElement('span');
@@ -260,21 +270,24 @@ export function initScrollCat() {
       element,
       x: safePoint.x,
       documentY: window.scrollY + safePoint.y,
-      angle: length > 12 ? Math.atan2(dy, dx) * 180 / Math.PI + 90 + side * 10 : (direction > 0 ? 180 : 0) + side * 13,
+      centerX: safePoint.centerX,
+      centerY: safePoint.centerY,
+      angle: safePoint.heading * 180 / Math.PI + 90 + side * 6,
     };
+    journeyStart = { x: safePoint.baseX, y: safePoint.baseY };
+    journeyHeading = safePoint.heading;
+    steps++;
     prints.push(print);
     trail.append(element);
     positionPrint(print);
     while (prints.length > MAX_PRINTS) removePrint(prints[0]);
+    prints.forEach((item, index) => { item.element.dataset.age = String(prints.length - 1 - index); });
   }
 
   function hideCat() {
     root.dataset.state = 'hiding';
     collectObstacles();
-    plannedPlacement = choosePlacement();
-    const origin = currentPlacement || plannedPlacement;
-    journeyStart = origin ? { x: origin.x, y: origin.y + window.scrollY } : null;
-    journeyStep = 0;
+    planJourney(previousDirection || 1, true);
     hideTimer = window.setTimeout(() => {
       if (!scrolling) return;
       // Explicit visibility prevents a delayed paint from overlapping a paw.
@@ -298,13 +311,21 @@ export function initScrollCat() {
     lastY = currentY;
     if (Math.abs(delta) < .5 || reducedMotion.matches || document.hidden || isObscured()) return;
 
+    const direction = delta > 0 ? 1 : -1;
+    const restarting = root.dataset.state === 'settling' || (previousDirection && direction !== previousDirection);
+    if (restarting) {
+      prints.splice(0).forEach(print => print.element.remove());
+      journeyStart = null;
+    }
     activityVersion++;
     scrolling = true;
     window.clearTimeout(returnTimer);
-    if (root.dataset.state === 'idle') hideCat();
+    if (root.dataset.state === 'idle') {
+      previousDirection = direction;
+      hideCat();
+    }
     else if (catHidden) root.dataset.state = 'walking';
 
-    const direction = delta > 0 ? 1 : -1;
     // A new direction starts a fresh stride, preventing jitter from making tracks.
     if (direction !== previousDirection) accumulatedDistance = 0;
     previousDirection = direction;

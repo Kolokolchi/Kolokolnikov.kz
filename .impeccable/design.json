@@ -133,7 +133,7 @@
       },
       {
         "name": "cat-print",
-        "value": "180ms entrance; 126px scroll distance per step; maximum 6 prints",
+        "value": "180ms entrance; 92px scroll distance per step; maximum 3 prints; 46px desktop / 34px mobile stride with alternating 6px / 4px lateral offset",
         "purpose": "Prints alternate along the planned journey and are suppressed when no safe point is available."
       },
       {
