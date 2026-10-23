@@ -43,23 +43,13 @@
 .wild-home .scroll-cue span { color: var(--accent); font-size: 16px; }
 .wild-home .hero-index { color: #708499; font-variant-numeric: tabular-nums; }
 .wild-home .hero-landscape { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
-/* The original four logo contours, repeated in the three existing colourways. */
-.wild-home .brand-form { position: absolute; aspect-ratio: 1540 / 1230; }
-.wild-home .brand-form--blue { width: clamp(650px, 62vw, 1380px); right: -18%; top: -11%; }
-.wild-home .brand-form--lime { width: clamp(340px, 35vw, 720px); left: -8%; bottom: -5%; opacity: .72; }
-.wild-home .brand-form--orange { width: clamp(250px, 25vw, 520px); left: -2%; top: -7%; opacity: .58; }
-.wild-home .brand-sculpture { display: block; width: 100%; height: 100%; overflow: visible; fill: none; stroke: none; stroke-linejoin: miter; animation: brand-float 14000ms var(--ease-in-out) infinite; }
-.wild-home .brand-form--lime .brand-sculpture { animation-delay: -4700ms; }
-.wild-home .brand-form--orange .brand-sculpture { animation-delay: -9300ms; }
-.wild-home .brand-contours { fill: none; stroke-width: 1.6; }
-.wild-home .brand-echo { opacity: .3; animation: brand-echo 7200ms linear infinite; animation-delay: calc(var(--echo) * -180ms); }
-.wild-home .brand-face { opacity: .25; }
-.wild-home .brand-rim { fill: none; stroke-width: 2.4; opacity: .8; }
-.wild-home .brand-sculpture clipPath use { fill: white; stroke: none; }
-.wild-home .brand-sweep { stroke: none; opacity: .42; animation: brand-sweep 7200ms linear infinite; }
-.wild-home .brand-form--lime .brand-sweep { animation-delay: -2400ms; }
-.wild-home .brand-form--orange .brand-sweep { animation-delay: -4800ms; }
-.wild-home .landscape-shade { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 43%, #0c1016e8 0%, #0c1016b3 28%, #0c101600 66%), linear-gradient(0deg, #0c1016, #0c101600 19%, #0c101600 87%, #0c10164d); }
+/* One folded metal ribbon: the mark's ascending gesture becomes a moving material. */
+.wild-home .hero-ribbon, .wild-home .ribbon-fallback { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+.wild-home .ribbon-fallback { stroke: none; }
+.wild-home .hero-ribbon { opacity: 0; }
+.wild-home .ribbon-ready .hero-ribbon { opacity: 1; }
+.wild-home .ribbon-ready .ribbon-fallback { visibility: hidden; }
+.wild-home .landscape-shade { position: absolute; inset: 0; background: radial-gradient(ellipse at 43% 40%, #0c1016e6 0%, #0c1016a6 29%, #0c101600 67%), linear-gradient(0deg, #0c1016, #0c101600 13%, #0c101600 94%, #0c101626); }
 .wild-home .hero-motion-tools { display: flex; align-items: center; gap: 25px; }
 .wild-home .hero-motion-toggle { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; padding: 0 9px; color: #a3afbd; font-size: 11px; transition: color 180ms ease; }
 .wild-home .hero-motion-toggle svg { width: 14px; height: 14px; }
@@ -163,9 +153,6 @@
 .wild-home [data-reveal].reveal-pending { opacity: 0; transform: translateY(22px); }
 .wild-home .ambient-paused .hero-landscape *, .wild-home .motion-paused .hero-landscape * { animation-play-state: paused; }
 @keyframes hero-enter { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes brand-float { 0%, 100% { transform: translate3d(0, 0, 0) rotate(-4deg); } 50% { transform: translate3d(-16px, 24px, 0) rotate(-1deg); } }
-@keyframes brand-echo { 0%, 100% { opacity: .19; } 45% { opacity: .52; } 70% { opacity: .28; } }
-@keyframes brand-sweep { 0% { transform: translate3d(0, 0, 0); opacity: 0; } 12% { opacity: .42; } 70% { opacity: .42; } 88%, 100% { transform: translate3d(2100px, 0, 0); opacity: 0; } }
 @media (hover: hover) and (pointer: fine) {
   .wild-home .hero-motion-toggle:hover { color: var(--text); }
   .wild-home .project-image { transition: transform 650ms var(--ease-out); }
@@ -200,10 +187,7 @@
   .wild-home .hero-bottom > span:first-child { width: 100%; }
   .wild-home .hero-motion-tools { margin-left: auto; gap: 12px; }
   .wild-home .scroll-cue { font-size: 8px; gap: 10px; }
-  .wild-home .brand-form--blue { width: 650px; right: -380px; top: -65px; opacity: .8; }
-  .wild-home .brand-form--lime { width: 400px; left: -230px; bottom: -70px; opacity: .65; }
-  .wild-home .brand-form--orange { width: 280px; left: -80px; top: -45px; opacity: .6; }
-  .wild-home .landscape-shade { background: radial-gradient(ellipse at 50% 42%, #0c1016e8, #0c1016b3 30%, #0c101600 72%), linear-gradient(0deg, #0c1016, #0c101600 20%); }
+  .wild-home .landscape-shade { background: radial-gradient(ellipse at 42% 40%, #0c1016ed, #0c1016a6 31%, #0c101600 78%), linear-gradient(0deg, #0c1016, #0c101600 13%); }
   .wild-home .intro-section { padding-top: 90px; padding-bottom: 125px; }
   .wild-home .intro-section h2 { font-size: 39px; letter-spacing: -1.2px; }
   .wild-home .intro-description { font-size: 12px; }
@@ -290,8 +274,6 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .wild-home .hero-copy > *, .wild-home .hero-landscape * { animation: none; }
-  .wild-home .brand-sculpture { transform: rotate(-3deg); }
-  .wild-home .brand-sweep { display: none; }
   .wild-home [data-reveal], .wild-home [data-reveal].reveal-pending { opacity: 1; transform: none; transition: none; }
   .wild-home .project-card:hover .project-image { transform: none; }
   .wild-home .client-preview, .wild-home .client-preview:hover { transform: none; }

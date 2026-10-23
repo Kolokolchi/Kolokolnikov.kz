@@ -1,3 +1,5 @@
+import { createHeroRibbon } from './hero-ribbon.js';
+
 // Decorative motion is optional: the complete page remains readable without JS.
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const revealItems = [...document.querySelectorAll('[data-reveal]')];
@@ -17,13 +19,16 @@ if (!reducedMotion.matches) {
 }
 
 const hero = document.querySelector('.hero');
+const heroRibbon = createHeroRibbon(document.querySelector('[data-hero-ribbon]'));
 const heroMotionToggle = document.querySelector('[data-hero-motion-toggle]');
 let heroMotionUserPaused = false;
+let heroVisible = true;
 function syncHeroMotion() {
   hero.classList.toggle('motion-paused', heroMotionUserPaused || reducedMotion.matches);
+  heroRibbon?.setPaused(heroMotionUserPaused || reducedMotion.matches || !heroVisible || document.hidden);
   if (!heroMotionToggle) return;
   const label = heroMotionUserPaused ? 'Продолжить анимацию' : 'Приостановить анимацию';
-  heroMotionToggle.hidden = reducedMotion.matches;
+  heroMotionToggle.hidden = reducedMotion.matches || !heroRibbon;
   heroMotionToggle.setAttribute('aria-pressed', String(heroMotionUserPaused));
   heroMotionToggle.setAttribute('aria-label', label);
   heroMotionToggle.title = label;
@@ -33,10 +38,10 @@ heroMotionToggle?.addEventListener('click', () => {
   syncHeroMotion();
 });
 syncHeroMotion();
-let heroVisible = true;
 new IntersectionObserver(entries => {
   heroVisible = entries[0].isIntersecting;
   hero.classList.toggle('ambient-paused', !heroVisible || document.hidden);
+  syncHeroMotion();
 }).observe(hero);
 
 const preview = document.querySelector('#motion-preview');
@@ -68,6 +73,7 @@ preview.addEventListener('play', reflectPlayback);
 preview.addEventListener('pause', reflectPlayback);
 document.addEventListener('visibilitychange', () => {
   hero.classList.toggle('ambient-paused', !heroVisible || document.hidden);
+  syncHeroMotion();
   syncPlayback();
 });
 reducedMotion.addEventListener('change', () => {
