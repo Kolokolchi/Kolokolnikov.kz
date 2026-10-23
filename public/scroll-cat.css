@@ -24,7 +24,8 @@
 .scroll-cat__tail-peek { transform-origin: 50% 0; }
 .scroll-cat .scroll-cat__drawing { display: block; width: 100%; height: 100%; overflow: visible; }
 .scroll-cat__tail { display: none; }
-.scroll-cat[data-pose="paired"] .scroll-cat__tail { display: block; }
+.scroll-cat[data-pose="paired"] .scroll-cat__tail,
+.scroll-cat[data-pose="peek"] .scroll-cat__tail { display: block; }
 .scroll-cat__slider { display: none; position: absolute; }
 .scroll-cat[data-pose="glide"] .scroll-cat__part { display: none; }
 .scroll-cat[data-pose="glide"] .scroll-cat__slider { display: block; }

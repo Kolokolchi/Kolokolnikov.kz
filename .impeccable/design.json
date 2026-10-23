@@ -139,7 +139,7 @@
       {
         "name": "cat-placement",
         "value": "top:0deg; bottom:180deg; left:-90deg; right:90deg; random peek/paired/lounge poses; occasional 2200ms empty-corridor glide",
-        "purpose": "One graphite character with large white eyes. Head widths 96px desktop, 84px intermediate, 66px mobile. Paired tail appears at the opposite edge of the same anchor; each part is clipped behind its edge. Same anchor may get different poses. Keep destination and pose fixed during trail fade. No safe candidate keeps the cat hidden."
+        "purpose": "One graphite character with large white eyes. Head widths 96px desktop, 84px intermediate, 66px mobile. Both peek and paired poses show the tail at the opposite edge of the same anchor, on exactly the same axis as the head: matching x for top/bottom or matching y for left/right. Each part is clipped behind its edge. Same anchor may get different poses. Keep destination and pose fixed during trail fade. No safe candidate keeps the cat hidden."
       },
       {
         "name": "cat-motion-policy",

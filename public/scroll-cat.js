@@ -8,6 +8,7 @@ const FADE_DURATION = 750;
 const STEP_DISTANCE = 92;
 const FINISH_STEP_DELAY = 120;
 const PRINT_ENTRANCE = 180;
+const TAIL_POSES = new Set(['paired', 'peek']);
 const ANCHOR_SELECTORS = '.project-image-link, .motion-stage, .client-preview, .expertise-list, .reel-button';
 const OBSTACLE_SELECTORS = 'h1, h2, h3, p, a, button, summary, .project-image-link, .motion-stage, .client-preview, .site-header, .site-footer';
 
@@ -133,7 +134,7 @@ export function initScrollCat() {
     const resolved = { ...placement, x: rect.left + placement.offsetX, y: rect.top + placement.offsetY, tailX: rect.left + placement.tailOffsetX, tailY: rect.top + placement.tailOffsetY };
     const bounds = placementBounds(resolved);
     if (!safeBounds(bounds, placement.element)) return null;
-    if (resolved.pose === 'paired') {
+    if (TAIL_POSES.has(resolved.pose)) {
       const size = tailSize();
       if (!safeBounds(partBounds(resolved.tailX, resolved.tailY, size.width, size.height, resolved.side), placement.element)) return null;
     }
@@ -192,8 +193,9 @@ export function initScrollCat() {
             const overlap = headOverlap(pose, size.height);
             let x = rect.left + rect.width * fraction;
             let y = rect.top + rect.height * fraction;
-            let tailX = rect.left + rect.width * (1 - fraction);
-            let tailY = rect.top + rect.height * (1 - fraction);
+            // Opposite ends of the same cat always share a horizontal/vertical axis.
+            let tailX = rect.left + rect.width * fraction;
+            let tailY = rect.top + rect.height * fraction;
             if (side === 'left') { x = rect.left - size.height / 2 + overlap; tailX = rect.right + tailDimensions.height / 2 - 4; }
             if (side === 'right') { x = rect.right + size.height / 2 - overlap; tailX = rect.left - tailDimensions.height / 2 + 4; }
             if (side === 'top') { y = rect.top - size.height / 2 + overlap; tailY = rect.bottom + tailDimensions.height / 2 - 4; }
@@ -272,7 +274,7 @@ export function initScrollCat() {
     }
     const size = catSize(placement.pose);
     placePart(head, placement.x, placement.y, size, placement.side, placement.pose === 'lounge' ? catLoungeDrawing(placement.side) : catHeadDrawing(placement.side));
-    if (placement.pose === 'paired') {
+    if (TAIL_POSES.has(placement.pose)) {
       const opposite = { top: 'bottom', bottom: 'top', left: 'right', right: 'left' }[placement.side];
       placePart(tail, placement.tailX, placement.tailY, tailSize(), opposite, catTailDrawing(placement.side));
     }
