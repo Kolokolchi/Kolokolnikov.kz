@@ -55,3 +55,22 @@ Ankor: локальный проект `D:\Anti-Gravity\Ankor\ankor-redesign`, R
 - Adilet: E:\Drive\Mira\Energy_animation_for_logo_əDİLET_202607221613.mp4
 
 Дополнительно просмотрены имена и структура файлов E:\Mira (Gorilla, KIA, Adilet, Юрта и другие). Дубли не добавлены. Пользователь подтвердил, что занимается видео; конкретные титры съёмочной группы и распределение ролей не выдуманы.
+
+## Сборка проектов при прокрутке
+
+`public/project-assembly-data.js` размечает каждый из девяти принятых скриншотов по смысловым блокам: шапка, заголовок, изображение, действия и дополнительные панели. Маски используют исходный скриншот; после сборки поверх них появляется точное цельное изображение, закрывающее субпиксельные стыки. Исходные медиа проявляются под собирающимися слоями и загружаются только рядом с проектом.
+
+Скопированные публичные изображения в `public/assets/assembly/`:
+
+| Файл | Локальный источник |
+|---|---|
+| `rpk.webp` | `D:\Anti-Gravity\RPK\public\assets\brand\brand-hero-1600.webp` |
+| `ankor.webp` | `D:\Anti-Gravity\Ankor\ankor-redesign\dist\assets\hero.webp` |
+| `saf.jpeg` | `D:\Anti-Gravity\Sansata\src\assets\saf-avenue\c589aa09a1bed158.jpeg` |
+| `lesa.webp` | `D:\Anti-Gravity\Constructor_Wood_Tower_Site\dist\assets\scaffolding-hero.webp` |
+| `killdez.webp` | `D:\Anti-Gravity\Site_Disinfection\public\images\brand\skullbug.webp` |
+| `patrol.png` | `D:\Anti-Gravity\Patrol Control\public\offroad_car.png` |
+| `aral.png` | `D:\Anti-Gravity\Presentation Aral Dune\public\assets\images\double_sprint_hero.png` |
+| `saf-landing.jpeg` | `D:\Anti-Gravity\SAF_Landing\assets\static.tildacdn.pro\tild3730-3865-4164-b332-323637353438\freepik__img1-make-t.jpeg` |
+| `dis-cleaning.jpg` | `D:\Anti-Gravity\DisCleaning_2026-10-13\public\images\hero-business.jpg` |
+

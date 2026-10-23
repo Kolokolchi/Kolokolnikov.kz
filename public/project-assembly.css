@@ -1,0 +1,54 @@
+/* Each work gets its own scroll passage and a full, readable final composition. */
+.wild-home .projects-grid { display: block; padding-bottom: 0; overflow-x: clip; }
+.wild-home .project-card,
+.wild-home .project-card:nth-child(even) { min-height: 150svh; transform: none; padding-bottom: 12svh; }
+.wild-home .project-presentation { position: sticky; top: 5svh; max-width: 1160px; margin-inline: auto; }
+.wild-home .project-sequence { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; color: var(--muted); font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; }
+.wild-home .project-sequence span:first-child { font-variant-numeric: tabular-nums; color: var(--accent-bright); }
+.wild-home .project-image-link { position: relative; display: block; isolation: isolate; overflow: visible; aspect-ratio: var(--preview-ratio); width: min(100%, calc((100svh - 220px) * var(--preview-ratio))); margin-inline: auto; border: 0; border-radius: 4px; background: transparent; }
+.wild-home .project-image-link::before { content: ''; position: absolute; inset: 0; border-radius: inherit; background: var(--assembly-paper); box-shadow: 0 20px 75px #0003; opacity: .18; }
+.wild-home .project-image-link .project-image { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: fill; border-radius: inherit; transition: none; transform: none; }
+.wild-home .project-card:hover .project-image { transform: none; }
+.assembly-art { position: absolute; inset: 0; pointer-events: none; }
+.assembly-definitions { position: absolute; pointer-events: none; }
+.assembly-source { position: absolute; display: block; pointer-events: none; opacity: 0; }
+.assembly-piece { position: absolute; inset: 0; pointer-events: none; }
+.assembly-piece img { display: block; width: 100%; height: 100%; object-fit: fill; }
+.assembly-moving .assembly-piece { will-change: transform, opacity; }
+.wild-home .assembly-reference { z-index: 1; }
+.wild-home .project-open { z-index: 2; opacity: 1; right: 16px; bottom: 16px; }
+.wild-home .assembly-ready:not(.assembly-complete):not(:focus-within) .project-open { opacity: 0; }
+.wild-home .project-caption { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 40px; width: min(100%, 1040px); margin: 23px auto 0; }
+.wild-home .project-meta { margin: 0; gap: 0; }
+.wild-home .project-meta h3 { font-size: clamp(30px, 3.1vw, 46px); line-height: 1.15; }
+.wild-home .project-description { margin: 0; max-width: 390px; font-size: 12px; }
+.wild-home .project-tags { grid-column: 2; margin-top: 0; }
+.wild-home .project-image-link:focus-visible { outline: 2px solid var(--accent-bright); outline-offset: 7px; }
+.wild-home .project-image-link:focus-within .assembly-reference { opacity: 1 !important; }
+@media (hover: hover) and (pointer: fine) {
+  .wild-home .project-image-link:hover .project-open { background: var(--accent); color: var(--bg); }
+}
+@media (max-width: 760px) {
+  .wild-home .project-card, .wild-home .project-card:nth-child(even) { min-height: 125svh; padding-bottom: 12svh; }
+  .wild-home .project-presentation { top: 12svh; }
+  .wild-home .project-sequence { font-size: 8px; letter-spacing: 1px; margin-bottom: 16px; }
+  .wild-home .project-image-link { width: 100%; aspect-ratio: var(--preview-ratio); }
+  .wild-home .project-caption { grid-template-columns: 1fr; gap: 13px; margin-top: 24px; }
+  .wild-home .project-tags { grid-column: 1; }
+  .wild-home .project-meta h3 { font-size: 36px; }
+  .wild-home .project-description { font-size: 12px; max-width: 370px; }
+}
+@media (max-height: 570px) and (min-width: 761px) {
+  .wild-home .project-image-link { width: min(68%, calc((100svh - 140px) * var(--preview-ratio))); }
+  .wild-home .project-presentation { top: 12px; }
+  .wild-home .project-sequence { margin-bottom: 10px; }
+  .wild-home .project-caption { margin-top: 12px; }
+  .wild-home .project-meta h3 { font-size: 28px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wild-home .project-card, .wild-home .project-card:nth-child(even) { min-height: 0; padding-bottom: 100px; }
+  .wild-home .project-presentation { position: relative; top: auto; }
+  .wild-home .assembly-art { display: none; }
+  .wild-home .project-image-link .assembly-reference { opacity: 1 !important; }
+  .wild-home .project-image-link .project-open { opacity: 1 !important; }
+}

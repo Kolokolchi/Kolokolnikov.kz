@@ -1,7 +1,8 @@
 import { projects } from './projects.js';
+import { createProjectAssembly, mountProjectAssemblies } from './project-assembly.js';
 const grid = document.querySelector('#projects-grid');
 let selectedFilter = 'all';
-let expanded = false;
+let disposeAssemblies;
 const create = (tag, className, text) => {
   const element = document.createElement(tag);
   if (className) element.className = className;
@@ -9,29 +10,27 @@ const create = (tag, className, text) => {
   return element;
 };
 function renderProjects() {
+  disposeAssemblies?.();
   const matching = projects.filter(project => selectedFilter === 'all' || project.category === selectedFilter);
-  const visible = selectedFilter === 'all' && !expanded ? matching.slice(0,4) : matching;
-  grid.replaceChildren(...visible.map(project => {
+  grid.replaceChildren(...matching.map((project, index) => {
     const article = create('article','project-card');
-    const link = create('a','project-image-link');
-    link.href = `project.html?project=${encodeURIComponent(project.id)}`;
-    link.setAttribute('aria-label',`Подробнее: ${project.name}`);
-    const image = create('img','project-image');
-    Object.assign(image,{src:project.image,alt:`${project.name} — ${project.type.toLowerCase()}`,loading:'lazy',width:1440,height:1000});
-    const arrow = create('span','project-open','↗'); arrow.setAttribute('aria-hidden','true');
-    link.append(image,arrow);
+    const presentation = create('div','project-presentation');
+    const sequence = create('div','project-sequence');
+    sequence.append(create('span','',`${String(index + 1).padStart(2,'0')} / ${String(matching.length).padStart(2,'0')}`),create('span','',project.type));
+    const link = createProjectAssembly(project);
+    const caption = create('div','project-caption');
     const meta = create('div','project-meta');
     const titleLink = create('a'); titleLink.href = link.href;
     titleLink.append(create('h3','',project.name));
-    meta.append(titleLink,create('span','project-category',project.type));
+    meta.append(titleLink);
     const tags = create('div','project-tags');
     tags.append(...project.tags.map(tag => create('span','',tag)));
-    article.append(link,meta,create('p','project-description',project.summary),tags);
+    caption.append(meta,create('p','project-description',project.summary),tags);
+    presentation.append(sequence,link,caption);
+    article.append(presentation);
     return article;
   }));
-  const more = document.querySelector('#more-projects');
-  more.hidden = selectedFilter !== 'all' || expanded || matching.length <= 4;
-  more.textContent = `Все проекты (${projects.length}) ↓`;
+  disposeAssemblies = mountProjectAssemblies(grid);
 }
 document.querySelector('#project-count').textContent = projects.length;
 document.querySelectorAll('[data-filter]').forEach(button => button.addEventListener('click',()=>{
@@ -43,7 +42,6 @@ document.querySelectorAll('[data-filter]').forEach(button => button.addEventList
   });
   renderProjects();
 }));
-document.querySelector('#more-projects').addEventListener('click',()=>{ expanded=true;renderProjects();grid.querySelectorAll('.project-card')[4]?.querySelector('a')?.focus({preventScroll:true}); });
 renderProjects();
 
 const menuButton = document.querySelector('.menu-toggle');

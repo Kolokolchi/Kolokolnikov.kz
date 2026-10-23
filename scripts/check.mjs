@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import assert from 'node:assert/strict';
 import { projects } from '../public/projects.js';
+import { assemblyDesigns } from '../public/project-assembly-data.js';
 import { videos } from '../public/videos.js';
 
 const root=fileURLToPath(new URL('../public/',import.meta.url));
@@ -17,6 +18,14 @@ for(const video of videos){
 for(const name of files.filter(name=>name.endsWith('.js')))execFileSync(process.execPath,['--check',path.join(root,name)]);
 assert.equal(new Set(projects.map(item=>item.id)).size,projects.length,'Project IDs must be unique');
 for(const project of projects){
+  const assembly=assemblyDesigns[project.id];
+  assert.ok(assembly,`Missing assembly: ${project.id}`);
+  assert.ok(assembly.pieces.length>=6,`Missing content layers: ${project.id}`);
+  assert.ok((await stat(path.join(root,assembly.source.src))).isFile(),assembly.source.src);
+  for(const piece of assembly.pieces){
+    const points=piece.poly||[[piece.rect[0],piece.rect[1]],[piece.rect[0]+piece.rect[2],piece.rect[1]+piece.rect[3]]];
+    assert.ok(points.flat().every(value=>value>=0&&value<=100),`${project.id}: ${piece.name} is outside the image`);
+  }
   assert.match(project.id,/^[a-z0-9-]+$/);
   assert.ok(['website','product','presentation'].includes(project.category));
   assert.ok(project.gallery.length);
