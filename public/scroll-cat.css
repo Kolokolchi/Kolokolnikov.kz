@@ -47,16 +47,6 @@
   overflow: visible;
 }
 
-.scroll-cat__edge {
-  position: absolute;
-  top: 7px;
-  right: 7px;
-  bottom: -2px;
-  width: 1px;
-  background: currentColor;
-  opacity: .4;
-}
-
 .scroll-cat:not([data-state="idle"]) .scroll-cat__companion {
   opacity: 0;
   transition-duration: 120ms;
@@ -96,7 +86,6 @@ body:has(dialog[open]) .scroll-cat { opacity: 0; }
   .scroll-cat__companion { width: 55px; height: 86px; opacity: .48; }
   .scroll-cat .scroll-cat__drawing { width: 55px; height: 86px; }
   .scroll-cat__peek { transform: translateX(19px) rotate(-9deg); }
-  .scroll-cat__edge { right: 3px; top: 5px; }
   .scroll-cat:not([data-state="idle"]) .scroll-cat__peek { transform: translateX(75px) rotate(-4deg); }
   .scroll-cat__print { width: 15px; height: 18px; }
 }

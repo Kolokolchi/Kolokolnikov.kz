@@ -39,7 +39,7 @@ export function initScrollCat() {
   root.dataset.scrollCat = '';
   root.dataset.state = 'idle';
   root.setAttribute('aria-hidden', 'true');
-  root.innerHTML = `<div class="scroll-cat__trail"></div><div class="scroll-cat__companion"><div class="scroll-cat__orientation"><div class="scroll-cat__peek">${catDrawing}</div><span class="scroll-cat__edge"></span></div></div>`;
+  root.innerHTML = `<div class="scroll-cat__trail"></div><div class="scroll-cat__companion"><div class="scroll-cat__orientation"><div class="scroll-cat__peek">${catDrawing}</div></div></div>`;
   document.body.append(root);
 
   const trail = root.querySelector('.scroll-cat__trail');
