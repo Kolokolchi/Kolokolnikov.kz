@@ -1,94 +1,78 @@
-// One original vector character, shared by the peeking, lounging and falling poses.
-// Support coordinates are fixed: head y96, opposite paws y0, lounge y78.
-const FUR = 'var(--cat-fur, #121c27)';
-const OUTLINE = 'var(--cat-outline, #a9c4d6)';
-const WHITE = '#eef6fa';
-const poses = {
-  top: { tilt: -2, gazeX: 2, gazeY: -1, tail: 'right' },
-  bottom: { tilt: 2, gazeX: -2, gazeY: 1, tail: 'left' },
-  left: { tilt: -3, gazeX: 3, gazeY: 0, tail: 'left' },
-  right: { tilt: 3, gazeX: -3, gazeY: 0, tail: 'right' },
+// The user's supplied artwork is kept byte-for-byte. SVG silhouettes reveal only
+// the cat pixels; the sample cards and their horizontal/vertical lines are masked.
+const SOURCE = new URL('./assets/cat/reference.jpg', import.meta.url).href;
+let spriteId = 0;
+const artwork = {
+  front: { box: [99, 88, 235, 164.5], paths: [
+    'M132 205C132 190 139 177 145 164C146 145 151 116 157 105Q161 101 167 110L187 141Q201 134 218 137L238 141L271 108Q278 101 282 108C289 127 290 151 289 167Q302 185 304 205L304 228L127 228Z',
+    'M105 220C104 207 119 199 132 201C149 201 159 213 157 224C155 232 149 238 142 233C137 243 128 240 124 234C115 240 108 231 105 225Z',
+    'M273 220C273 207 288 201 302 202C318 203 331 214 330 224C329 235 321 240 314 235C309 245 300 243 296 236C286 241 276 234 273 226Z'
+  ], lines: ['M105 169L146 182M99 190L141 195M107 210L139 203M285 185L329 174M290 195L332 194M289 203L326 209M122 131L133 163M296 102L297 160M313 128L307 169'] },
+  paired: { box: [959, 16.8, 222, 155.4], paths: [
+    'M986 135C985 117 999 108 1008 98C1013 80 1018 58 1025 51Q1029 47 1034 56L1049 81Q1068 75 1089 81L1108 58Q1118 47 1122 53C1130 65 1130 88 1131 102Q1145 114 1145 136L1145 149L985 149Z',
+    'M970 146C970 134 982 130 992 130C1004 129 1017 138 1017 148C1017 157 1011 162 1005 157C1000 164 994 164 990 158C981 163 973 158 970 152Z',
+    'M1121 146C1121 134 1132 129 1143 130C1155 130 1167 139 1167 148C1167 158 1161 162 1155 158C1151 165 1145 164 1141 158C1132 163 1124 158 1121 152Z'
+  ], lines: ['M982 101L1013 112M976 119L1009 123M1126 113L1164 106M1131 124L1165 123M1136 134L1163 139M1137 50L1139 96M1150 71L1146 99'] },
+  right: { box: [658, 69, 170, 263], paths: [
+    'M671 329L671 159C675 137 682 116 689 106Q693 102 698 112L711 143Q727 141 743 146L770 120Q778 114 781 121C786 137 788 155 785 169Q799 187 788 215C779 231 758 239 739 242C731 275 705 312 671 329Z',
+    'M674 217C664 217 658 226 664 233C655 238 658 247 665 250C657 257 664 265 674 266C685 265 694 252 694 240C693 229 687 219 678 217Z'
+  ], lines: ['M784 182L818 171M789 192L823 189M790 201L823 210M786 210L817 229M777 221L805 243M686 70Q691 84 683 104M707 89L698 109M798 147L796 166M807 150L802 168'] },
+  left: { box: [39, 479, 160, 250], paths: [
+    'M185 727C155 715 142 685 134 655C131 643 129 638 124 635C100 635 82 620 78 602C72 585 78 569 82 559L86 521Q88 511 94 517L119 539Q137 533 154 537L174 502Q179 493 184 501L185 610Z',
+    'M184 608C174 608 165 617 167 630C165 645 175 657 185 657C195 656 199 649 192 643C201 638 199 629 192 626C199 620 194 612 187 609Z'
+  ], lines: ['M47 587L89 596M42 602L87 607M43 620L88 615M49 638L92 624M60 650L99 629M154 485Q161 500 155 513M165 491L161 510M67 552L74 573M77 542L79 564'] },
+  rear: { box: [1002, 229, 134, 164], paths: [
+    'M1018 244C1007 243 1008 257 1018 267C1029 282 1044 287 1055 286C1067 299 1050 316 1040 335C1027 358 1037 382 1060 389C1082 396 1107 378 1107 361C1107 346 1093 342 1085 349C1080 355 1085 362 1080 365C1071 369 1065 356 1071 345C1081 327 1094 311 1088 285C1104 282 1118 269 1124 254L1115 243Z',
+    'M1004 250C1002 244 1005 240 1009 239C1007 233 1013 230 1016 235C1020 229 1026 232 1026 237C1032 237 1034 243 1030 246C1038 253 1032 262 1025 262C1017 264 1007 258 1004 253Z',
+    'M1101 247C1101 241 1105 236 1109 237C1110 231 1116 229 1119 235C1126 232 1130 238 1127 242C1134 243 1134 249 1130 252C1130 260 1121 265 1114 262C1105 262 1099 255 1101 247Z'
+  ], lines: [] },
+  tailLeft: { box: [468, 200, 94, 128], paths: [
+    'M561 324C534 317 516 299 510 281C505 269 507 251 500 241Q496 234 495 242C493 252 481 252 475 247C467 238 471 222 481 212C492 200 507 204 518 217C532 234 533 249 534 268C536 283 547 290 561 293Z'
+  ], lines: [] },
+  tailRight: { box: [271, 596, 89, 136], paths: [
+    'M272 696C284 690 289 668 295 647C300 624 316 604 335 601C352 598 362 614 356 630C353 642 343 650 337 647C331 644 337 634 332 634C323 634 323 650 319 668C314 694 297 716 272 729Z'
+  ], lines: [] },
+  lounge: { box: [461, 520, 366, 165], paths: [
+    'M487 652C487 638 495 625 501 614C502 594 505 571 510 557Q513 552 519 560L538 587Q552 582 567 586L601 557Q607 552 611 558C620 573 621 589 620 601C648 586 687 585 713 597C740 611 752 633 753 668L489 668Z',
+    'M747 645C760 631 766 609 764 588C761 562 771 537 788 528C806 518 823 530 823 547C825 563 815 570 807 567C799 563 804 554 798 556C787 565 792 584 790 601C788 632 774 658 752 670Z',
+    'M466 662C466 651 480 645 491 646C505 645 516 654 516 664C516 674 509 678 504 673C498 682 491 680 488 675C480 680 470 676 466 668Z',
+    'M600 663C600 652 612 645 625 646C638 646 651 654 652 664C653 674 645 681 638 676C633 685 626 682 623 676C614 682 604 675 600 670Z'
+  ], lines: ['M470 617L505 629M463 632L501 638M618 631L660 615M623 641L662 633M626 648L658 648M624 574L628 595M636 577L632 598'] },
+  glide: { box: [985, 426, 182, 384], paths: [
+    'M1040 554L1037 515C1030 510 1021 500 1025 494C1027 490 1034 492 1037 495C1032 485 1033 476 1038 474C1044 469 1049 479 1050 483C1052 471 1058 467 1062 473C1066 478 1062 488 1062 491C1069 485 1075 490 1072 497C1070 502 1066 507 1062 511L1065 549L1089 550L1092 512C1088 506 1082 501 1082 495C1082 489 1089 487 1093 492C1089 483 1092 473 1097 473C1103 471 1106 481 1106 485C1107 475 1112 470 1117 475C1121 480 1119 487 1118 491C1126 485 1132 488 1133 494C1134 501 1125 509 1120 512L1116 558L1129 568C1139 588 1132 604 1128 615L1131 630L1118 623L1119 653C1126 653 1128 643 1135 637C1141 630 1149 632 1149 641C1154 634 1161 637 1162 643C1162 649 1154 655 1150 658C1159 656 1164 661 1158 669L1146 675C1134 695 1119 709 1099 719C1091 738 1065 743 1054 758C1045 771 1051 788 1068 787C1085 787 1094 773 1087 764C1080 756 1084 744 1092 740C1110 731 1123 749 1119 768C1114 791 1091 809 1069 808C1045 807 1024 793 1017 773C1008 748 1034 730 1051 722C1027 709 1010 690 1003 672C995 669 987 660 991 654C995 648 1001 653 1003 655C998 645 1000 634 1006 634C1012 634 1015 642 1016 646C1019 638 1025 634 1029 641C1031 648 1025 656 1026 658L1030 632L1014 624L1016 607C1008 593 1010 579 1019 567Z'
+  ], lines: ['M1037 429L1038 465M1055 432L1054 467M1075 431L1075 465M1099 430L1099 465M1115 430L1114 466M990 552L1021 564M993 569L1018 575M1128 568L1157 552M1130 580L1164 572M1131 591L1161 593M1001 594L1000 622M990 602L992 630M1146 599L1147 625M1155 603L1156 632'] }
 };
 
-const HEAD = 'M30 44C27 30 29 14 35 7C39 2 45 5 54 14L68 28Q80 25 92 28L107 13C115 5 122 2 126 8C132 19 132 32 130 45C138 54 141 66 137 79C133 96 112 105 80 105C48 105 28 97 23 81C19 66 22 53 30 44Z';
-// The open chin joins the full-body pose without drawing a seam across its neck.
-const JOINED_HEAD_EDGE = 'M62 104C43 102 28 97 23 81C19 66 22 53 30 44C27 30 29 14 35 7C39 2 45 5 54 14L68 28Q80 25 92 28L107 13C115 5 122 2 126 8C132 19 132 32 130 45C138 54 141 66 137 79C133 96 115 103 98 104';
-
-function poseFor(side) {
-  return poses[side] || poses.top;
+function cropped(name, width, height) {
+  const item = artwork[name];
+  const id = `cat-reference-${++spriteId}`;
+  const mask = item.paths.map(d => `<path d="${d}"/>`).join('') + item.lines.map(d => `<path d="${d}" fill="none" stroke="black" stroke-width="4" stroke-linecap="round"/>`).join('');
+  return `<svg width="${width}" height="${height}" viewBox="${item.box.join(' ')}" overflow="visible"><defs><clipPath id="${id}">${mask}</clipPath></defs><image href="${SOURCE}" width="1280" height="853" clip-path="url(#${id})"/></svg>`;
 }
-
-function svg(kind, viewBox, content) {
-  return `<svg class="scroll-cat__drawing scroll-cat__drawing--${kind}" viewBox="${viewBox}" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><g stroke-linecap="round" stroke-linejoin="round">${content}</g></svg>`;
+function wrap(kind, width, height, content) {
+  return `<svg class="scroll-cat__drawing scroll-cat__drawing--${kind}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">${content}</svg>`;
 }
-
-function shape(d, width = 1.6) {
-  return `<path d="${d}" fill="${FUR}" stroke="${OUTLINE}" stroke-opacity=".64" stroke-width="${width}"/>`;
+export function catDrawingMetrics(side, pose, part = 'head') {
+  if (part === 'tail') {
+    if (side === 'right') return { scale: .60, ratio: 94 / 128, overlap: 3 / 94, bleed: 0 };
+    if (side === 'left') return { scale: .60, ratio: 89 / 136, overlap: 3 / 89, bleed: 0 };
+    return { scale: .72, ratio: 164 / 134, overlap: 0, bleed: 0 };
+  }
+  if (pose === 'lounge') return { scale: 1.85, ratio: 165 / 366, overlap: 15 / 165, bleed: 11 / 165 };
+  if (side === 'right') return { scale: 1.18, ratio: 170 / 263, overlap: 12 / 170, bleed: 13 / 170 };
+  if (side === 'left') return { scale: 1.18, ratio: 160 / 250, overlap: 13 / 160, bleed: 13 / 160 };
+  return { scale: 1, ratio: 112 / 160, overlap: 16 / 112, bleed: 10 / 112 };
 }
-
-function line(d, width = 1.5, opacity = .6) {
-  return `<path d="${d}" fill="none" stroke="${OUTLINE}" stroke-opacity="${opacity}" stroke-width="${width}"/>`;
-}
-
-function head({ tilt = 0, gazeX = 0, gazeY = 0, joined = false } = {}) {
-  return `<g transform="rotate(${tilt} 80 74)">
-    <path d="${HEAD}" fill="${FUR}"/>
-    ${line(joined ? JOINED_HEAD_EDGE : HEAD, 1.6, .64)}
-    <path d="M38 29C38 23 39 18 41 15Q48 20 55 29M105 29Q112 20 119 15C122 20 123 25 122 30" stroke="${WHITE}" stroke-opacity=".84" stroke-width="3.6"/>
-    <g fill="${WHITE}">
-      <ellipse cx="58" cy="63" rx="18.5" ry="22.5" transform="rotate(-7 58 63)"/>
-      <ellipse cx="102" cy="63" rx="18.5" ry="22.5" transform="rotate(7 102 63)"/>
-    </g>
-    <g fill="${FUR}">
-      <ellipse cx="${62 + gazeX}" cy="${65 + gazeY}" rx="6.8" ry="10.2"/>
-      <ellipse cx="${98 + gazeX}" cy="${65 + gazeY}" rx="6.8" ry="10.2"/>
-    </g>
-    <g fill="${WHITE}">
-      <ellipse cx="${64 + gazeX}" cy="${61 + gazeY}" rx="1.9" ry="2.9"/>
-      <ellipse cx="${100 + gazeX}" cy="${61 + gazeY}" rx="1.9" ry="2.9"/>
-      <path d="M75 80C76 77 84 77 85 80C87 83 83 87 80 87C77 87 73 83 75 80Z"/>
-    </g>
-    ${line('M80 87v3m0 0c-3 3-6 3-8 0m8 0c3 3 6 3 8 0', 1.3, .57)}
-    ${line('m27 72-14-3m14 12-15 2m121-11 14-3m-14 12 15 2', 2, .61)}
-  </g>`;
-}
-
-function frontPaws() {
-  const paw = `${shape('M34 88C34 84 40 81 47 82C54 81 60 84 61 88L62 90C63 94 59 96 55 96Q52 96 51 93Q49 96 45 96Q41 96 40 93C39 95 37 96 35 96C31 96 30 92 33 88Z')}${line('m41 89 1 4m9-4 1 4', 1.2, .34)}`;
-  return `<g>${paw}</g><g transform="translate(160 0) scale(-1 1)">${paw}</g>`;
-}
-
-function backPaw(x, tilt) {
-  return `<g transform="translate(${x} 16) rotate(${tilt})">
-    <ellipse rx="11" ry="15" fill="${FUR}" stroke="${OUTLINE}" stroke-opacity=".64" stroke-width="1.6"/>
-    <g fill="${WHITE}"><ellipse cy="4" rx="4.5" ry="5.4"/><ellipse cx="-5.5" cy="-5.8" rx="2.5" ry="3"/><ellipse cy="-9" rx="2.5" ry="3"/><ellipse cx="5.5" cy="-5.8" rx="2.5" ry="3"/></g>
-  </g>`;
-}
-
 export function catHeadDrawing(side = 'top', variant = 'paired') {
-  const pose = poseFor(side);
-  const peek = variant === 'peek';
-  const facing = pose.tilt < 0 ? -1 : 1;
-  return svg('head', '0 0 160 112', `${head({ ...pose, tilt: pose.tilt + (peek ? facing * 3 : 0), gazeX: pose.gazeX + (peek ? facing : 0) })}${frontPaws()}`);
+  if (side === 'right') return wrap('head',263,170,`<g transform="translate(0 170) rotate(-90)">${cropped('right',170,263)}</g>`);
+  if (side === 'left') return wrap('head',250,160,`<g transform="translate(250 0) rotate(90)">${cropped('left',160,250)}</g>`);
+  // Bottom uses the exact same third-panel artwork; placement rotates it 180deg.
+  return wrap('head',160,112,cropped(side === 'bottom' || variant === 'paired' ? 'paired' : 'front',160,112));
 }
-
 export function catTailDrawing(side = 'top') {
-  const mirror = poseFor(side).tail === 'left';
-  const tail = shape('M74 34C80 55 49 63 47 85C45 104 60 122 76 120C90 119 96 106 87 100C83 97 78 99 79 104C82 112 72 115 66 108C53 94 85 80 88 60C90 48 87 39 85 34Z');
-  return svg('tail', '0 0 140 128', `<g${mirror ? ' transform="translate(140 0) scale(-1 1)"' : ''}>${tail}</g>${shape('M26-12C25 4 28 20 39 31C48 42 59 43 70 37C80 43 94 42 104 32C116 20 117 4 114-12Z')}${backPaw(28, -30)}${backPaw(112, 30)}`);
+  if (side === 'right') return wrap('tail',128,94,`<g transform="translate(0 94) rotate(-90)">${cropped('tailLeft',94,128)}</g>`);
+  if (side === 'left') return wrap('tail',136,89,`<g transform="translate(136 0) rotate(90)">${cropped('tailRight',89,136)}</g>`);
+  return wrap('tail',134,164,cropped('rear',134,164));
 }
-
-export function catSlidingDrawing() {
-  const tail = shape('M78 232C80 252 53 254 47 270C40 289 65 300 89 295C112 290 127 275 120 262C116 254 107 255 105 261C102 268 112 271 109 277C102 291 68 293 60 282C51 269 92 267 95 243L95 233Z');
-  // Forelegs, body and loose hind paws share one contour; only the head overlaps.
-  const body = shape('M53 94C47 78 43 63 44 48L43 32C38 29 36 22 40 19C38 11 45 9 48 14C52 9 58 11 58 17C64 16 67 22 62 27L65 46C67 62 72 72 80 82C88 72 94 62 96 46L97 27C92 22 95 16 101 17C101 10 107 9 111 14C116 9 123 11 121 19C125 22 123 29 118 32L117 48C118 65 112 81 107 95C104 105 107 123 113 143C119 161 117 180 112 196C115 197 120 192 122 184C121 177 126 174 130 178C134 174 139 177 138 183C144 182 146 188 141 192C136 210 129 224 116 231C108 242 95 248 80 248C64 248 52 242 44 231C31 224 24 210 19 192C14 188 16 182 22 183C21 177 26 174 30 178C34 174 39 177 38 184C40 192 45 197 48 196C43 180 41 162 47 143C53 123 56 105 53 94Z');
-  return svg('sliding', '0 0 160 300', `${tail}${body}${line('m48 24 2 7m8-8 1 6m44-6-1 6m10-5-2 7m-82 153 3 5m102-5-3 5', 1.15, .34)}<g transform="translate(10 42) scale(.875)">${head({ tilt: -2, gazeX: 0, gazeY: -4, joined: true })}</g>`);
-}
-
-export function catLoungeDrawing(side = 'top') {
-  const pose = poseFor(side);
-  const tail = shape('M205 65C220 58 225 45 223 30C221 17 226 7 236 6C247 4 255 12 254 21C253 31 243 36 236 30C232 27 234 22 238 24C244 28 250 22 246 17C239 9 232 18 236 31C241 47 234 66 220 77Z');
-  const legs = `${shape('M91 69C90 82 99 94 98 109C98 115 101 122 96 125C90 128 85 124 86 116L79 83L78 70Z')}${shape('M188 69C190 82 184 89 186 102C188 110 190 118 184 121C179 124 173 120 174 113L169 85L173 70Z')}`;
-  const body = shape('M79 58C103 45 135 39 165 44C190 45 210 49 220 64C227 75 216 83 199 81L96 80C82 80 74 69 79 58Z');
-  return svg('lounge', '0 0 260 130', `${tail}${legs}${body}${line('m91 118 1 6m87-11 1 6', 1.15, .34)}<g transform="translate(0 7) scale(.68)">${head({ ...pose, tilt: pose.tilt / 2 })}</g>`);
-}
+export function catSlidingDrawing() { return wrap('sliding',182,384,cropped('glide',182,384)); }
+export function catLoungeDrawing() { return wrap('lounge',366,165,cropped('lounge',366,165)); }

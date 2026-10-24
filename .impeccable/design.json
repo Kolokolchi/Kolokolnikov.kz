@@ -139,7 +139,7 @@
       {
         "name": "cat-placement",
         "value": "top:0deg; bottom:180deg; left:-90deg; right:90deg; random peek/paired poses; lounge on top edges only; occasional 2200ms empty-corridor glide",
-        "purpose": "One graphite character with shared vector face and large white eyes. Head widths 96px desktop, 84px intermediate, 66px mobile. Tilt the face, keep paws fixed. Both peek and paired poses show the tail at the opposite edge of the same anchor on exactly the same axis. Recompute positions and masks from live bounds plus side/fraction during scroll, retreat and layout changes, without rebuilding artwork. Exclude perspective-rotated edges. Same anchor may get different poses. Keep destination and pose fixed during trail fade. No safe candidate keeps the cat hidden."
+        "purpose": "Use the exact six-panel user reference in public/assets/cat/reference.jpg with SVG silhouette masks, preserving original eyes, outlines, paws and whiskers. Panel 3 rotated 180 degrees supplies the upside-down pose. Base widths are 96px desktop, 84px intermediate and 66px mobile, with source-specific aspect ratios. Side peeks and paired poses show the tail at the opposite edge on the same axis. Front paws grip over the edge. Recompute positions and masks from live bounds plus side/fraction during scroll, retreat and layout changes without rebuilding artwork. Exclude perspective-rotated edges. Keep destination and pose fixed during trail fade; hide when no safe candidate exists."
       },
       {
         "name": "cat-motion-policy",

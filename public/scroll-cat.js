@@ -1,4 +1,4 @@
-import { catHeadDrawing, catTailDrawing, catSlidingDrawing, catLoungeDrawing } from './cat-drawings.js';
+import { catHeadDrawing, catTailDrawing, catSlidingDrawing, catLoungeDrawing, catDrawingMetrics } from './cat-drawings.js';
 
 // One character, one destination: the companion and its tracks take turns.
 const MAX_PRINTS = 3;
@@ -8,7 +8,7 @@ const FADE_DURATION = 750;
 const STEP_DISTANCE = 92;
 const FINISH_STEP_DELAY = 120;
 const PRINT_ENTRANCE = 180;
-const TAIL_POSES = new Set(['paired', 'peek']);
+const hasTail = placement => placement.pose === 'paired' || (placement.pose === 'peek' && ['left', 'right'].includes(placement.side));
 // The perspective-rotated client preview has no straight screen-space edge.
 const ANCHOR_SELECTORS = '.project-image-link, .motion-stage, .expertise-list, .reel-button';
 const OBSTACLE_SELECTORS = 'h1, h2, h3, p, a, button, summary, .project-image-link, .motion-stage, .client-preview, .site-header, .site-footer';
@@ -62,10 +62,11 @@ export function initScrollCat() {
   let anchorFrame;
   let destroyed = false;
 
-  function catSize(pose = 'peek') {
-    const width = compactScreen.matches ? 66 : window.innerWidth <= 1480 ? 84 : 96;
-    if (pose === 'lounge') return { width: width * 1.65, height: width * .825 };
-    return { width, height: width * .7 };
+  function catSize(pose = 'peek', side = 'top', part = 'head') {
+    const base = compactScreen.matches ? 66 : window.innerWidth <= 1480 ? 84 : 96;
+    const metrics = catDrawingMetrics(side, pose, part);
+    const width = base * metrics.scale;
+    return { width, height: width * metrics.ratio };
   }
 
   function partBounds(x, y, width, height, side) {
@@ -75,29 +76,21 @@ export function initScrollCat() {
     return { left: x - w / 2, right: x + w / 2, top: y - h / 2, bottom: y + h / 2 };
   }
 
-  function tailSize() {
-    const width = compactScreen.matches ? 52 : window.innerWidth <= 1480 ? 66 : 76;
-    return { width, height: width * 128 / 140 };
-  }
-
-  function headOverlap(pose, height) {
-    return height * (pose === 'lounge' ? .4 : 16 / 112);
-  }
-
   // Recompute both attachment points from the live edge, including resized cards.
   function anchoredCoordinates(placement, rect) {
-    const size = catSize(placement.pose);
-    const tailDimensions = tailSize();
-    const overlap = headOverlap(placement.pose, size.height);
+    const size = catSize(placement.pose, placement.side);
+    const tailDimensions = catSize(placement.pose, placement.side, 'tail');
+    const overlap = catDrawingMetrics(placement.side, placement.pose).overlap * size.height;
+    const tailOverlap = catDrawingMetrics(placement.side, placement.pose, 'tail').overlap * tailDimensions.height;
     const { side, fraction } = placement;
     let x = rect.left + rect.width * fraction;
     let y = rect.top + rect.height * fraction;
     let tailX = x;
     let tailY = y;
-    if (side === 'left') { x = rect.left - size.height / 2 + overlap; tailX = rect.right + tailDimensions.height / 2 - 4; }
-    if (side === 'right') { x = rect.right + size.height / 2 - overlap; tailX = rect.left - tailDimensions.height / 2 + 4; }
-    if (side === 'top') { y = rect.top - size.height / 2 + overlap; tailY = rect.bottom + tailDimensions.height / 2 - 4; }
-    if (side === 'bottom') { y = rect.bottom + size.height / 2 - overlap; tailY = rect.top - tailDimensions.height / 2 + 4; }
+    if (side === 'left') { x = rect.left - size.height / 2 + overlap; tailX = rect.right + tailDimensions.height / 2 - tailOverlap; }
+    if (side === 'right') { x = rect.right + size.height / 2 - overlap; tailX = rect.left - tailDimensions.height / 2 + tailOverlap; }
+    if (side === 'top') { y = rect.top - size.height / 2 + overlap; tailY = rect.bottom + tailDimensions.height / 2 - tailOverlap; }
+    if (side === 'bottom') { y = rect.bottom + size.height / 2 - overlap; tailY = rect.top - tailDimensions.height / 2 + tailOverlap; }
     return { ...placement, x, y, tailX, tailY };
   }
 
@@ -138,7 +131,7 @@ export function initScrollCat() {
     const tilt = Math.abs((placement.tilt || 0) * Math.PI / 180);
     const size = placement.pose === 'glide'
       ? { width: placement.width * Math.cos(tilt) + placement.height * Math.sin(tilt), height: placement.height * Math.cos(tilt) + placement.width * Math.sin(tilt) + 60 }
-      : catSize(placement.pose);
+      : catSize(placement.pose, placement.side);
     return partBounds(placement.x, placement.y, size.width, size.height, placement.pose === 'glide' ? 'top' : placement.side);
   }
 
@@ -154,8 +147,8 @@ export function initScrollCat() {
     const resolved = anchoredCoordinates(placement, rect);
     const bounds = placementBounds(resolved);
     if (!safeBounds(bounds, placement.element)) return null;
-    if (TAIL_POSES.has(resolved.pose)) {
-      const size = tailSize();
+    if (hasTail(resolved)) {
+      const size = catSize(resolved.pose, resolved.side, 'tail');
       if (!safeBounds(partBounds(resolved.tailX, resolved.tailY, size.width, size.height, resolved.side), placement.element)) return null;
     }
     return resolved;
@@ -210,10 +203,11 @@ export function initScrollCat() {
             if (!media && pose !== 'peek') continue;
             // A relaxed body rests on a horizontal ledge; side poses use a grip.
             if (pose === 'lounge' && side !== 'top') continue;
+            if (side === 'bottom' && pose !== 'paired') continue;
             const position = anchoredCoordinates({ side, pose, fraction }, rect);
             const repeated = currentPlacement?.anchor === label && currentPlacement?.pose === pose;
             const score = (media ? 100 : 60) - Math.abs(position.y - viewportHeight * .55) * .035 - (repeated ? 16 : 0) + Math.random() * 24;
-            // Only the face changes angle. Rotating the paws detaches their grip.
+            // Preserve the supplied pose and its paw grip without an added tilt.
             const candidate = { ...position, anchor: label, score, element: anchor, media, tilt: 0 };
             if (resolvePlacement(candidate)) candidates.push(candidate);
           }
@@ -223,7 +217,7 @@ export function initScrollCat() {
     // A single occasional glide uses an empty side corridor, never the content.
     const free = [];
     const width = compactScreen.matches ? 56 : 74;
-    const height = width * 300 / 160;
+    const height = width * 384 / 182;
     const rotatedWidth = width * Math.cos(Math.PI / 30) + height * Math.sin(Math.PI / 30);
     for (const x of [rotatedWidth / 2 + 12, window.innerWidth - rotatedWidth / 2 - 12]) {
       for (const fraction of [.28, .52, .74]) {
@@ -256,6 +250,7 @@ export function initScrollCat() {
     root.dataset.side = placement.side;
     root.dataset.anchor = placement.anchor;
     root.dataset.pose = placement.pose;
+    root.dataset.tail = String(hasTail(placement));
     if (placement.pose === 'glide') {
       slider.innerHTML = catSlidingDrawing();
       slider.style.width = `${placement.width}px`;
@@ -272,12 +267,15 @@ export function initScrollCat() {
       const bounds = partBounds(x, y, size.width, size.height, placement.side);
       const width = bounds.right - bounds.left;
       const height = bounds.bottom - bounds.top;
+      // The supplied paws grip a few pixels over the edge. The image mask keeps
+      // the face/body behind it while exposing only those original paw pixels.
+      const bleed = part === head ? catDrawingMetrics(placement.side, placement.pose).bleed * size.height : 0;
       Object.assign(part.style, { width: `${width}px`, height: `${height}px`, transform: `translate3d(${bounds.left}px, ${bounds.top}px, 0)` });
       const inset = { top: -200, right: -200, bottom: -200, left: -200 };
-      if (edgeSide === 'left') inset.right = width - (rect.left - bounds.left);
-      if (edgeSide === 'right') inset.left = rect.right - bounds.left;
-      if (edgeSide === 'top') inset.bottom = height - (rect.top - bounds.top);
-      if (edgeSide === 'bottom') inset.top = rect.bottom - bounds.top;
+      if (edgeSide === 'left') inset.right = width - (rect.left - bounds.left) - bleed;
+      if (edgeSide === 'right') inset.left = rect.right - bounds.left - bleed;
+      if (edgeSide === 'top') inset.bottom = height - (rect.top - bounds.top) - bleed;
+      if (edgeSide === 'bottom') inset.top = rect.bottom - bounds.top - bleed;
       part.style.clipPath = `inset(${inset.top}px ${inset.right}px ${inset.bottom}px ${inset.left}px)`;
       const orientation = part.querySelector('.scroll-cat__orientation');
       Object.assign(orientation.style, { width: `${size.width}px`, height: `${size.height}px`, transform: `translate(-50%, -50%) rotate(${angle}deg)` });
@@ -285,11 +283,11 @@ export function initScrollCat() {
       if (renderArtwork) artwork.innerHTML = drawing;
       artwork.style.setProperty('--cat-tilt', `${placement.tilt}deg`);
     }
-    const size = catSize(placement.pose);
+    const size = catSize(placement.pose, placement.side);
     placePart(head, placement.x, placement.y, size, placement.side, renderArtwork ? (placement.pose === 'lounge' ? catLoungeDrawing(placement.side) : catHeadDrawing(placement.side, placement.pose)) : '');
-    if (TAIL_POSES.has(placement.pose)) {
+    if (hasTail(placement)) {
       const opposite = { top: 'bottom', bottom: 'top', left: 'right', right: 'left' }[placement.side];
-      placePart(tail, placement.tailX, placement.tailY, tailSize(), opposite, renderArtwork ? catTailDrawing(placement.side) : '');
+      placePart(tail, placement.tailX, placement.tailY, catSize(placement.pose, placement.side, 'tail'), opposite, renderArtwork ? catTailDrawing(placement.side) : '');
     }
     followAnchor();
   }

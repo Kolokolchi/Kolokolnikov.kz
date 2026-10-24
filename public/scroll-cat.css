@@ -7,12 +7,10 @@
   pointer-events: none;
   user-select: none;
   color: #cfdfeb;
-  --cat-fur: #121c27;
-  --cat-outline: #a9c4d6;
   transition: opacity 200ms var(--ease-out, cubic-bezier(.23, 1, .32, 1));
   contain: layout style;
 }
-.scroll-cat__companion { position: absolute; inset: 0; opacity: .92; transition: opacity 200ms var(--ease-out, cubic-bezier(.23, 1, .32, 1)); }
+.scroll-cat__companion { position: absolute; inset: 0; opacity: 1; transition: opacity 200ms var(--ease-out, cubic-bezier(.23, 1, .32, 1)); }
 .scroll-cat__part { position: absolute; top: 0; left: 0; }
 .scroll-cat__orientation { position: absolute; left: 50%; top: 50%; transform-origin: center; }
 .scroll-cat__peek, .scroll-cat__tail-peek {
@@ -24,8 +22,7 @@
 .scroll-cat__tail-peek { transform-origin: 50% 0; }
 .scroll-cat .scroll-cat__drawing { display: block; width: 100%; height: 100%; overflow: visible; }
 .scroll-cat__tail { display: none; }
-.scroll-cat[data-pose="paired"] .scroll-cat__tail,
-.scroll-cat[data-pose="peek"] .scroll-cat__tail { display: block; }
+.scroll-cat[data-tail="true"] .scroll-cat__tail { display: block; }
 .scroll-cat__slider { display: none; position: absolute; }
 .scroll-cat[data-pose="glide"] .scroll-cat__part { display: none; }
 .scroll-cat[data-pose="glide"] .scroll-cat__slider { display: block; }
@@ -52,7 +49,6 @@ body.menu-open .scroll-cat, body:has(dialog[open]) .scroll-cat { opacity: 0; }
   100% { opacity: 0; transform: translate3d(0, 28px, 0) rotate(var(--cat-tilt, 0deg)); }
 }
 @media (max-width: 760px) {
-  .scroll-cat__companion { opacity: .88; }
   .scroll-cat__print { width: 15px; height: 18px; }
 }
 @media (prefers-reduced-motion: reduce) {
