@@ -8,10 +8,17 @@ const FADE_DURATION = 750;
 const STEP_DISTANCE = 92;
 const FINISH_STEP_DELAY = 120;
 const PRINT_ENTRANCE = 180;
+const PRINT_LIFETIME = 900;
 const hasTail = placement => placement.pose === 'paired' || (placement.pose === 'peek' && ['left', 'right'].includes(placement.side));
 // The perspective-rotated client preview has no straight screen-space edge.
 const ANCHOR_SELECTORS = '.project-image-link, .motion-stage, .expertise-list, .reel-button';
 const OBSTACLE_SELECTORS = 'h1, h2, h3, p, a, button, summary, .project-image-link, .motion-stage, .client-preview, .site-header, .site-footer';
+
+function weightedPick(items, weight = () => 1) {
+  const weights = items.map(weight);
+  let roll = Math.random() * weights.reduce((sum, value) => sum + value, 0);
+  return items.find((_, index) => (roll -= weights[index]) < 0) || items.at(-1);
+}
 
 const pawDrawing = `<svg viewBox="0 0 36 42" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
   <g stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
@@ -42,6 +49,7 @@ export function initScrollCat() {
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const compactScreen = window.matchMedia('(max-width: 760px)');
   const prints = [];
+  const appearances = [];
   const controller = new AbortController();
   let hideTimer;
   let idleTimer;
@@ -158,23 +166,26 @@ export function initScrollCat() {
     const compact = compactScreen.matches;
     const stride = compact ? 34 : 46;
     const spread = compact ? 4 : 6;
-    const gap = compact ? 22 : 30;
+    const gap = compact ? 12 : 16;
     const width = compact ? 15 : 21;
     const height = compact ? 18 : 25;
     const heading = { left: 0, right: Math.PI, top: Math.PI / 2, bottom: -Math.PI / 2 }[placement.side];
     const landingX = -Math.cos(heading) * 8;
     const landingY = -Math.sin(heading) * 8;
-    // Narrow gaps can be approached along the edge as well as straight toward it.
-    for (const turn of [0, -.3, .3, -.6, .6, -1, 1, -1.3, 1.3, -Math.PI / 2, Math.PI / 2]) {
-      const angle = heading + turn;
-      const dx = Math.cos(angle);
-      const dy = Math.sin(angle);
-      const route = Array.from({ length: MAX_PRINTS }, (_, index) => {
-        const distance = gap + stride * (MAX_PRINTS - 1 - index);
-        const side = index % 2 ? 1 : -1;
-        return { offsetX: landingX - dx * distance - dy * side * spread, offsetY: landingY - dy * distance + dx * side * spread, angle: angle * 180 / Math.PI + 90 + side * 6, width, height };
-      });
-      if (route.every(point => safeStep(placement, point))) return route;
+    // Try several approaches, then shorten the walk in a narrow free gap.
+    const turns = [0, -.3, .3, -.6, .6, -1, 1, -1.3, 1.3, -Math.PI / 2, Math.PI / 2];
+    for (const length of [MAX_PRINTS, 2, 1]) {
+      for (const turn of turns) {
+        const angle = heading + turn;
+        const dx = Math.cos(angle);
+        const dy = Math.sin(angle);
+        const route = Array.from({ length }, (_, index) => {
+          const distance = gap + stride * (length - 1 - index);
+          const side = index % 2 ? 1 : -1;
+          return { offsetX: landingX - dx * distance - dy * side * spread, offsetY: landingY - dy * distance + dx * side * spread, angle: angle * 180 / Math.PI + 90 + side * 6, width, height };
+        });
+        if (route.every(point => safeStep(placement, point))) return route;
+      }
     }
     return null;
   }
@@ -198,17 +209,16 @@ export function initScrollCat() {
       const media = anchor.matches('.project-image-link, .motion-stage, .client-preview');
       const label = `${anchor.closest('section')?.id || 'hero'}:${anchor.className.split(' ')[0] || 'section'}:${index}`;
       ['left', 'right', 'top', 'bottom'].forEach(side => {
-        [.28, .72].forEach(fraction => {
+        [.15, .29, .43, .57, .71, .85].map(value => value + (Math.random() - .5) * .08).forEach(fraction => {
           for (const pose of ['paired', 'peek', 'lounge']) {
             if (!media && pose !== 'peek') continue;
             // A relaxed body rests on a horizontal ledge; side poses use a grip.
             if (pose === 'lounge' && side !== 'top') continue;
             if (side === 'bottom' && pose !== 'paired') continue;
+            if (['left', 'right'].includes(side) && pose === 'paired') continue;
             const position = anchoredCoordinates({ side, pose, fraction }, rect);
-            const repeated = currentPlacement?.anchor === label && currentPlacement?.pose === pose;
-            const score = (media ? 100 : 60) - Math.abs(position.y - viewportHeight * .55) * .035 - (repeated ? 16 : 0) + Math.random() * 24;
             // Preserve the supplied pose and its paw grip without an added tilt.
-            const candidate = { ...position, anchor: label, score, element: anchor, media, tilt: 0 };
+            const candidate = { ...position, anchor: label, element: anchor, media, tilt: 0 };
             if (resolvePlacement(candidate)) candidates.push(candidate);
           }
         });
@@ -221,22 +231,29 @@ export function initScrollCat() {
     const rotatedWidth = width * Math.cos(Math.PI / 30) + height * Math.sin(Math.PI / 30);
     for (const x of [rotatedWidth / 2 + 12, window.innerWidth - rotatedWidth / 2 - 12]) {
       for (const fraction of [.28, .52, .74]) {
-        const candidate = { x, y: viewportHeight * fraction, width, height, side: 'top', pose: 'glide', anchor: `whitespace:${x}:${fraction}`, score: 20, tilt: x < window.innerWidth / 2 ? -6 : 6 };
+        const candidate = { x, y: viewportHeight * fraction, width, height, side: 'top', pose: 'glide', anchor: `whitespace:${x}:${fraction}`, tilt: x < window.innerWidth / 2 ? -6 : 6 };
         if (resolvePlacement(candidate)) free.push(candidate);
       }
     }
-    if (free.length && (!candidates.length || Math.random() < .16)) candidates.push({ ...free[Math.floor(Math.random() * free.length)], score: 140 });
-    candidates.sort((a, b) => b.score - a.score);
-    if (candidates.length) {
-      const preferred = candidates[0].pose === 'glide' ? 0 : Math.floor(Math.random() * Math.min(6, candidates.length));
-      if (!withApproach) return candidates[preferred];
-      const ordered = [candidates[preferred], ...candidates.filter((_, index) => index !== preferred)];
-      for (const candidate of ordered) {
-        const route = approachTo(candidate);
-        if (route) return { ...candidate, route };
-      }
-    }
-    return null;
+    const eligible = items => withApproach
+      ? items.map(candidate => ({ ...candidate, route: approachTo(candidate) })).filter(candidate => candidate.route)
+      : items;
+    const anchored = eligible(candidates);
+    const glides = eligible(free);
+    if (glides.length && (!anchored.length || (appearances.at(-1)?.pose !== 'glide' && Math.random() < .18))) return weightedPick(glides);
+    if (!anchored.length) return null;
+    // Choose the element first so a card with more valid poses cannot dominate.
+    const anchors = [...new Set(anchored.map(candidate => candidate.anchor))];
+    const anchor = weightedPick(anchors, label => {
+      const count = appearances.filter(previous => previous.anchor === label).length;
+      return (appearances.at(-1)?.anchor === label ? .25 : 1) / (1 + count);
+    });
+    return weightedPick(anchored.filter(candidate => candidate.anchor === anchor), candidate => {
+      const count = appearances.filter(previous => previous.anchor === anchor && previous.side === candidate.side && previous.pose === candidate.pose).length;
+      const last = appearances.at(-1);
+      const nearby = last?.anchor === anchor && last.side === candidate.side && Math.abs(last.fraction - candidate.fraction) < .2;
+      return (nearby ? .2 : 1) / (1 + count * 3);
+    });
   }
 
   function parkCat(placement, renderArtwork = true) {
@@ -251,6 +268,10 @@ export function initScrollCat() {
     root.dataset.anchor = placement.anchor;
     root.dataset.pose = placement.pose;
     root.dataset.tail = String(hasTail(placement));
+    if (renderArtwork) {
+      appearances.push({ anchor: placement.anchor, side: placement.side, pose: placement.pose, fraction: placement.fraction });
+      if (appearances.length > 8) appearances.shift();
+    }
     if (placement.pose === 'glide') {
       slider.innerHTML = catSlidingDrawing();
       slider.style.width = `${placement.width}px`;
@@ -312,6 +333,25 @@ export function initScrollCat() {
     });
   }
 
+  function removePrint(print) {
+    window.clearTimeout(print.fadeTimer);
+    window.clearTimeout(print.removeTimer);
+    print.element.remove();
+    const index = prints.indexOf(print);
+    if (index !== -1) prints.splice(index, 1);
+  }
+
+  function clearPrints() {
+    [...prints].forEach(removePrint);
+  }
+
+  function fadePrint(print) {
+    if (print.element.classList.contains('is-fading')) return;
+    window.clearTimeout(print.fadeTimer);
+    print.element.classList.add('is-fading');
+    print.removeTimer = window.setTimeout(() => removePrint(print), FADE_DURATION);
+  }
+
   function clearTrail() {
     cancelAnimationFrame(anchorFrame);
     anchorFrame = null;
@@ -322,7 +362,7 @@ export function initScrollCat() {
     activityVersion++;
     scrolling = false;
     catHidden = false;
-    prints.splice(0).forEach(print => print.element.remove());
+    clearPrints();
     companion.style.visibility = '';
     root.dataset.state = 'idle';
     accumulatedDistance = 0;
@@ -331,6 +371,8 @@ export function initScrollCat() {
     journeyStep = 0;
     plannedPlacement = null;
     delete root.dataset.destination;
+    delete root.dataset.destinationX;
+    delete root.dataset.destinationY;
     lastY = window.scrollY;
     collectObstacles();
     parkCat(choosePlacement());
@@ -339,11 +381,23 @@ export function initScrollCat() {
   function revealCat(version) {
     if (version !== activityVersion || scrolling) return;
     // Removing every print first makes the visible states mutually exclusive.
-    prints.splice(0).forEach(print => print.element.remove());
+    clearPrints();
     collectObstacles();
     // Reveal at the same element the final steps approach; never roll a new target.
-    parkCat(resolvePlacement(plannedPlacement));
+    const destination = resolvePlacement(plannedPlacement);
+    if (!destination && plannedPlacement) {
+      // A layout change during the fade needs its own visible final approach.
+      planJourney();
+      if (plannedPlacement) {
+        finishJourney(version);
+        return;
+      }
+    }
+    parkCat(destination);
     plannedPlacement = null;
+    delete root.dataset.destination;
+    delete root.dataset.destinationX;
+    delete root.dataset.destinationY;
     finishingJourney = false;
     catHidden = false;
     companion.style.visibility = currentPlacement ? '' : 'hidden';
@@ -356,26 +410,50 @@ export function initScrollCat() {
     accumulatedDistance = 0;
     const version = activityVersion;
     finishingJourney = true;
+    collectObstacles();
+    // Commit a reachable final destination after the viewport has stopped.
+    // An exhausted or faded preview is walked again instead of becoming stuck.
+    const resolved = resolvePlacement(plannedPlacement);
+    const route = resolved && approachTo(resolved);
+    const fresh = prints.some(print => !print.element.classList.contains('is-fading'));
+    if (!route) planJourney();
+    else if (!fresh || journeyStep >= plannedPlacement.route.length) {
+      clearPrints();
+      journeyStep = 0;
+      plannedPlacement = { ...resolved, route };
+    }
+    companion.style.visibility = 'hidden';
+    catHidden = true;
     finishJourney(version);
   }
 
   function positionPrint(print) {
     const x = plannedPlacement.x + print.point.offsetX - print.point.width / 2;
     const y = plannedPlacement.y + print.point.offsetY - print.point.height / 2;
+    print.element.dataset.x = String(x + print.point.width / 2);
+    print.element.dataset.y = String(y + print.point.height / 2);
     print.element.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${print.point.angle}deg)`;
   }
 
   function resetJourney() {
-    prints.splice(0).forEach(print => print.element.remove());
+    clearPrints();
     plannedPlacement = null;
     journeyStep = 0;
     delete root.dataset.destination;
+    delete root.dataset.destinationX;
+    delete root.dataset.destinationY;
   }
 
   function planJourney() {
     resetJourney();
     plannedPlacement = choosePlacement(true);
-    if (plannedPlacement) root.dataset.destination = plannedPlacement.anchor;
+    if (plannedPlacement) describeDestination();
+  }
+
+  function describeDestination() {
+    root.dataset.destination = plannedPlacement.anchor;
+    root.dataset.destinationX = String(plannedPlacement.x);
+    root.dataset.destinationY = String(plannedPlacement.y);
   }
 
   function syncJourney() {
@@ -385,6 +463,7 @@ export function initScrollCat() {
       return false;
     }
     plannedPlacement = resolved;
+    describeDestination();
     prints.forEach(positionPrint);
     return true;
   }
@@ -402,16 +481,16 @@ export function initScrollCat() {
     trail.append(element);
     positionPrint(print);
     prints.forEach((item, index) => { item.element.dataset.age = String(prints.length - 1 - index); });
+    print.fadeTimer = window.setTimeout(() => fadePrint(print), PRINT_LIFETIME);
+    while (prints.length > MAX_PRINTS) removePrint(prints[0]);
     return true;
   }
 
   function finishJourney(version) {
     if (version !== activityVersion || scrolling) return;
     collectObstacles();
-    if (!syncJourney()) {
-      revealCat(version);
-      return;
-    }
+    if (!syncJourney()) planJourney();
+    if (!plannedPlacement) { revealCat(version); return; }
     if (journeyStep < plannedPlacement.route.length) {
       root.dataset.state = 'walking';
       leavePrint();
@@ -421,7 +500,7 @@ export function initScrollCat() {
     }
     finishingJourney = false;
     root.dataset.state = 'settling';
-    prints.forEach(print => print.element.classList.add('is-fading'));
+    prints.forEach(fadePrint);
     returnTimer = window.setTimeout(() => revealCat(version), FADE_DURATION);
   }
 

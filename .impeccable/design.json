@@ -134,7 +134,7 @@
       {
         "name": "cat-print",
         "value": "180ms entrance; 92px scroll distance per step; maximum 3 prints; 46px desktop / 34px mobile stride with alternating 6px / 4px lateral offset",
-        "purpose": "Three steps approach one safely anchored destination, which is shared with the cat reveal. The element edge clips the cat silhouette so the cat appears behind it. Suppress the route if its destination becomes unsafe."
+        "purpose": "Up to three steps approach one safely anchored destination shared with the cat reveal. Every print starts a 750ms fade after 900ms, independently of scrolling. On idle, replay exhausted previews and replan invalidated destinations before the final approach. Tight gaps may use two or one step. The element edge clips the cat silhouette behind it."
       },
       {
         "name": "cat-placement",
