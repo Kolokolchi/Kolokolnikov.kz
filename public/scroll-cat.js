@@ -1,4 +1,5 @@
 import { catHeadDrawing, catTailDrawing, catSlidingDrawing, catLoungeDrawing, catDrawingMetrics } from './cat-drawings.js';
+import { createCatVoice } from './cat-meow.js';
 
 // One character, one destination: the companion and its tracks take turns.
 const MAX_PRINTS = 3;
@@ -37,8 +38,8 @@ export function initScrollCat() {
   root.className = 'scroll-cat';
   root.dataset.scrollCat = '';
   root.dataset.state = 'idle';
-  root.setAttribute('aria-hidden', 'true');
-  root.innerHTML = `<div class="scroll-cat__trail"></div><div class="scroll-cat__companion"><div class="scroll-cat__part scroll-cat__head"><div class="scroll-cat__orientation"><div class="scroll-cat__peek"></div></div></div><div class="scroll-cat__part scroll-cat__tail"><div class="scroll-cat__orientation"><div class="scroll-cat__tail-peek"></div></div></div><div class="scroll-cat__slider"></div></div>`;
+  const catAction = 'type="button" data-cat-voice aria-label="Погладить котика — услышать мяу" title="Погладить котика" disabled';
+  root.innerHTML = `<div class="scroll-cat__trail" aria-hidden="true"></div><div class="scroll-cat__companion" inert><button class="scroll-cat__part scroll-cat__head" ${catAction}><span class="scroll-cat__orientation"><span class="scroll-cat__peek"></span></span></button><button class="scroll-cat__part scroll-cat__tail" ${catAction} tabindex="-1"><span class="scroll-cat__orientation"><span class="scroll-cat__tail-peek"></span></span></button><button class="scroll-cat__slider" ${catAction}></button></div>`;
   document.body.append(root);
 
   const trail = root.querySelector('.scroll-cat__trail');
@@ -46,6 +47,9 @@ export function initScrollCat() {
   const head = root.querySelector('.scroll-cat__head');
   const tail = root.querySelector('.scroll-cat__tail');
   const slider = root.querySelector('.scroll-cat__slider');
+  const voice = createCatVoice();
+  root.append(voice.audio);
+  const catButtons = [...root.querySelectorAll('[data-cat-voice]')];
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const compactScreen = window.matchMedia('(max-width: 760px)');
   const prints = [];
@@ -69,6 +73,24 @@ export function initScrollCat() {
   let obstacleScrollY = window.scrollY;
   let anchorFrame;
   let destroyed = false;
+  let glideFinished = false;
+
+  function updateCatInteraction() {
+    const active = Boolean(currentPlacement) && root.dataset.state === 'idle' && !glideFinished && !document.hidden && !isObscured();
+    companion.inert = !active;
+    catButtons.forEach(button => { button.disabled = !active; });
+  }
+
+  catButtons.forEach(button => button.addEventListener('click', event => {
+    if (button.disabled || isObscured()) return;
+    event.stopPropagation();
+    voice.play();
+  }, { signal: controller.signal }));
+  slider.addEventListener('animationend', event => {
+    if (event.animationName !== 'scroll-cat-glide') return;
+    glideFinished = true;
+    updateCatInteraction();
+  }, { signal: controller.signal });
 
   function catSize(pose = 'peek', side = 'top', part = 'head') {
     const base = compactScreen.matches ? 66 : window.innerWidth <= 1480 ? 84 : 96;
@@ -258,6 +280,8 @@ export function initScrollCat() {
 
   function parkCat(placement, renderArtwork = true) {
     currentPlacement = placement;
+    if (renderArtwork) glideFinished = false;
+    updateCatInteraction();
     if (!placement) {
       companion.style.visibility = 'hidden';
       delete root.dataset.side;
@@ -365,6 +389,7 @@ export function initScrollCat() {
     clearPrints();
     companion.style.visibility = '';
     root.dataset.state = 'idle';
+    voice.stop();
     accumulatedDistance = 0;
     previousDirection = 0;
     finishingJourney = false;
@@ -402,6 +427,7 @@ export function initScrollCat() {
     catHidden = false;
     companion.style.visibility = currentPlacement ? '' : 'hidden';
     root.dataset.state = 'idle';
+    updateCatInteraction();
     followAnchor();
   }
 
@@ -506,6 +532,7 @@ export function initScrollCat() {
 
   function hideCat() {
     root.dataset.state = 'hiding';
+    updateCatInteraction();
     collectObstacles();
     planJourney();
     hideTimer = window.setTimeout(() => {
@@ -581,6 +608,7 @@ export function initScrollCat() {
   const menuObserver = new MutationObserver(records => {
     const overlayChanged = records.some(record => record.attributeName === 'open' || record.target === document.body);
     if (overlayChanged && isObscured()) clearTrail();
+    else if (overlayChanged) updateCatInteraction();
   });
   menuObserver.observe(document.body, { attributes: true, attributeFilter: ['class', 'open'], subtree: true });
 
@@ -593,6 +621,7 @@ export function initScrollCat() {
     destroyed = true;
     clearTrail();
     controller.abort();
+    voice.destroy();
     menuObserver.disconnect();
     root.remove();
   }

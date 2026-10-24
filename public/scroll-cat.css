@@ -11,10 +11,22 @@
   contain: layout style;
 }
 .scroll-cat__companion { position: absolute; inset: 0; opacity: 1; transition: opacity 200ms var(--ease-out, cubic-bezier(.23, 1, .32, 1)); }
+.scroll-cat [data-cat-voice] {
+  appearance: none; margin: 0; padding: 0; border: 0; border-radius: 0;
+  background: none; color: inherit; line-height: 1; text-align: inherit;
+  pointer-events: none;
+}
+/* Only the clipped cat pixels catch taps; surrounding links remain reachable. */
+.scroll-cat[data-state="idle"] [data-cat-voice]:not(:disabled) .scroll-cat__drawing image {
+  pointer-events: visiblePainted; cursor: pointer;
+}
+.scroll-cat [data-cat-voice]:focus-visible { outline: none; }
+.scroll-cat [data-cat-voice]:focus-visible .scroll-cat__drawing { filter: drop-shadow(0 0 3px #a9d2ec); }
+.scroll-cat__audio { display: none; }
 .scroll-cat__part { position: absolute; top: 0; left: 0; }
 .scroll-cat__orientation { position: absolute; left: 50%; top: 50%; transform-origin: center; }
 .scroll-cat__peek, .scroll-cat__tail-peek {
-  width: 100%; height: 100%;
+  display: block; width: 100%; height: 100%;
   transform: translateY(0) rotate(var(--cat-tilt, 0deg));
   transform-origin: 50% 86%;
   transition: transform 200ms var(--ease-out, cubic-bezier(.23, 1, .32, 1));
@@ -27,6 +39,10 @@
 .scroll-cat[data-pose="glide"] .scroll-cat__part { display: none; }
 .scroll-cat[data-pose="glide"] .scroll-cat__slider { display: block; }
 .scroll-cat[data-pose="glide"][data-state="idle"] .scroll-cat__slider { animation: scroll-cat-glide 2200ms linear both; }
+.scroll-cat__slider:focus-visible { animation-play-state: paused !important; }
+@media (hover: hover) and (pointer: fine) {
+  .scroll-cat__slider:has(image:hover) { animation-play-state: paused !important; }
+}
 .scroll-cat:not([data-state="idle"]) .scroll-cat__companion { opacity: 0; transition-duration: 120ms; }
 .scroll-cat:not([data-state="idle"]) .scroll-cat__peek { transform: translateY(90%) rotate(var(--cat-tilt, 0deg)); transition-duration: 120ms; }
 .scroll-cat:not([data-state="idle"]) .scroll-cat__tail-peek { transform: translateY(-90%) rotate(var(--cat-tilt, 0deg)); transition-duration: 120ms; }
