@@ -55,15 +55,6 @@ export const projects = [
     gallery:[{src:'assets/projects/patrol.jpg',caption:'Локальный прототип, офлайн-режим. Показатели на экране не являются измерениями подключённого автомобиля.'}]
   },
   {
-    id:'aral', name:'ARAL DUNE', category:'presentation', type:'Веб-презентация', status:'Опубликован',
-    summary:'Интерактивная презентация фестиваля автотуризма в Аралкуме.',
-    description:'Веб-презентация концепции фестиваля DRIVE FORUM GREAT ORDA — ARAL DUNE. Формат объединяет программу, интерактивную схему трассы, практические материалы и чек-лист для участников.',
-    features:['Презентация формата и программы','Интерактивная схема трассы','Чек-лист подготовки автомобиля','Материалы и документы для участников'],
-    tags:['Презентация','React','Интерактив'], image:'assets/projects/aral.jpg',
-    url:'https://kolokolchi.github.io/aral-dune/', repository:'https://github.com/Kolokolchi/aral-dune',
-    gallery:[{src:'assets/projects/aral.jpg',caption:'Главный экран веб-презентации ARAL DUNE'}]
-  },
-  {
     id:'saf-landing', name:'SAF Avenue — лендинг', category:'website', type:'Сайт недвижимости', status:'Опубликован',
     summary:'Презентационный сайт жилого комплекса на двух языках.',
     description:'Работа с существующим презентационным сайтом SAF Avenue: адаптация и публикация с сохранением исходной композиции, фотографий, анимаций и визуального стиля комплекса.',

@@ -9,7 +9,7 @@
 | SAF Avenue, каталог | https://github.com/Kolokolchi/Sansata | https://kolokolchi.github.io/Sansata/ |
 | Леса-вышки | https://github.com/Kolokolchi/lesa-vyshki | https://kolokolchi.github.io/lesa-vyshki/ |
 | KILL DEZ | https://github.com/Kolokolchi/KillDEZ | https://kolokolchi.github.io/KillDEZ/ |
-| ARAL DUNE | https://github.com/Kolokolchi/aral-dune | https://kolokolchi.github.io/aral-dune/ |
+| ARAL DUNE (снят с портфолио 6.11.2026 по решению владельца) | https://github.com/Kolokolchi/aral-dune | https://kolokolchi.github.io/aral-dune/ |
 | SAF Avenue, лендинг | https://github.com/Kolokolchi/SAF_Landing | https://kolokolchi.github.io/SAF_Landing/ |
 | Dis Cleaning | https://github.com/Kolokolchi/Site_Disinfection | https://kolokolchi.github.io/Site_Disinfection/ |
 
@@ -58,11 +58,11 @@ Ankor: локальный проект `D:\Anti-Gravity\Ankor\ankor-redesign`, R
 
 ## Сборка проектов при прокрутке
 
-`public/assembly-scenes/*.html` содержит девять настоящих композиций из исходных проектов: HTML-текст, кнопки, SVG-логотипы, прозрачные иллюстрации и цельные фотографии. Каждый документ сохраняет собственные стили и оригинальные локальные шрифты. Внутри сцен нет скриптов и ссылок на скриншоты портфолио.
+`public/assembly-scenes/*.html` содержит восемь настоящих композиций (сцена ARAL DUNE удалена вместе с проектом) из исходных проектов: HTML-текст, кнопки, SVG-логотипы, прозрачные иллюстрации и цельные фотографии. Каждый документ сохраняет собственные стили и оригинальные локальные шрифты. Внутри сцен нет скриптов и ссылок на скриншоты портфолио.
 
 `public/project-assembly-data.js` задаёт только размер холста и адрес сцены. `public/project-assembly.js` привязывает движение элементов с `data-assembly-layer` к прокрутке через приостановленные WAAPI-анимации. Цельные фоны остаются неподвижными. Скриншот в родительской странице используется только на время загрузки или при ошибке загрузки сцены; после загрузки он скрыт и не участвует в анимации или её завершении.
 
-Сцены следуют обычному потоку документа с коротким отступом после подписи. Закрепления и дополнительного экранного запаса для скролла нет.
+Сцены стоят в двух колонках, правая сдвинута вниз (80 px, на планшете 50 px, на телефоне одна колонка без сдвига). Сборка начинается, только когда превью целиком в окне (центр не ниже 70% высоты окна, нижний край в 32 px над краем экрана), и завершается за следующие 40% высоты окна, пока превью ещё полностью видно. Закрепления и дополнительного экранного запаса для скролла нет.
 
 Медиа и шрифты скопированы в `public/assets/assembly/{id}/` из исходных проектов:
 
@@ -76,4 +76,48 @@ Ankor: локальный проект `D:\Anti-Gravity\Ankor\ankor-redesign`, R
 | SAF Avenue — лендинг | `D:\Anti-Gravity\SAF_Landing` |
 | SAF Avenue — каталог | `D:\Anti-Gravity\Sansata\src` (ночная панорама `18719179b2f40831.jpeg`) |
 | Patrol Control | `D:\Anti-Gravity\Patrol Control\src` и `public` |
-| ARAL DUNE | `D:\Anti-Gravity\Presentation Aral Dune\src` и `public\assets` |
+
+## Расширенное портфолио (6 ноября 2026)
+
+Новые разделы главной: «Инженерия», «3D и CGI», расширенное «Видео», «Бренды», «Презентации», таймлайн в «Обо мне». Исходники не изменялись: все файлы читались, сжатые копии лежат в `public/assets/work/` и `public/assets/engineering/models/`.
+
+### Как пересобрать
+
+- `python scripts/media/build_media.py [--only id,...] [--force]` — WebP (полный размер + `-sm`), беззвучные H.264-лупы с постерами, страницы PDF. Каждая задача в файле указывает путь к исходнику. Пишет `public/assets/work/manifest.json` и `public/work-media.js`. Инструменты локальные: Pillow, ffmpeg/ffprobe из Shutter Encoder, Ghostscript 10.03.
+- `blender --background --factory-startup --python scripts/media/export_machines.py` — станки ANKOR V05 в GLB (Draco) по `assemblies/*_manifest.json` и STL проекта, по тому же правилу размещения, что `src/render_v05.py` этого проекта. У каждой детали в GLB есть extras: part, group, step, material.
+- `scripts/media/step_to_gltf.py` (окружение CadQuery/OCP из «Матрицы и оборудование») + `scripts/media/compress_glb.py` — универсальный перевод STEP → GLB для будущих моделей. Для экспорта из Fusion (ось Y вверх) нужен поворот −90° по X.
+- `npm run build:hero` — three.js-бандлы (hero, просмотрщик станков, панорама) с общим чанком и локальным декодером Draco.
+
+### Инженерия
+
+- Станки ANKOR V05 (заливка, блистер, матрица): `D:\Anti-Gravity\Матрицы и оборудование\ANKOR_MACHINES_V05`. Габариты и описание взяты из README_RU.md, эволюция блистера (936 мм/104 кг → 876/66 → 624/48 → V05 ≈ 25 кг) — оттуда же. На сайте прямо указано, что станки не собраны и не испытаны.
+- Рендеры: `ANKOR_MACHINES_V05\preview`, `ANKOR_ENGINEERING_V02\preview`, `ANKOR_LAB_V01\preview`, `ANKOR_DOSER_V03\preview`. Ролик цикла: 1440 кадров `ANKOR_ANIMATION_V01\frames`, ускорен вдвое.
+- Экстракторы не публикуются по решению владельца (6 ноября 2026): модель и рендеры экстрактора удалены с сайта и из задач сборки медиа.
+- **Не опубликовано:** ультразвуковая доработка ТОМ-24 (`D:\Anti-Gravity\Ультразвук`) — на её проектной странице записано, что документы остаются локальными. Модели Mini Chiller, Rotary Sieves, Vibrating screen, Peneira — авторство не подтверждено, похоже на модели поставщиков. Название изделия из README станков на сайте не упоминается.
+
+### 3D и CGI
+
+- Лобби SAF Avenue (UE 5.8, path tracer, панорама 360°): `D:\Anti-Gravity\TEST 360\SAF_F1\final`.
+- Экстерьер SAF (Blender Cycles, UE path tracer): `D:\Anti-Gravity\Sansata\3d model\Blender`, `...\3d tour\ue-pt`.
+- VR-ландшафты Welcome to Kazakhstan: `D:\Work\TARTIP Studio\VR\Presentation\Tex\Exemple\HighresScreenshot*`.
+- Мобы H-377, MetaHuman: ссылки PDF-портфолио `D:\Work\TARTIP Studio\Portfolio Game Dev\Portfolio GameDevKK Folder\Links`. Подписи и опыт (Mzzuko Games, Playrix, Wargaming) — из текста того же портфолио 2023 года.
+- Mobika & Notel: `D:\Work\TARTIP Studio\Mobika Sound` и `...\Mobile`. Упаковка HyperOil (C4D): `D:\Work\Akvitol\Package`. Генплан IRI Farm: `D:\Work\Acvitol\Model\Render`.
+
+### Видео
+
+- Лупы: опенер Mobika & Notel, опенер ZTK и AI-кадры (`D:\Work\Vladik`), NYGMET (`D:\Work\Romadanov\Ready to work\Final Render\Nygmet.mov`), Great Orda Fest, HYPER (`D:\Work\A\Video\Render`), All4Race (`E:\Drive\All4Race\Video`), Чарын в UE (`E:\Drive\NewCharyn_60.mp4`), Astana Render, а также прежние Gorilla, Rose, Юрта, Adilet.
+- Вертикальные ролики: «Эхо Палеолита», Mars, «Марш», DETOX GYM, Office (`D:\Anti-Gravity\Youtube\Uploaded`), FALCON и TANKZ (`D:\Anti-Gravity\Video Cloth\Проекты`). Это беззвучные отрывки по 7–8 секунд.
+- YouTube: 25 роликов канала @korneykolokolnikov5150, названия, длительность и годы проверены на странице канала 6 ноября 2026 (год вычислен из «N лет назад»). У «Костанай будущего» и «Казахский язык — символ единства» владелец запретил встраивание (oEmbed 401), поэтому они открываются на YouTube.
+
+### Бренды и презентации
+
+- Бренды: ребренд RPK (`D:\Anti-Gravity\RPK\artifacts\rebrand`), DETOX (`D:\Anti-Gravity\DETOX Rebrending\output`), V Connect, TravelHUB, Smart Light Control, Patrol Control, Great Orda Fest, HYPER, IRI Farm, TARTIP, I CAN FLY, All4Race, FALCON, TANKZ, TOGYS.
+- Презентации: 25 PDF из `E:\Drive\Presentation`, `E:\Drive\Animation`, `E:\Drive\Sensata`, `D:\Work\Animation Film`, `D:\Anti-Gravity\Presentation Festival`, `D:\Anti-Gravity\Avatar`, `D:\Anti-Gravity\Do Neba`, `D:\Anti-Gravity\DETOX Rebrending`. Отрисованы первые 1–3 страницы.
+- **Не опубликовано:** обложка AURA (на ней цена коммерческого предложения), презентация Ankor 0525 (авторство не ясно), листовка «Елтаңба» (реквизиты фонда), семейный постер, стоковые и референсные изображения из папок `Tex`, скриншоты игр Playrix и Wargaming, рендеры ЖК из стороннего проекта 3ds Max (`Nurmakova_building`).
+
+### Требует подтверждения владельца
+
+- NYGMET: подпись «анимация визуализаций и монтаж» предполагает, что сами рендеры сделаны не вами.
+- Разрешение клиентов на публичный показ: ZTK, FALCON, TANKZ, NYGMET, All4Race, SAF Avenue.
+- Сцена «Купол у Чарына» подписана как Unreal Engine — по виду кадра.
+- Годы в таймлайне приблизительные (по датам файлов и YouTube).

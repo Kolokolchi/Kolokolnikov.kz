@@ -56,4 +56,20 @@ for(const colour of ['blue','lime','orange']){
   assert.match(svg,/x="650" y="1050"/);
 }
 assert.deepEqual(shapes[0],shapes[1]);assert.deepEqual(shapes[1],shapes[2]);
+
+// Extended portfolio: every referenced media id resolves to files that exist, models are present.
+const work=await import('../public/work-data.js');
+const {media}=await import('../public/work-media.js');
+const isFile=async relative=>(await stat(path.join(root,relative))).isFile();
+let mediaFiles=0;
+for(const item of Object.values(media))for(const file of [item.src,item.sm,item.video,item.poster,...(item.pages||[]).flatMap(page=>[page.src,page.sm])].filter(Boolean)){assert.ok(await isFile(file),file);mediaFiles++;}
+const referenced=[...work.machines.map(item=>item.poster),...work.engineeringGallery,...work.cgiItems,...work.motionReel.filter(item=>!item.src),...work.reels,...work.brands,...work.decks,...work.marquee.map(([id])=>id)].map(item=>typeof item==='string'?item:item.id);
+for(const id of referenced)assert.ok(media[id],`Missing media for ${id}`);
+for(const item of work.motionReel.filter(item=>item.src))for(const file of [item.src,item.poster])assert.ok(await isFile(file),file);
+for(const machine of work.machines){assert.ok(await isFile(machine.file),machine.file);assert.ok(machine.facts.length&&machine.summary&&machine.status,machine.id);}
+const youtubeIds=work.youtubeGroups.flatMap(group=>group.items.map(([id])=>id));
+for(const id of youtubeIds)assert.match(id,/^[\w-]{11}$/);
+for(const id of work.youtubeNoEmbed)assert.ok(youtubeIds.includes(id),`Unused no-embed id ${id}`);
+for(const file of ['machine-viewer.js','pano-viewer.js','assets/draco/draco_wasm_wrapper.js','assets/draco/draco_decoder.wasm'])assert.ok(await isFile(file),file);
 console.log(`Checked JavaScript syntax, local HTML references, ${projects.length} projects, ${demos.length} demo links and identical logo geometry. Uploaded demos are stored independently in D1/R2.`);
+console.log(`Checked ${referenced.length} gallery references, ${mediaFiles} media files, ${work.machines.length} WebGL models and ${new Set(youtubeIds).size} YouTube videos.`);

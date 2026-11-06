@@ -1,9 +1,8 @@
-/* Compact document flow: the next composition follows the previous caption. */
-.wild-home .projects-grid { display: block; padding-bottom: 0; }
-.wild-home .project-card,
-.wild-home .project-card:nth-child(even) { min-height: 0; transform: none; padding-bottom: clamp(50px, 7svh, 88px); }
-.wild-home .project-card:last-child { padding-bottom: 0; }
-.wild-home .project-presentation { position: relative; top: auto; width: min(100%, 1160px, calc((100svh - 220px) * var(--preview-ratio))); margin-inline: auto; }
+/* Two columns with alternating vertical offsets (80px desktop, 50px tablet); one column at 480px. */
+.wild-home .projects-grid { --stagger: 80px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 5%; align-items: start; padding-bottom: var(--stagger); }
+.wild-home .project-card { min-height: 0; transform: none; padding-bottom: clamp(56px, 6vw, 96px); }
+.wild-home .project-card:nth-child(even) { transform: translateY(var(--stagger)); }
+.wild-home .project-presentation { position: relative; top: auto; width: 100%; margin-inline: 0; }
 .wild-home .project-sequence { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; color: var(--muted); font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; }
 .wild-home .project-sequence span:first-child { font-variant-numeric: tabular-nums; color: var(--accent-bright); }
 .wild-home .project-image-link { position: relative; display: block; isolation: isolate; overflow: hidden; aspect-ratio: var(--preview-ratio); width: 100%; border: 0; border-radius: 4px; background: var(--assembly-paper); box-shadow: 0 16px 60px #0002; }
@@ -14,27 +13,30 @@
 .wild-home .assembly-ready .assembly-native-frame { opacity: 1; }
 .wild-home .assembly-ready .assembly-fallback { visibility: hidden; }
 .wild-home .project-open { z-index: 2; right: 16px; bottom: 16px; }
-.wild-home .project-caption { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 40px; margin: 22px 0 0; }
+.wild-home .project-caption { display: grid; grid-template-columns: 1fr; gap: 10px; margin: 22px 0 0; }
 .wild-home .project-meta { margin: 0; gap: 0; }
-.wild-home .project-meta h3 { font-size: clamp(30px, 3.1vw, 46px); line-height: 1.15; }
-.wild-home .project-description { margin: 0; max-width: 390px; font-size: 12px; }
-.wild-home .project-tags { grid-column: 2; margin-top: 0; }
+.wild-home .project-meta h3 { font-size: clamp(27px, 2.6vw, 39px); line-height: 1.15; }
+.wild-home .project-description { margin: 0; max-width: 420px; font-size: 12px; }
+.wild-home .project-tags { grid-column: 1; margin-top: 4px; }
 .wild-home .project-image-link:focus-visible { outline: 2px solid var(--accent-bright); outline-offset: 7px; }
 @media (hover: hover) and (pointer: fine) {
   .wild-home .project-image-link:hover .project-open { background: var(--accent); color: var(--bg); }
 }
 @media (max-width: 760px) {
-  .wild-home .project-card, .wild-home .project-card:nth-child(even) { min-height: 0; padding-bottom: 54px; }
-  .wild-home .project-presentation { width: 100%; }
-  .wild-home .project-sequence { font-size: 8px; letter-spacing: 1px; margin-bottom: 14px; }
-  .wild-home .project-caption { grid-template-columns: 1fr; gap: 12px; margin-top: 20px; }
-  .wild-home .project-tags { grid-column: 1; }
-  .wild-home .project-meta h3 { font-size: 34px; }
-  .wild-home .project-description { font-size: 12px; max-width: 370px; }
+  .wild-home .projects-grid { --stagger: 50px; gap: 0 18px; }
+  .wild-home .project-card { padding-bottom: 44px; }
+  .wild-home .project-sequence { font-size: 8px; letter-spacing: 1px; margin-bottom: 12px; }
+  .wild-home .project-sequence span:last-child { display: none; }
+  .wild-home .project-caption { gap: 8px; margin-top: 16px; }
+  .wild-home .project-meta h3 { font-size: 22px; }
+  .wild-home .project-description { font-size: 11px; }
+  .wild-home .project-open { right: 10px; bottom: 10px; }
 }
-@media (max-height: 570px) and (min-width: 761px) {
-  .wild-home .project-presentation { width: min(100%, 900px, calc((100svh - 150px) * var(--preview-ratio))); }
-  .wild-home .project-sequence { margin-bottom: 10px; }
-  .wild-home .project-caption { margin-top: 12px; }
-  .wild-home .project-meta h3 { font-size: 28px; }
+@media (max-width: 480px) {
+  .wild-home .projects-grid { --stagger: 0px; grid-template-columns: 1fr; padding-bottom: 0; }
+  .wild-home .project-card, .wild-home .project-card:nth-child(even) { transform: none; padding-bottom: 50px; }
+  .wild-home .project-card:last-child { padding-bottom: 0; }
+  .wild-home .project-sequence span:last-child { display: inline; }
+  .wild-home .project-meta h3 { font-size: 30px; }
+  .wild-home .project-description { font-size: 12px; max-width: 370px; }
 }

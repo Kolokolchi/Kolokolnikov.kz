@@ -138,6 +138,19 @@ Home buttons and filters are pills; media frames have small corners. Base-page b
 
 **Roaming cat.** Use the exact black cat with white outlines and large oval eyes from the user's six-panel reference, preserved in `public/assets/cat/reference.jpg`. `public/cat-drawings.js` isolates its original pixels with SVG silhouettes; do not redraw the face or include the sample blocks and edge lines. Use panel 1 for a top peek, panels 2/4 for right/left peeks, panel 3 for paired head and tail, panel 5 for lounging and panel 6 for the glide. The upside-down pose is panel 3 rotated 180 degrees. Side peeks and paired poses show the head and tail at opposite edges of the same element on one axis; the front paws may grip over the edge. Store the side and fractional attachment point, recalculate from the live element bounds, and follow layout changes without rebuilding the artwork. Follow the edge during the hide transition and during reduced-motion scrolling. Exclude perspective-rotated edges from rectangular placement. An occasional full-body glide is allowed only in a verified empty side corridor. Keep text and controls clear; if no safe candidate exists, stay hidden. Scrolling hides the cat before any paw appears. Keep a single trail of at most three alternating steps (46px desktop, 34px mobile) leading to the exact future head position. Track the shared destination through scrolling, finish remaining steps 120ms apart after stopping, allow the final step's 180ms entrance, then fade all prints for 750ms before revealing the cat there. Never reselect its destination or pose during the fade. Reduced motion uses a static cat and no prints.
 
+## Extended portfolio sections (November 2026)
+
+The home page now runs 01 Sites → 02 Engineering → 03 3D/CGI → 04 Video → 05 Brands → 06 Decks → 07 About (with timeline) → 08 Demos → 09 Contact. Styles live in `public/work.css`, behaviour in `public/work.js`, copy and ordering in `public/work-data.js`; media ids resolve through the generated `public/work-media.js`.
+
+- **Reel band and stats.** Two opposing marquee rows of real work tiles under the intro, then six serif counters computed from the data file. Reduced motion stops the rows and makes them scrollable.
+- **Engineering lab.** WebGL viewer (`src/machine-viewer.js`) for CAD exports: model tabs, assembly slider that replays manifest steps, section cut, shell solid/X-ray/hidden, part tooltip with material, reset, fullscreen. A blueprint grid sits behind the section. The rendered poster stays until the first draw and returns on context loss. Wheel zoom only after the visitor clicks the model; touch keeps vertical page scrolling (`touch-action: pan-y`).
+- **360° panorama.** `src/pano-viewer.js`, poster first, slow idle pan unless reduced motion, plain wheel never hijacks the page.
+- **Bento grids** (3D and brands) use `wide`, `tall` and `square` tiles with dense packing; captions sit on a dark gradient. Logos on dark artwork use `dark: true` (contained, padded).
+- **Motion.** The existing stage plays a playlist with a thumbnail rail; vertical films sit in phone frames; YouTube opens in a lightbox through `youtube-nocookie.com` only after a click. Uploads with embedding disabled open on YouTube.
+- **Lightbox.** One `<dialog>` for images, loops, deck pages and YouTube; arrows, swipe and Escape.
+
+Accent rule is unchanged: engineering, 3D, brands and decks are exploration (blue); demos stay lime; contact stays orange. Silent loops play only while visible and pause for reduced motion or a hidden tab.
+
 ## Do's and Don'ts
 
 ### Do:

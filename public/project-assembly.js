@@ -41,9 +41,14 @@ export function mountProjectAssemblies(grid) {
     if (!state.ready) return;
     const { top, height } = state.link.getBoundingClientRect();
     const viewport = innerHeight;
-    const travel = Math.min(viewport * .72, height + viewport * .1);
+    // Start only once the whole preview is on screen (its bottom edge clear of the
+    // viewport bottom, centre no lower than 70%), and finish over the next 40% of the
+    // viewport, while the preview is still fully visible near the top.
+    const center = top + height / 2;
+    const startAt = Math.max(viewport * .35, Math.min(viewport * .7, viewport - height / 2 - 32));
+    const endAt = startAt - viewport * .4;
     const progress = reduceMotion.matches || state.link.matches(':focus-within')
-      ? 1 : clamp((viewport * .95 - top) / travel);
+      ? 1 : clamp((startAt - center) / (startAt - endAt));
     if (state.progress === progress) return;
     state.progress = progress;
     for (const layer of state.layers) {

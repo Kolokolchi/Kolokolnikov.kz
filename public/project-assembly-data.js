@@ -7,7 +7,6 @@ export const assemblyDesigns = {
   lesa: { width: 1440, height: 1000, paper: '#ffffff', scene: 'assembly-scenes/lesa.html' },
   killdez: { width: 1440, height: 1000, paper: '#f2efe8', scene: 'assembly-scenes/killdez.html' },
   patrol: { width: 1440, height: 1000, paper: '#090a05', scene: 'assembly-scenes/patrol.html' },
-  aral: { width: 1440, height: 1000, paper: '#060911', scene: 'assembly-scenes/aral.html' },
   'saf-landing': { width: 1440, height: 1000, paper: '#ffffff', scene: 'assembly-scenes/saf-landing.html' },
   'dis-cleaning': { width: 1440, height: 1000, paper: '#ffffff', scene: 'assembly-scenes/dis-cleaning.html' },
 };
