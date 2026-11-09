@@ -42,18 +42,18 @@ export function mountProjectAssemblies(grid) {
     const { top, height } = state.link.getBoundingClientRect();
     const viewport = innerHeight;
     // Start only once the whole preview is on screen (its bottom edge clear of the
-    // viewport bottom, centre no lower than 70%), and finish over the next 40% of the
-    // viewport, while the preview is still fully visible near the top.
+    // viewport bottom, centre no lower than 70%), then play over 75% of the viewport
+    // height of scrolling, so the assembly stays long and readable.
     const center = top + height / 2;
     const startAt = Math.max(viewport * .35, Math.min(viewport * .7, viewport - height / 2 - 32));
-    const endAt = startAt - viewport * .4;
+    const endAt = startAt - viewport * .75;
     const progress = reduceMotion.matches || state.link.matches(':focus-within')
       ? 1 : clamp((startAt - center) / (startAt - endAt));
     if (state.progress === progress) return;
     state.progress = progress;
     for (const layer of state.layers) {
       // Paused WAAPI effects follow scroll; the continuous backdrop is untouched.
-      layer.animation.currentTime = clamp((progress - layer.start) / .68) * 1000;
+      layer.animation.currentTime = clamp((progress - layer.start) / .8) * 1000;
     }
     state.link.classList.toggle('assembly-complete', progress === 1);
   }
@@ -90,7 +90,9 @@ export function mountProjectAssemblies(grid) {
       await Promise.allSettled([doc.fonts.ready, ...[...doc.images].map(image => image.decode())]);
       if (disposed || currentGeneration !== generation || state.ready) return;
       const view = iframe.contentWindow;
-      const ease = getComputedStyle(grid).getPropertyValue('--ease-out').trim() || 'cubic-bezier(.23,1,.32,1)';
+      // Scroll-linked: a soft in-out curve spreads the motion over the whole scroll window
+      // (a strong ease-out would finish each layer in its first quarter).
+      const ease = 'cubic-bezier(.45, 0, .25, 1)';
       for (const [index, element] of elements.entries()) {
         const [x = 0, y = 32, angle = 0] = (element.dataset.from || '0,32,0').split(',').map(Number);
         const style = view.getComputedStyle(element);
@@ -102,7 +104,8 @@ export function mountProjectAssemblies(grid) {
         ], { duration: 1000, easing: ease, fill: 'both' });
         animation.pause();
         const order = Number(element.dataset.order ?? index);
-        state.layers.push({ animation, start: Math.min(.28, order * .028) });
+        // Each layer plays over 80% of the scroll window; later layers start up to 20% later.
+        state.layers.push({ animation, start: Math.min(.2, order * .02) });
       }
       state.ready = true;
       scale(state);

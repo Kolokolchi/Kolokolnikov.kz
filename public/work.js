@@ -596,7 +596,7 @@ function renderDecks() {
 }
 // Scroll-linked "deal": the covers start as one pile at the first slot and spread into the
 // row while the shelf scrolls through the viewport (same window as the site assemblies:
-// start once the shelf is fully visible, finish over the next 40% of the viewport).
+// start once the shelf is fully visible, play over 75% of the viewport height).
 function dealDecks(shelf, track) {
   const cards = [...track.children];
   if (!cards.length) return;
@@ -615,13 +615,16 @@ function dealDecks(shelf, track) {
     if (!reducedMotion.matches) {
       const center = rect.top + rect.height / 2;
       const startAt = Math.max(viewport * .35, Math.min(viewport * .7, viewport - rect.height / 2 - 32));
-      const endAt = startAt - viewport * .4;
+      const endAt = startAt - viewport * .75;
       progress = Math.max(0, Math.min(1, (startAt - center) / (startAt - endAt)));
     }
     cards.forEach((card, index) => {
-      const delay = Math.min(index, 9) * .045;
-      const local = Math.max(0, Math.min(1, (progress - delay) / (1 - 9 * .045)));
-      card.style.setProperty('--deal', (1 - Math.pow(1 - local, 3)).toFixed(3));
+      // Each card moves over 80% of the scroll window; neighbours follow 2.5% apart.
+      const delay = Math.min(index, 8) * .025;
+      const local = Math.max(0, Math.min(1, (progress - delay) / .8));
+      // Ease in-out so the deal is spread across the scroll, not finished at its start.
+      const eased = local < .5 ? 4 * local ** 3 : 1 - Math.pow(-2 * local + 2, 3) / 2;
+      card.style.setProperty('--deal', eased.toFixed(3));
     });
     shelf.classList.toggle('decks-dealt', progress >= 1);
   }
