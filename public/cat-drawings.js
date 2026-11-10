@@ -75,4 +75,24 @@ export function catTailDrawing(side = 'top') {
   return wrap('tail',134,164,cropped('rear',134,164));
 }
 export function catSlidingDrawing() { return wrap('sliding',182,384,cropped('glide',182,384)); }
+
+// Held by the scruff: panel 3 with its card taken away. The head with whiskers, the front paws, the
+// hind paws and the tail stay the original pixels in their original places; only the chest the card
+// covered is filled in with a plain silhouette and the reference's thin white outline.
+const SCRUFF_BOX = [959, 16.8, 222, 376.2];
+const SCRUFF_CHEST = 'M1006 146C1000 180 1001 216 1011 247L1120 247C1130 216 1131 180 1125 146Z';
+const SCRUFF_SIDES = 'M1005 156C1000 184 1001 216 1011 244M1126 156C1131 184 1130 216 1120 244';
+// Shares of the drawing box: where the hand pinches (top of the head) and where the hind paws end.
+export const catScruffMetrics = {
+  ratio: SCRUFF_BOX[3] / SCRUFF_BOX[2],
+  hold: { x: (1068 - SCRUFF_BOX[0]) / SCRUFF_BOX[2], y: (84 - SCRUFF_BOX[1]) / SCRUFF_BOX[3] },
+  feet: (264 - SCRUFF_BOX[1]) / SCRUFF_BOX[3],
+};
+export function catScruffDrawing() {
+  const id = `cat-reference-${++spriteId}`;
+  const mask = [artwork.paired, artwork.rear].map(item => item.paths.map(d => `<path d="${d}"/>`).join('')
+    + item.lines.map(d => `<path d="${d}" fill="none" stroke="black" stroke-width="4" stroke-linecap="round"/>`).join('')).join('');
+  const chest = `<path d="${SCRUFF_CHEST}" fill="#050609"/><path d="${SCRUFF_SIDES}" fill="none" stroke="#edf3f6" stroke-width="2.6" stroke-linecap="round"/>`;
+  return wrap('scruff', SCRUFF_BOX[2], SCRUFF_BOX[3], `<svg width="${SCRUFF_BOX[2]}" height="${SCRUFF_BOX[3]}" viewBox="${SCRUFF_BOX.join(' ')}" overflow="visible"><defs><clipPath id="${id}">${mask}</clipPath></defs>${chest}<image href="${SOURCE}" width="1280" height="853" clip-path="url(#${id})"/></svg>`);
+}
 export function catLoungeDrawing() { return wrap('lounge',366,165,cropped('lounge',366,165)); }

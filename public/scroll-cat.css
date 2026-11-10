@@ -78,14 +78,19 @@ body.menu-open .scroll-cat, body:has(dialog[open]) .scroll-cat { opacity: 0; }
 /* The sliding cat can be caught: it is lifted by the scruff (top of the head between the raised paws),
    dangles from the pointer and swings, and settles on the surface edge it is released at. */
 .scroll-cat[data-state="idle"] .scroll-cat__slider:not(:disabled) .scroll-cat__drawing image {
-  cursor: grab; touch-action: none; -webkit-user-drag: none;
+  /* A vertical swipe that starts on the cat still scrolls the page (the grab is cancelled and the
+     cat put back); a sideways drag carries it. */
+  cursor: grab; touch-action: pan-y; -webkit-user-drag: none;
 }
 .scroll-cat[data-reglide][data-pose="glide"][data-state="idle"] .scroll-cat__slider { animation: scroll-cat-reglide 1500ms linear both; }
 .scroll-cat[data-carry][data-pose="glide"][data-state="idle"] .scroll-cat__slider {
   animation: none; opacity: 1; pointer-events: auto; cursor: grabbing;
-  transform-origin: 50.55% 32.55%;
-  transform: rotate(var(--carry-angle, 0deg)) scale(.97, 1.05);
+  transform: rotate(var(--carry-angle, 0deg)) scale(calc(var(--carry-scale, 1) * .98), calc(var(--carry-scale, 1) * 1.02));
   filter: drop-shadow(0 14px 12px #0009);
+}
+/* Hopping down and slipping behind a surface: no lift shadow, the clip is the surface edge. */
+.scroll-cat[data-jumping][data-carry][data-pose="glide"][data-state="idle"] .scroll-cat__slider {
+  transform: rotate(var(--carry-angle, 0deg)); filter: none;
 }
 .scroll-cat[data-carry][data-falling][data-pose="glide"][data-state="idle"] .scroll-cat__slider {
   animation: scroll-cat-fall 650ms cubic-bezier(.5, 0, .9, .4) forwards;
@@ -103,7 +108,7 @@ html.scroll-cat-carrying, html.scroll-cat-carrying * { cursor: grabbing !importa
   100% { opacity: 0; transform: translate3d(0, 34px, 0) rotate(var(--cat-tilt, 0deg)); }
 }
 @keyframes scroll-cat-fall {
-  12% { transform: translate3d(0, -10px, 0) rotate(var(--carry-angle, 0deg)) scale(.97, 1.05); }
+  12% { transform: translate3d(0, -10px, 0) rotate(var(--carry-angle, 0deg)); }
   100% { opacity: 0; transform: translate3d(0, 70vh, 0) rotate(calc(var(--carry-angle, 0deg) + 28deg)); }
 }
 @keyframes scroll-cat-landing { from { opacity: .45; } to { opacity: .95; } }
