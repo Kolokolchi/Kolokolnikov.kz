@@ -1,37 +1,36 @@
-Cat meow sound effects
+Cat meow sound effects (replaced 2026-11-10)
 
-All five recordings are available under CC0 1.0 Universal (public-domain dedication):
-https://creativecommons.org/publicdomain/zero/1.0/
+All five recordings are real cats, published on Freesound under CC0 1.0 Universal
+(public-domain dedication): https://creativecommons.org/publicdomain/zero/1.0/
+Files were made from the public HQ previews (128 kbps MP3) of each sound.
 
-meow-1.mp3
-Original: cat_mewfood.wav, by Kerzoven
-Source page: https://opengameart.org/content/cat-purr-meow
-Original download: https://opengameart.org/sites/default/files/cat_mewfood.wav
-Changes: trimmed to 0.48-1.06 seconds; gentle level adjustment and edge fades; mono 44.1kHz MP3, 96kbps.
+Common processing: 110 Hz high-pass, trimmed to a single meow, 8 ms fade-in and
+70 ms fade-out, loudness matched to -18 LUFS (peaks below -5 dBFS), mono 44.1 kHz MP3, 96 kbps.
 
-meow-2.mp3
-Original: cat_mewpurr.wav, by Kerzoven
-Source page: https://opengameart.org/content/cat-purr-meow
-Original download: https://opengameart.org/sites/default/files/cat_mewpurr.wav
-Changes: trimmed to 0.00-1.25 seconds; gentle level adjustment and edge fades; mono 44.1kHz MP3, 96kbps.
+meow-1.mp3 - an ordinary adult meow
+Original: "Cat Meowing" by lextrack (Freesound #333916), "meow of a cat"
+Source page: https://freesound.org/people/lextrack/sounds/333916/
+Trimmed to 0.07-1.24 s.
 
-meow-3.mp3
-Original: cat_mewpurr2.wav, by Kerzoven
-Source page: https://opengameart.org/content/cat-purr-meow
-Original download: https://opengameart.org/sites/default/files/cat_mewpurr2.wav
-Changes: trimmed to 0.12-2.05 seconds; gentle level adjustment and edge fades; mono 44.1kHz MP3, 96kbps.
+meow-2.mp3 - a short meow
+Original: "cat meow short" by skymary (Freesound #412017), "a cat meowing (short)"
+Source page: https://freesound.org/people/skymary/sounds/412017/
+Trimmed to 0.24-1.15 s.
 
-meow-4.mp3
-Original: cat_softmew.wav, by Kerzoven
-Source page: https://opengameart.org/content/cat-purr-meow
-Original download: https://opengameart.org/sites/default/files/cat_softmew.wav
-Changes: trimmed to 0.30-2.22 seconds; gentle level adjustment and edge fades; mono 44.1kHz MP3, 96kbps.
+meow-3.mp3 - an insistent meow
+Original: "New Cat Meow 1" by steffcaffrey (Freesound #479272), "My cat's very annoying meow. Zoom H4N"
+Source page: https://freesound.org/people/steffcaffrey/sounds/479272/
+Whole recording (0.00-0.92 s).
 
-meow-5.mp3
-Original: cat meow, by tuberatanka (Freesound #110011)
+meow-4.mp3 - a kitten
+Original: "Cute Kitten Meow" by Breviceps (Freesound #448084), "A cute kitten meow"
+Source page: https://freesound.org/people/Breviceps/sounds/448084/
+Whole recording (0.00-0.60 s).
+
+meow-5.mp3 - a hungry cat (kept from the previous set: the only natural one there)
+Original: "cat meow" by tuberatanka (Freesound #110011), "my hungry cat meowing"
 Source page: https://freesound.org/people/tuberatanka/sounds/110011/
-Licensed original preview: https://cdn.freesound.org/previews/110/110011_1537422-hq.mp3
-Changes: gentle level adjustment and edge fades; mono 44.1kHz MP3, 96kbps.
+Trimmed to 0.10-1.50 s.
 
-These are distinct natural cat vocalizations, not synthesized sounds or pitch-shifted copies.
-
+The previous meow-1..4 (Kerzoven, OpenGameArt "cat purr meow") were dropped:
+noisy, muffled, with long silences and odd chirps.

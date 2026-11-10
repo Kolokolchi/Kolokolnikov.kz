@@ -16,6 +16,8 @@ for(const video of videos){
   for(const asset of [video.src,video.poster].filter(item=>item&&!item.startsWith('https://')))assert.ok((await stat(path.join(root,asset))).isFile(),asset);
 }
 for(const name of files.filter(name=>name.endsWith('.js')))execFileSync(process.execPath,['--check',path.join(root,name)]);
+// the story player lives in a subfolder (and ESLint's Next config does not flag a redeclared const in it)
+for(const name of ['story/story.js'])execFileSync(process.execPath,['--check',path.join(root,name)]);
 assert.equal(new Set(projects.map(item=>item.id)).size,projects.length,'Project IDs must be unique');
 for(const project of projects){
   const assembly=assemblyDesigns[project.id];
@@ -42,7 +44,6 @@ for(const name of [...files.filter(name=>name.endsWith('.html')),'demos/index.ht
   assert.match(html,/<meta name="viewport"/);
   for(const [,target] of html.matchAll(/(?:href|src)="([^"?#]+)(?:[?#][^"]*)?"/g)){
     if(/^(https?:|mailto:|tel:)/.test(target)||target==='./')continue;
-    if(target==='/admin/')continue; // Protected server-rendered route.
     let resolved=path.resolve(root,path.dirname(name),target);
     if((await stat(resolved)).isDirectory())resolved=path.join(resolved,'index.html');
     assert.ok((await stat(resolved)).isFile(),`${name}: ${target}`);

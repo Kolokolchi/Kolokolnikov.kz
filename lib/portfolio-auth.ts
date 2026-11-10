@@ -1,17 +1,24 @@
 type User={userId:string;email:string;displayName?:string};
-export async function ownerAllowed(user:User|null,env:any){
+type AdminRow={subject:string};
+// The D1 binding; without it nothing here can work (it used to fail on env.DB.prepare the same way)
+export function database(env:Cloudflare.Env):D1Database{
+ if(!env.DB)throw new Error('The portfolio database binding (DB) is missing.');
+ return env.DB;
+}
+export async function ownerAllowed(user:User|null,env:Cloudflare.Env){
  if(!user)return false;
- let row=await env.DB.prepare('SELECT subject FROM portfolio_admins WHERE role = ?').bind('owner').first();
+ const db=database(env);
+ let row=await db.prepare('SELECT subject FROM portfolio_admins WHERE role = ?').bind('owner').first<AdminRow>();
  if(!row){
   // The verified invitation email bootstraps the permanent Site user ID once.
   const bootstrap=import.meta.env.DEV?'seedy@sites.test':env.PORTFOLIO_OWNER_EMAIL;
   if(!bootstrap||user.email.toLowerCase()!==bootstrap.toLowerCase())return false;
-  await env.DB.prepare('INSERT OR IGNORE INTO portfolio_admins (role,subject,created_at) VALUES (?,?,?)').bind('owner',user.userId,new Date().toISOString()).run();
-  row=await env.DB.prepare('SELECT subject FROM portfolio_admins WHERE role = ?').bind('owner').first();
+  await db.prepare('INSERT OR IGNORE INTO portfolio_admins (role,subject,created_at) VALUES (?,?,?)').bind('owner',user.userId,new Date().toISOString()).run();
+  row=await db.prepare('SELECT subject FROM portfolio_admins WHERE role = ?').bind('owner').first<AdminRow>();
  }
  return row?.subject===user.userId;
 }
-export async function authorize(request:Request,env:any){
+export async function authorize(request:Request,env:Cloudflare.Env){
  const supplied=request.headers.get('X-Portfolio-Key');
  if(supplied&&env.PORTFOLIO_UPLOAD_KEY){
   const encode=new TextEncoder();const [a,b]=await Promise.all([crypto.subtle.digest('SHA-256',encode.encode(supplied)),crypto.subtle.digest('SHA-256',encode.encode(env.PORTFOLIO_UPLOAD_KEY))]);

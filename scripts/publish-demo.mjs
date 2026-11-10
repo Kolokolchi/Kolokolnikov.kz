@@ -20,8 +20,11 @@ async function readHidden(){
 async function collect(source){const files=[];async function visit(relative=''){for(const entry of await readdir(path.join(source,relative),{withFileTypes:true})){if(entry.name.startsWith('.')||['node_modules','__MACOSX'].includes(entry.name))continue;const rel=relative?`${relative}/${entry.name}`:entry.name,full=path.join(source,rel),stat=await lstat(full);if(stat.isSymbolicLink())throw Error(`Symbolic links are not supported: ${rel}`);if(entry.isDirectory())await visit(rel);else if(allowedFile(rel)){const bytes=await readFile(full);files.push({path:rel,size:bytes.length,hash:await sha256(bytes),full});}}}await visit();files.sort((a,b)=>a.path.localeCompare(b.path));return files;}
 async function main(){
  if(options.configure){const input=await readHidden();if(input.origin!==DEFAULT_ORIGIN||typeof input.key!=='string'||input.key.length<32)throw Error('Invalid connection settings.');await mkdir(configDir,{recursive:true});await writeFile(configPath,JSON.stringify({origin:input.origin,encryptedKey:encrypt(input.key)},null,2));console.log('Portfolio connection saved with Windows DPAPI.');return;}
- if(!options.list&&(!validSlug(options.id)||!options.from||!path.isAbsolute(options.from)))throw Error('Specify --id using lowercase Latin letters and --from as an absolute build path.');
- const files=options.list?[]:await collect(path.resolve(options.from));if(!options.list)validateManifest(files);
+ // --list, --delete-version <id> and --unpublish-version <id> manage what is on the server: no build is read
+ const manage=options.list||options['delete-version']||options['unpublish-version'];
+ for(const key of ['delete-version','unpublish-version'])if(key in options&&!/^[a-f0-9-]{36}$/.test(options[key]||''))throw Error(`Specify --${key} with a version ID from --list.`);
+ if(!manage&&(!validSlug(options.id)||!options.from||!path.isAbsolute(options.from)))throw Error('Specify --id using lowercase Latin letters and --from as an absolute build path.');
+ const files=manage?[]:await collect(path.resolve(options.from));if(!manage)validateManifest(files);
  if(options['dry-run']){console.log(JSON.stringify({project:options.id,files:files.length,bytes:files.reduce((s,f)=>s+f.size,0),paths:files.map(f=>f.path)},null,2));return;}
  const input=await readHidden();let key,origin;
  if(options.origin&&/^http:\/\/(127\.0\.0\.1|localhost):\d+$/.test(options.origin)){origin=options.origin;key=input.key;}
@@ -34,9 +37,14 @@ async function main(){
   let data;try{data=await response.json();}catch{throw Error(`Portfolio access unavailable (HTTP ${response.status}). Refresh get_site service access.`);}if(!response.ok)throw Error(data.error||`HTTP ${response.status}`);return data;
  }
  if(options.list){console.log(JSON.stringify(await request('projects'),null,2));return;}
+ // An interrupted upload or an old variant: the files leave R2, the rows leave D1. The current version is refused by the server.
+ if(options['delete-version']){console.log(JSON.stringify(await request(`uploads/${options['delete-version']}`,{method:'DELETE'}),null,2));return;}
+ // A published variant becomes a draft again
+ if(options['unpublish-version']){console.log(JSON.stringify(await request(`uploads/${options['unpublish-version']}`,{method:'PATCH',json:{visible:false}}),null,2));return;}
  const id=options['upload-id']||randomUUID(),label=options.version||new Intl.DateTimeFormat('ru-RU',{dateStyle:'short',timeStyle:'short'}).format(new Date());
+ // Without --title / --description an existing project keeps its own (a new one is named after its address)
  console.log(`Uploading ${options.id}: ${files.length} files. Upload ID: ${id}`);
- const prepared=await request('uploads',{method:'POST',json:{id,project:options.id,title:options.title||options.id,description:options.description||'',label,basePath:options['base-path']||'',source:'codex',files:files.map(({path,size,hash})=>({path,size,hash}))}});
+ const prepared=await request('uploads',{method:'POST',json:{id,project:options.id,...(options.title?{title:options.title}:{}),...(typeof options.description==='string'?{description:options.description}:{}),label,basePath:options['base-path']||'',source:'codex',files:files.map(({path,size,hash})=>({path,size,hash}))}});
  if(prepared.status==='uploading')for(let i=0;i<files.length;i++){
   const file=files[i],body=await readFile(file.full);let failure;
   for(let attempt=0;attempt<3;attempt++){try{await request(`uploads/${id}/files/${file.path.split('/').map(encodeURIComponent).join('/')}`,{method:'PUT',body});failure=null;break;}catch(error){failure=error;if(attempt<2)await new Promise(resolve=>setTimeout(resolve,700*(attempt+1)));}}
@@ -55,6 +63,6 @@ async function main(){
   await response.body?.cancel();checked=true;break;
  }
  if(!checked)throw Error('Preview redirect limit exceeded.');
- console.log(JSON.stringify({project:options.id,versionId:id,status:options.draft?'draft':'published',url:new URL(result.url,origin).href,versionUrl:new URL(complete.url,origin).href,reviewUrl:`${origin}/showcase.html?demo=${options.id}`,adminUrl:`${origin}/admin`},null,2));
+ console.log(JSON.stringify({project:options.id,versionId:id,status:options.draft?'draft':'published',url:new URL(result.url,origin).href,versionUrl:new URL(complete.url,origin).href,reviewUrl:`${origin}/showcase.html?demo=${options.id}`},null,2));
 }
 main().catch(error=>{console.error(error.message);process.exitCode=1;});

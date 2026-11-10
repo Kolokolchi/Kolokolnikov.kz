@@ -154,6 +154,9 @@ def pdf_job(job, manifest, force):
     src = job["src"]
     (OUT / "decks").mkdir(exist_ok=True)
     pages = job.get("pages", [1])
+    if isinstance(pages, int):  # a first page: every page from there to the end of the PDF
+        from pypdf import PdfReader
+        pages = list(range(pages, len(PdfReader(src).pages) + 1))
     if not force and job["id"] in manifest and all((OUT / "decks" / f"{job['id']}-{p}.webp").exists() for p in pages):
         return
     files = []
@@ -213,32 +216,32 @@ def main():
 
 P = DRIVE + r"\Presentation"
 AG = r"D:\Anti-Gravity"
-DECKS = [
-    ("p-360", P + r"\360 Degree panorama 6 Кластеров.pdf", [1, 2, 3]),
-    ("p-vr-museum", P + r"\3d scan Musium .pdf", [1, 2, 3]),
-    ("p-3d-scan", P + r"\3d Scan people P.pdf", [1]),
-    ("p-axium-additive", P + r"\Additive.pdf", [1, 2, 3]),
-    ("p-cubes", P + r"\Cube Concept.pdf", [1, 2, 3]),
-    ("p-vr-education", P + r"\DIGI Face.pdf", [1]),
-    ("p-axium-feedback", P + r"\FeedBack.pdf", [1, 2]),
-    ("p-hyperoil", P + r"\HyperOil H.pdf", [1, 2, 3]),
-    ("p-icanfly", P + r"\I CAN FLY VR SIMULATOR S.pdf", [1, 2, 3]),
-    ("p-iri-farm", P + r"\IRI Farm print RUS.pdf", [1, 2, 3]),
-    ("p-manganese", P + r"\Magfactory.pdf", [1, 2, 3]),
-    ("p-icl", P + r"\Presentation ICL Print.pdf", [1, 2, 3]),
-    ("p-showroom", P + r"\Show Room Dress P.pdf", [1]),
-    ("p-ski", P + r"\Ski Resort - Presentation_A3.pdf", [1, 2, 3]),
-    ("p-vr-lookbook", P + r"\VR Lookbook Bleed.pdf", [1, 2, 3]),
-    ("p-wtk", P + r"\WtK - VR Presentation A4 Spreads.pdf", [1, 2, 3]),
-    ("p-animation", DRIVE + r"\Animation\Presentation Animation web S.pdf", [1, 2, 3]),
-    ("p-saf", DRIVE + r"\Sensata\Presentation\SAF_Avenue_Visual_RU.pdf", [1, 2, 3]),
-    ("p-eltanba", W + r"\Animation Film\Eltanba Storyboard.pdf", [1, 2, 3]),
-    ("p-sakai", AG + r"\Presentation Festival\SakaiFest\output\SAKAI_FEST_Charyn_2027.pdf", [1, 2, 3]),
-    ("p-gof", AG + r"\Presentation Festival\GreatOrdaFest\output\Great_Orda_Fest_Qonaev_2027_with_logo.pdf", [1, 2, 3]),
-    ("p-togys", AG + r"\Presentation Festival\output\TOGYS_Astana_2027.pdf", [1, 2, 3]),
-    ("p-aura", AG + r"\Avatar\output\pdf\AURA Unreal.pdf", [2, 3]),
-    ("p-do-neba", AG + r"\Do Neba\output\do_neba\03_Storyboard.pdf", [1, 2, 3]),
-    ("p-detox", AG + r"\DETOX Rebrending\output\detox-ankor-style-2026-10-16\DETOX-four-directions-joy.pdf", [1, 2, 3]),
+DECKS = [  # (id, PDF, first page): every page from there to the end of the PDF
+    ("p-360", P + r"\360 Degree panorama 6 Кластеров.pdf", 1),
+    ("p-vr-museum", P + r"\3d scan Musium .pdf", 1),
+    ("p-3d-scan", P + r"\3d Scan people P.pdf", 1),
+    ("p-axium-additive", P + r"\Additive.pdf", 1),
+    ("p-cubes", P + r"\Cube Concept.pdf", 1),
+    ("p-vr-education", P + r"\DIGI Face.pdf", 1),
+    ("p-axium-feedback", P + r"\FeedBack.pdf", 1),
+    ("p-hyperoil", P + r"\HyperOil H.pdf", 1),
+    ("p-icanfly", P + r"\I CAN FLY VR SIMULATOR S.pdf", 1),
+    ("p-iri-farm", P + r"\IRI Farm print RUS.pdf", 1),
+    ("p-manganese", P + r"\Magfactory.pdf", 1),
+    ("p-icl", P + r"\Presentation ICL Print.pdf", 1),
+    ("p-showroom", P + r"\Show Room Dress P.pdf", 1),
+    ("p-ski", P + r"\Ski Resort - Presentation_A3.pdf", 1),
+    ("p-vr-lookbook", P + r"\VR Lookbook Bleed.pdf", 1),
+    ("p-wtk", P + r"\WtK - VR Presentation A4 Spreads.pdf", 1),
+    ("p-animation", DRIVE + r"\Animation\Presentation Animation web S.pdf", 1),
+    ("p-saf", DRIVE + r"\Sensata\Presentation\SAF_Avenue_Visual_RU.pdf", 1),
+    ("p-eltanba", W + r"\Animation Film\Eltanba Storyboard.pdf", 1),
+    ("p-sakai", AG + r"\Presentation Festival\SakaiFest\output\SAKAI_FEST_Charyn_2027.pdf", 1),
+    ("p-gof", AG + r"\Presentation Festival\GreatOrdaFest\output\Great_Orda_Fest_Qonaev_2027_with_logo.pdf", 1),
+    ("p-togys", AG + r"\Presentation Festival\output\TOGYS_Astana_2027.pdf", 1),
+    ("p-aura", AG + r"\Avatar\output\pdf\AURA Unreal.pdf", 2),
+    ("p-do-neba", AG + r"\Do Neba\output\do_neba\03_Storyboard.pdf", 1),
+    ("p-detox", AG + r"\DETOX Rebrending\output\detox-ankor-style-2026-10-16\DETOX-four-directions-joy.pdf", 1),
 ]
 SAF = AG + r"\TEST 360\SAF_F1\final"
 SANS = AG + r"\Sansata"

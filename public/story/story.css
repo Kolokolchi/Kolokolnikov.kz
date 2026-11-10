@@ -1,0 +1,193 @@
+/* Story player v2. One 1440×810 «screen» carries both the Blender films (canvas) and the DOM
+   chapters; it covers the stage in landscape and sits in the upper part in portrait.
+   Contrast follows the site's APCA rules: text under 15px is near-white, nothing below 12px. */
+@font-face { font-family: Manrope; src: url(../assets/manrope-400.ttf) format('truetype'); font-weight: 400; font-display: swap; }
+@font-face { font-family: Manrope; src: url(../assets/manrope-600.ttf) format('truetype'); font-weight: 600; font-display: swap; }
+
+:root {
+  --bg: #0c1016;
+  --surface: #121820;
+  --text: #edf2f7;
+  --muted: #ebf0f5; /* story text always sits over moving pictures: more APCA headroom than the site's #e3e9ef */
+  --line: #ffffff17;
+  --line-strong: #ffffff4d;
+  --accent: #4aafff;
+  --accent-bright: #a9d9ff;
+  --accent-text: #e2f2ff; /* site: #d7edff */
+  --accent-fill: #a9d9ff;
+  --lime: #b1ed45;
+  --lime-text: #daff98;
+  --orange: #ff9549;
+  --orange-text: #ffe6d3;
+  --orange-fill: #ffd0a9; /* the site's orange --accent-fill: ink on it passes Lc 75 */
+  --ink: #08111a;
+  --serif: Georgia, "Times New Roman", serif;
+  --sans: Manrope, Arial, sans-serif;
+  --gut: clamp(16px, 5.5vw, 88px);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; overflow: hidden; background: var(--bg); color: var(--text); font: 15px/1.7 var(--sans); overscroll-behavior: none; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+p { margin: 0; }
+
+/* ---------- stage & shared screen ---------- */
+.stage { position: fixed; inset: 0; overflow: hidden; touch-action: none; }
+#film { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* overflow: in portrait the screen is a band at the top; DOM chapters must not spill below it */
+.screen { position: absolute; left: 0; top: 0; width: 1440px; height: 810px; transform-origin: 0 0; pointer-events: none; overflow: hidden; } /* desktop: its own layer (story.js) */
+.layer { position: absolute; inset: 0; visibility: hidden; }
+.layer.on, .layer.warm { visibility: visible; } /* warm: drawn at the prewarm opacity (story.js) */
+.drawline { position: absolute; inset: 0; width: 1440px; height: 810px; visibility: hidden; } /* geometry only: story.js strokes the lines on the canvas */
+.drawline rect, .drawline path { fill: none; stroke: var(--accent); }
+.drawline.lime rect { stroke: var(--lime); }
+
+/* 03 — browser, sites, phone */
+.browser { position: absolute; left: 560px; top: 120px; width: 780px; height: 570px; border-radius: 14px; overflow: hidden; background: #05080c; box-shadow: 0 30px 80px #000a; will-change: opacity; } /* fades on its own layer (see .cap) */
+.tabbar { position: relative; z-index: 1; display: flex; align-items: center; gap: 14px; height: 28px; padding: 0 14px; background: #121820; font-size: 12px; font-weight: 600; color: var(--muted); }
+.dots { display: flex; gap: 6px; }
+.dots i { width: 8px; height: 8px; border-radius: 50%; background: #ffffff38; }
+.tab { padding: 2px 12px; border-radius: 6px; background: #ffffff10; }
+.tab.dim { background: none; }
+.viewport { position: relative; width: 100%; height: calc(100% - 28px); overflow: hidden; background: #080808; }
+.viewport iframe { position: absolute; left: 0; top: 0; width: 1440px; height: 1000px; border: 0; transform-origin: 0 0; opacity: 0; }
+.viewport > img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.fly { position: absolute; left: 0; top: 0; width: 212px; height: 81px; transform-origin: 0 0; }
+.phone { position: absolute; left: 0; top: 0; border: 2px solid var(--accent); border-radius: 26px; background: #05080c; overflow: hidden; box-shadow: 0 0 18px #4aafff99, 0 0 46px #4aafff33; }
+.phone img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* 05 — mosaic of worlds, panorama */
+.tiles { position: absolute; inset: 0; transform-origin: 720px 405px; will-change: transform; } /* drift: story.js render05 */
+.tile { position: absolute; overflow: hidden; border-radius: 6px; background: #121820; box-shadow: 0 10px 40px #0008; }
+.tile img { display: block; width: 100%; height: 100%; object-fit: cover; }
+/* the SAF lobby render (16:9, the whole screen): exactly where the zoomed-in tile 0 shows it */
+.pano { position: absolute; inset: 0; overflow: hidden; opacity: 0; }
+.pano img { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; transform-origin: 50% 50%; will-change: transform; } /* the slow push-in (+3.5 %) scales on the GPU */
+
+/* 06 — film strip */
+.strip { position: absolute; left: 0; top: 236px; height: 338px; display: flex; align-items: center; gap: 22px; padding: 0 26px; background: #05070a; will-change: transform; }
+.strip::before, .strip::after { content: ""; position: absolute; left: 0; right: 0; height: 12px; background: repeating-linear-gradient(90deg, #233041 0 22px, transparent 22px 40px); }
+.strip::before { top: 10px; }
+.strip::after { bottom: 10px; }
+.cell { position: relative; flex: none; width: 480px; height: 270px; border-radius: 4px; overflow: hidden; background: #121820; }
+.cell.wide { width: 1080px; }
+.cell img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+/* the one reel of 06 (story.js showReel): over the live cell, 16:9; the wide cell shows its band */
+.reel { position: absolute; top: 34px; left: 0; width: 480px; height: 270px; overflow: hidden; border-radius: 4px; opacity: 0; pointer-events: none; }
+.reel video { position: absolute; left: 0; top: 0; width: 100%; height: 270px; }
+/* the live cell's ring: one element that travels between cells (a glow switched on each cell re-rasterized
+   at every change of cell) */
+.ring { position: absolute; top: 34px; left: 0; width: 480px; height: 270px; border-radius: 4px; box-shadow: 0 0 0 3px var(--accent), 0 0 28px #4aafff88; opacity: 0; pointer-events: none; will-change: transform; }
+
+/* 07 — deck fan */
+.decks { position: absolute; inset: 0; }
+/* Own compositor layer per card: the fan «breathes» every frame, and as painted content the cards were
+   re-rastered on every frame; when they faded out, the browser freed that tile pool at once and the GPU
+   stalled for 150–450 ms right before the road (measured on an RTX 4090 Laptop, Edge 157 / Chrome 156) */
+.deck { position: absolute; left: 780px; top: 250px; width: 240px; height: 300px; border-radius: 8px; overflow: hidden; transform-origin: 50% 160%; background: #121820; box-shadow: 0 18px 50px #000b; will-change: transform; }
+.deck img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.deck.lead { box-shadow: 0 0 0 3px var(--accent), 0 0 30px #4aafff77, 0 18px 50px #000b; }
+
+/* 09 — demo frame */
+.browser.lime { left: 560px; top: 120px; width: 780px; height: 570px; }
+.browser.lime .tab:first-of-type { color: var(--lime-text); }
+
+/* ---------- captions ---------- */
+/* Each caption carries its own soft backdrop (≥ 92% under the text, APCA over any film pixel);
+   the films and the line stay fully visible everywhere else. The loader wears the same backdrop: it is the
+   page colour, so it changes nothing on screen, but the browser sets up this large blur while the loader is
+   up, not on the first caption (that first set-up cost a 40–60 ms stall 0.4 s into the prologue) */
+.cap, .counter, .loader { isolation: isolate; }
+.cap::before, .counter::before, .loader::before { content: ""; position: absolute; inset: -16px -22px -14px; z-index: -1; border-radius: 24px; background: rgba(12, 16, 22, .93); box-shadow: 0 0 40px 12px rgba(12, 16, 22, .82), 0 0 90px 30px rgba(12, 16, 22, .45); pointer-events: none; }
+.cap, .counter, .chip, .milestone, .loader { z-index: 2; }
+/* Each fades and slides on its own layer: without one, every frame of a fade re-rasterized the text and its
+   large blurred backdrop — cheap on a desktop GPU, ~110 ms a second of GPU raster in Android Chrome. */
+.cap, .counter, .chip, .milestone { will-change: opacity, transform; }
+.eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--accent-text); }
+.stage h2 { margin: 12px 0 16px; font: 400 clamp(34px, 4.4vw, 68px)/1.05 var(--serif); letter-spacing: -.025em; text-wrap: balance; }
+.stage h2 em { color: var(--accent); }
+.cap h2, .cap p { text-shadow: 0 1px 2px #0c1016, 0 0 22px #0c1016, 0 0 40px #0c1016cc; }
+.cap { position: absolute; left: var(--gut); top: 50%; width: max-content; max-width: min(560px, 42vw); transform: translateY(-50%); opacity: 0; visibility: hidden; }
+.cap > p:not(.eyebrow) { max-width: 460px; font-size: 16px; color: var(--muted); }
+/* Captions under the subject when the subject spans the frame (chapter 02) */
+.cap.cap-low { top: auto; bottom: max(108px, 12vh); max-width: min(760px, 60vw); } /* clear of the controls, lower than the marks above it */
+.cap.cap-low h2 { margin-bottom: 8px; }
+.cap-final h2 em { color: var(--orange); }
+.cap-final .eyebrow { color: var(--orange-text); }
+/* left/top: under the machine's feet, set by the player (render04) */
+.chip { position: absolute; left: 0; top: 0; white-space: nowrap; padding: 8px 16px; border: 1px solid #4aafff80; border-radius: 30px; background: #0c1016f5; font-size: 12px; font-weight: 600; letter-spacing: .14em; color: var(--accent-text); opacity: 0; visibility: hidden; }
+.counter { position: absolute; left: var(--gut); bottom: 19vh; display: flex; gap: 44px; opacity: 0; visibility: hidden; }
+.counter b, .milestone b { display: block; font: 400 clamp(42px, 5vw, 76px)/1 var(--serif); font-variant-numeric: tabular-nums; }
+.counter span, .milestone span { font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.milestone { position: absolute; left: var(--gut); bottom: 19vh; padding: 16px 22px 18px; border-left: 2px solid var(--accent); background: #0c1016f5; opacity: 0; visibility: hidden; }
+.milestone b { color: var(--accent-bright); }
+.milestone span { display: block; margin-top: 8px; font-size: 14px; letter-spacing: .06em; text-transform: none; }
+
+.end-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px; }
+.end-actions.small { margin-top: 12px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 13px 24px; border-radius: 32px; font-size: 15px; font-weight: 600; transition: background .2s, border-color .2s; }
+.btn-fill { background: var(--orange-fill); color: var(--ink); }
+.btn-fill:hover { background: var(--orange-text); }
+.btn-line { border: 1px solid var(--line-strong); }
+.btn-line:hover { border-color: var(--orange); background: #ff954914; }
+.end-actions.small .btn { min-height: 44px; padding: 9px 18px; font-size: 13px; }
+
+.loader { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 16px; font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); transition: opacity .6s; }
+.loader b { color: var(--accent-text); font-weight: 600; }
+.loader-line { width: 160px; height: 2px; background: var(--line); overflow: hidden; }
+.loader-line i { display: block; width: 0; height: 100%; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+.loader.done { opacity: 0; pointer-events: none; }
+.buffering .loader { transition-delay: .4s; }
+
+/* ---------- chrome ---------- */
+.topbar { position: fixed; inset: 0 0 auto; z-index: 5; display: flex; align-items: center; gap: 18px; padding: 18px var(--gut); background: linear-gradient(#0c1016f8, #0c1016f5 62%, #0c101600); transition: opacity .4s; }
+.brand { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 600; letter-spacing: .02em; }
+.chapter-now { font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--accent-text); }
+.exit { margin-left: auto; display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 8px 14px 8px 18px; border: 1px solid var(--line-strong); border-radius: 30px; font-size: 13px; font-weight: 600; }
+.exit:hover { border-color: var(--accent); }
+.exit svg { width: 16px; height: 16px; }
+.controls { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; display: flex; align-items: center; gap: 10px; padding: 20px var(--gut) max(20px, env(safe-area-inset-bottom)); background: linear-gradient(#0c101600, #0c1016f5 34%, #0c1016f8); transition: opacity .4s; }
+.ctl { display: grid; place-items: center; width: 44px; height: 44px; flex: none; border: 1px solid var(--line-strong); border-radius: 50%; }
+.ctl:hover { border-color: var(--accent); color: var(--accent-bright); }
+#play { width: 52px; height: 52px; border-color: var(--accent); color: var(--accent-bright); }
+#play svg { width: 22px; height: 22px; }
+#play .i-play { fill: currentColor; stroke: none; }
+#play .i-play, .paused #play .i-pause { display: none; }
+.paused #play .i-play { display: block; }
+.scrub { position: relative; flex: 1; height: 44px; margin: 0 8px; cursor: pointer; touch-action: none; }
+.track { position: absolute; left: 0; right: 0; top: 50%; height: 2px; transform: translateY(-50%); background: var(--line); }
+.track i { position: absolute; left: 0; top: 0; height: 100%; }
+.track .buffer { background: #ffffff2e; }
+.track .fill { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+.track .knob { top: 50%; width: 12px; height: 12px; margin-left: -6px; transform: translateY(-50%); border-radius: 50%; background: var(--accent-bright); box-shadow: 0 0 10px var(--accent); }
+.ticks { position: absolute; inset: 0; pointer-events: none; }
+.ticks span { position: absolute; top: 50%; transform: translate(-50%, 4px); padding-top: 10px; font-size: 12px; font-weight: 600; letter-spacing: .06em; color: var(--muted); white-space: nowrap; }
+.ticks span::before { content: ""; position: absolute; left: 50%; top: -6px; width: 1px; height: 10px; background: var(--accent-bright); }
+.ticks span.past { color: var(--accent-text); }
+.time { min-width: 92px; text-align: right; font-size: 12px; font-weight: 600; letter-spacing: .06em; color: var(--muted); font-variant-numeric: tabular-nums; }
+.hint { position: fixed; left: 50%; bottom: 92px; z-index: 5; transform: translateX(-50%); padding: 8px 16px; border-radius: 20px; background: #0c1016f5; font-size: 12px; color: var(--muted); white-space: nowrap; transition: opacity .6s; }
+.idle .topbar, .idle .controls, .idle .hint { opacity: 0; }
+.idle, .idle .stage { cursor: none; }
+.hint.gone { opacity: 0; pointer-events: none; }
+
+/* Smaller headlines need more contrast (APCA): the bright accent variants of the site */
+@media (max-width: 1100px) {
+  .stage h2 em { color: var(--accent-bright); }
+  .cap-final h2 em { color: #ffd0a9; }
+}
+@media (max-width: 760px) {
+  .brand span, .exit span, .time, #prev, #next { display: none; }
+  .exit { padding: 8px 12px; }
+  .cap, .cap.cap-low { top: auto; bottom: 112px; right: var(--gut); width: auto; max-width: none; transform: none; }
+  .stage h2 { font-size: clamp(30px, 8.6vw, 44px); }
+  .cap > p:not(.eyebrow) { font-size: 14px; }
+  .counter { top: 84px; bottom: auto; gap: 26px; padding: 10px 14px; border-radius: 12px; background: #0c1016eb; }
+  .counter b, .milestone b { font-size: 34px; }
+  .milestone { top: 84px; bottom: auto; }
+  .chip { display: none; }
+  .hint { display: none; }
+}

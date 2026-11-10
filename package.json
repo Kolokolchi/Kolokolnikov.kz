@@ -15,9 +15,12 @@
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
     "check:portfolio": "node scripts/check.mjs",
+    "check:apca": "node scripts/check-apca.mjs",
+    "check:types": "tsc --noEmit",
+    "check": "node scripts/check.mjs && node scripts/check-apca.mjs && tsc --noEmit && eslint . --ignore-pattern dist --ignore-pattern .next",
     "demo:import": "node scripts/publish-demo.mjs",
     "demo:publish": "node scripts/publish-demo.mjs",
-    "prebuild": "node scripts/brand.mjs && node scripts/build-hero.mjs && node scripts/check.mjs"
+    "prebuild": "node scripts/brand.mjs && node scripts/build-hero.mjs && node scripts/check.mjs && node scripts/check-apca.mjs && tsc --noEmit"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

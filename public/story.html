@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0c1016">
+<title>История — Korney Kolokolnikov</title>
+<meta name="description" content="История одной линии: как идея становится знаком, интерфейсом, механизмом, миром, фильмом и дорогой. 3D-сцены из Blender.">
+<meta property="og:type" content="video.other">
+<meta property="og:title" content="История одной линии — Korney Kolokolnikov">
+<meta property="og:description" content="Знак, интерфейс, механизм, мир, фильм, дорога — 1:41 о том, как идея становится вещью. 3D из Blender.">
+<meta property="og:image" content="story/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.svg">
+<link rel="stylesheet" href="story/story.css">
+<script type="module" src="story/story.js"></script>
+</head>
+<body class="paused">
+<main class="stage" id="stage" aria-label="История одной линии">
+  <canvas id="film" aria-hidden="true"></canvas>
+
+  <!-- One 1440 × 810 screen shared by the Blender films and the DOM chapters -->
+  <div class="screen" id="screen" aria-hidden="true">
+    <section class="layer" id="L03">
+      <div class="browser" id="browser">
+        <div class="tabbar"><span class="dots"><i></i><i></i><i></i></span><span class="tab" id="tabName">rpk.kz</span></div>
+        <div class="viewport" id="bview">
+          <iframe id="sceneA" title="Сборка сайта RPK" tabindex="-1" sandbox="allow-same-origin" width="1440" height="1000"></iframe>
+          <iframe id="sceneB" title="Сборка сайта Ankor" tabindex="-1" sandbox="allow-same-origin" width="1440" height="1000"></iframe>
+        </div>
+      </div>
+      <svg class="drawline" viewBox="0 0 1440 810"><rect id="bframe" x="560" y="120" width="780" height="570" rx="14" pathLength="1"/></svg>
+      <img class="fly" id="rpkFly" src="assets/assembly/rpk/rpk-logo-light.svg" alt="">
+      <div class="phone" id="phone"><img src="story/img/patrol.webp" alt=""></div>
+    </section>
+
+    <section class="layer" id="L05">
+      <div class="tiles" id="tiles"></div>
+      <div class="pano" id="pano"><img src="story/img/saf-lobby.webp" alt="" decoding="async"></div>
+    </section>
+
+    <section class="layer" id="L06">
+      <svg class="drawline" viewBox="0 0 1440 810"><path id="stripEdge" d="M0 236 H1440" pathLength="1"/></svg>
+      <div class="strip" id="strip"></div>
+    </section>
+
+    <section class="layer" id="L07">
+      <div class="decks" id="decks"></div>
+      <svg class="drawline" viewBox="0 0 1440 810"><path id="deckLine" d="M950 640 V810" pathLength="1"/></svg>
+    </section>
+
+    <section class="layer" id="L09">
+      <div class="browser lime" id="demo">
+        <div class="tabbar"><span class="dots"><i></i><i></i><i></i></span><span class="tab">Ankor</span><span class="tab dim">Леса-вышки</span></div>
+        <div class="viewport"><img src="assets/projects/lesa.jpg" alt=""></div>
+      </div>
+      <svg class="drawline lime" viewBox="0 0 1440 810"><rect id="demoFrame" x="560" y="120" width="780" height="570" rx="14" pathLength="1"/></svg>
+    </section>
+  </div>
+
+  <!-- Captions: data-seg = segment, data-in / data-out = seconds inside it -->
+  <section class="cap" data-seg="01" data-in="0.4" data-out="2.6">
+    <p class="eyebrow">Корней Колокольников</p>
+    <h2>История одной <em>линии.</em></h2>
+  </section>
+  <section class="cap" data-seg="01" data-in="3.4" data-out="8.6">
+    <p class="eyebrow">01 · Идея</p>
+    <h2>Каждая идея начинается <em>с линии.</em></h2>
+  </section>
+  <section class="cap cap-low" data-seg="02" data-in="0.6" data-out="7.4">
+    <p class="eyebrow">02 · Знак</p>
+    <h2>Линия становится <em>знаком.</em></h2>
+    <p>TravelHUB, V Connect, RPK — от контура до айдентики.</p>
+  </section>
+  <section class="cap" data-seg="03" data-in="0.9" data-out="8.0">
+    <p class="eyebrow">03 · Интерфейс</p>
+    <h2>Знак становится <em>интерфейсом.</em></h2>
+    <p>Сайты собираются из настоящих слоёв: RPK, затем Ankor.</p>
+  </section>
+  <section class="cap" data-seg="03" data-in="8.5" data-out="11.6">
+    <p class="eyebrow">03 · Интерфейс</p>
+    <h2>Экран, который <em>управляет железом.</em></h2>
+    <p>Patrol Control — бортовой комплекс на ESP32.</p>
+  </section>
+  <section class="cap" data-seg="04" data-cap="m04">
+    <p class="eyebrow">04 · Механизм</p>
+    <h2>Интерфейс управляет <em>механизмом.</em></h2>
+    <p>Тот же ESP32 и экран Nextion — в станке заливки. Линия чертит его по рёбрам настоящей CAD-модели.</p>
+  </section>
+  <p class="chip" data-cap="dim">330 × 380 × 420 мм</p>
+  <div class="counter" data-cap="count">
+    <div><b id="parts">0</b><span>из 350 деталей</span></div>
+    <div><b id="step">0</b><span>из 25 шагов сборки</span></div>
+  </div>
+  <section class="cap" data-seg="04" data-cap="m05">
+    <p class="eyebrow">05 · Мир</p>
+    <h2>Механизм получает <em>свет.</em></h2>
+    <p>Шторка идёт по линии: серая глина становится металлом, стеклом и пластиком.</p>
+  </section>
+  <section class="cap" data-seg="05" data-in="1.4" data-out="5.4">
+    <p class="eyebrow">05 · Мир</p>
+    <h2>Миры, которых <em>ещё нет.</em></h2>
+    <p>Архвиз, VR-Казахстан, персонажи и анимация: Unreal Engine, Blender, Cinema 4D, ZBrush.</p>
+  </section>
+  <section class="cap" data-seg="05" data-in="5.6" data-out="9.0">
+    <p class="eyebrow">05 · Мир</p>
+    <h2>Лобби SAF <em>Avenue.</em></h2>
+    <p>Blender → USD → Unreal Engine 5.8, path tracing.</p>
+  </section>
+  <section class="cap" data-seg="06" data-in="0.8" data-out="9.6">
+    <p class="eyebrow">06 · Видео</p>
+    <h2>Свет становится <em>движением.</em></h2>
+    <p>AI-фильмы, CGI и анимация логотипов — и 25 фильмов на YouTube.</p>
+  </section>
+  <section class="cap" data-seg="07" data-in="0.6" data-out="7.2">
+    <p class="eyebrow">07 · Презентации</p>
+    <h2>Движение складывается <em>в историю.</em></h2>
+    <p>25 питчей и концепций: фестивали, VR, производство, анимация.</p>
+  </section>
+  <section class="cap" data-seg="08" data-in="0.3" data-out="2.4">
+    <p class="eyebrow">08 · Возможности</p>
+    <h2>Одна линия&nbsp;— <em>девять направлений.</em></h2>
+  </section>
+  <div class="milestone" data-cap="mile" id="mile"><b id="mileHead">Сайты</b><span id="mileNote">лендинги · CRM · магазины</span></div>
+  <section class="cap" data-seg="09" data-in="0.5" data-out="4.2">
+    <p class="eyebrow">09 · Для заказчиков</p>
+    <h2>Ваш проект. <em>Уже в действии.</em></h2>
+    <p>Демо на домене портфолио: открывайте сайт по своей ссылке и оставляйте комментарии.</p>
+  </section>
+  <section class="cap cap-final" data-seg="09" data-in="4.6" data-out="99">
+    <p class="eyebrow">09 · Контакт</p>
+    <h2>Следующая история — <em>ваша.</em></h2>
+    <div class="end-actions">
+      <a class="btn btn-fill" href="https://wa.me/77074151715" target="_blank" rel="noopener">Написать в WhatsApp</a>
+      <a class="btn btn-line" href="mailto:kolokolnikovk@gmail.com">kolokolnikovk@gmail.com</a>
+    </div>
+    <div class="end-actions small">
+      <button class="btn btn-line" type="button" data-action="replay">Смотреть заново</button>
+      <a class="btn btn-line" href="./" data-exit>Вернуться на сайт</a>
+    </div>
+  </section>
+
+  <div class="loader" id="loader" role="status"><span class="loader-line"><i></i></span><span>Загружаю историю <b id="loadpct">0%</b></span></div>
+</main>
+
+<header class="topbar">
+  <a class="brand" href="./" data-exit aria-label="Korney Kolokolnikov — на сайт"><img src="assets/brand/mark-blue.svg" width="40" height="27" alt=""><span>История</span></a>
+  <p class="chapter-now" id="chapterNow" aria-live="polite">01 · Идея</p>
+  <a class="exit" href="./" data-exit><span>На сайт</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></a>
+</header>
+
+<nav class="controls" id="controls" aria-label="Управление историей">
+  <button class="ctl" id="play" type="button" aria-label="Смотреть" aria-keyshortcuts="Space">
+    <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg>
+    <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 9 6-9 6Z"/></svg>
+  </button>
+  <button class="ctl" id="prev" type="button" aria-label="Предыдущая глава" aria-keyshortcuts="ArrowLeft"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6 9 12l6 6"/></svg></button>
+  <div class="scrub" id="scrub" role="slider" tabindex="0" aria-label="Время истории" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0">
+    <div class="track"><i class="buffer" id="buffer"></i><i class="fill" id="fill"></i><i class="knob" id="knob"></i></div>
+    <div class="ticks" id="ticks"></div>
+  </div>
+  <button class="ctl" id="next" type="button" aria-label="Следующая глава" aria-keyshortcuts="ArrowRight"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+  <span class="time" id="time">0:00 / 0:00</span>
+</nav>
+<p class="hint" id="hint">Пробел — пауза · ← → главы · колесо и свайп — перемотка · Esc — на сайт</p>
+</body>
+</html>

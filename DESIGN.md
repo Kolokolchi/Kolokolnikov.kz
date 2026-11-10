@@ -6,15 +6,19 @@ colors:
   surface: "#121820"
   surface-2: "#18212c"
   text: "#edf2f7"
-  muted: "#9ca8b6"
-  home-muted: "#a3afbd"
+  muted: "#e3e9ef"
+  faint: "#98a1ac"
   line: "#ffffff17"
+  line-strong: "#ffffff4d"
+  line-input: "#ffffff74"
   blue: "#4aafff"
   blue-bright: "#a9d9ff"
+  blue-text: "#d7edff"
   lime: "#b1ed45"
   lime-bright: "#daff98"
   orange: "#ff9549"
   orange-bright: "#ffd0a9"
+  orange-text: "#ffe6d3"
   button-ink: "#08111a"
 typography:
   display:
@@ -40,10 +44,14 @@ typography:
     lineHeight: 1.7
   label:
     fontFamily: "Manrope, Arial, sans-serif"
-    fontSize: "10px"
+    fontSize: "12px"
     fontWeight: 600
     lineHeight: 1.6
-    letterSpacing: "2px"
+    letterSpacing: "1.6px"
+  copy:
+    fontFamily: "Manrope, Arial, sans-serif"
+    fontSize: "14px"
+    lineHeight: 1.8
   page-display:
     fontFamily: "Unbounded, Arial, sans-serif"
     fontSize: "clamp(32px, 5vw, 65px)"
@@ -65,6 +73,7 @@ components:
     textColor: "{colors.button-ink}"
     rounded: "{rounded.home-button}"
     padding: "13px 25px"
+    fontSize: "15px"
   button-primary-hover:
     backgroundColor: "{colors.lime-bright}"
   button-outline:
@@ -72,8 +81,8 @@ components:
     rounded: "{rounded.home-button}"
     padding: "13px 25px"
   filter-active:
-    backgroundColor: "#4aafff15"
-    textColor: "{colors.blue-bright}"
+    backgroundColor: "#4aafff0d"
+    textColor: "{colors.blue-text}"
     rounded: "{rounded.home-filter}"
     padding: "9px 18px"
 ---
@@ -97,20 +106,33 @@ This records the incumbent identity and the approved home extension. The hero pa
 
 ## Colors
 
-The frontmatter owns the UI palette. `public/styles.css` defines the shared values; the home stylesheet overrides muted text with `home-muted`.
+The frontmatter owns the UI palette. `public/styles.css` defines the shared values as custom properties (`--text`, `--muted`, `--faint`, `--accent`, `--accent-bright`, `--accent-text`, `--accent-fill`, `--line`, `--line-strong`, `--line-input`); every page and the home sections use them instead of literal greys.
 
 - **Primary — Blue:** browsing projects and video; bright blue supports emphasis and interactive details.
 - **Secondary — Lime:** the client demonstration section and its primary action.
 - **Tertiary — Orange:** contact navigation and the contact section.
-- **Neutral:** `bg` is the page canvas, `surface` and `surface-2` support panels, `text` is main copy, and muted values and `line` support secondary copy and dividers.
+- **Neutral:** `bg` is the page canvas, `surface` and `surface-2` support panels, `text` is main copy, `muted` is secondary copy, `faint` is spot text only, and `line` supports dividers.
 
 **The Semantic Color Rule.** Keep blue for exploration, lime for client demonstrations and orange for starting a conversation. Section and action accents are local; sculpture lighting cycles do not change the page theme. `public/theme.js` removes the legacy saved theme attribute.
+
+## Contrast — APCA
+
+The site follows APCA (the WCAG 3 draft contrast method), Bronze Simple Mode: base algorithm 0.0.98G-4g, levels from "APCA in a Nutshell" (apca-w3 0.1.9). Font sizes are corrected by x-height against the Helvetica reference 0.52 (Manrope 0.54, Unbounded 0.566, Georgia 0.481).
+
+- **Text under 15px needs Lc 90, so it stays near white.** On these dark surfaces Lc 90 starts at roughly `#dfe5ec`; secondary text (`muted`) and small accent text (`accent-text`: `#d7edff`, `#daff98`, `#ffe6d3`) sit there. Hierarchy for small text comes from size, weight, case and spacing, not from grey.
+- **Lc 75 from 15px, Lc 60 from 24px, Lc 45 from 36px.** `accent-bright` serves 15px+ text and the italic display accents; saturated `accent` is for headlines, icons, dots and the 2px focus ring (non-text, Lc 45+).
+- **Type floor.** Content text is never below 12px (`--fs-min`); copy that wraps to three or more lines is at least 14px (`--fs-copy`, body text Lc 90). Only spot text (APCA Lc 30) may be smaller: decorative numbering, the copyright, the client-space mock-up and the faint expertise counters.
+- **Filled buttons** keep their accent fill (`accent-fill`: blue-bright, lime, orange-bright) with `button-ink`, which reaches Lc 75+, so their labels are 15px (`--fs-action`); the hover fill is `accent-text` (Lc 90+). Compact toolbars that must keep 12px labels use the `accent-text` fill instead.
+- **Overlays.** Badges and captions over images, video and the 3D viewer use scrims of at least 90% (`#0c1016e6`–`f2`, gradients reaching `#070b12d9` by the first text line), so they hold Lc 90 even over a white pixel. Section glows behind text stay dark enough for `muted` (work band from `#112a44`, engineering glow `#0f2740`).
+- **Non-text.** Outline-button borders use `line-strong` (Lc 15+), text-field borders `line-input` (Lc 30+); disabled controls keep Lc 30+ (opacity no lower than 0.5).
+
+Checks: `npm run check:apca` (tokens and the 12px floor, also part of `prebuild`) and the rendered-page audit `scripts/apca-audit.mjs`, which measures every visible text run with its real size, weight, opacity, gradients and overlays. With the dev server running, in the browser console: `(await import('/@fs/<project>/scripts/apca-audit.mjs')).auditDocument()`.
 
 ## Typography
 
 Home display, headings and project titles use Georgia with Times New Roman and serif fallbacks. Preserve the italic accent line. Manrope uses the bundled regular, semibold and bold faces for body text and controls. Home eyebrows are uppercase; the frontmatter label token records their desktop treatment.
 
-The display token is the desktop hero heading. At the intermediate breakpoint it becomes `clamp(48px, 6.1vw, 74px)`; on mobile it becomes `clamp(45px, 8.6vw, 60px)`, then `clamp(38px, 10.6vw, 49px)` on narrow phones. The home hero description is smaller than base body copy (14px, line-height 1.8; 12px on mobile and 11px on narrow phones).
+The display token is the desktop hero heading. At the intermediate breakpoint it becomes `clamp(48px, 6.1vw, 74px)`; on mobile it becomes `clamp(45px, 8.6vw, 60px)`, then `clamp(38px, 10.6vw, 49px)` on narrow phones. The home hero description is smaller than base body copy (14px, line-height 1.8, at every width — the APCA copy floor).
 
 **The Home Type Rule.** Scope the serif display treatment to `.wild-home`. Other existing pages retain Unbounded headings; `page-display` records their page-intro role.
 

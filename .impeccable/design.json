@@ -24,9 +24,9 @@
         "role": "neutral",
         "displayName": "Charcoal canvas"
       },
-      "home-muted": {
+      "muted": {
         "role": "neutral",
-        "displayName": "Home secondary text"
+        "displayName": "Secondary text (APCA Lc 90 under 15px)"
       }
     },
     "typographyMeta": {
@@ -193,7 +193,7 @@
       "kind": "button",
       "description": "Existing showreel action with circular play symbol and year detail.",
       "html": "<a class=\"ds-reel\" href=\"video.html?video=cgi-showreel\"><span class=\"ds-play\" aria-hidden=\"true\"><svg viewBox=\"0 0 24 24\"><path d=\"m9 6 9 6-9 6Z\"/></svg></span>Смотреть шоурил <span class=\"ds-year\">CGI / 2021</span></a>",
-      "css": ".ds-reel{display:inline-flex;align-items:center;justify-content:center;gap:24px;min-height:54px;padding:13px 25px;border:1px solid transparent;border-radius:32px;font-family:Manrope,Arial,sans-serif;font-size:12px;font-weight:600;line-height:1.7;text-decoration:none;cursor:pointer;transition:background 200ms ease,border-color 200ms ease,color 200ms ease,transform 140ms cubic-bezier(.23,1,.32,1);background:#4aafff15;border-color:#4aafff55;color:var(--text, #edf2f7);font-weight:400;gap:16px;padding:11px 24px 11px 12px}.ds-reel:hover{background:#4aafff28;border-color:var(--accent, #4aafff)}.ds-reel:active{transform:scale(.98)}.ds-reel:focus-visible { outline:2px solid var(--accent, #4aafff); outline-offset:6px; }.ds-play{display:grid;place-items:center;width:33px;height:33px;border:1px solid var(--accent, #4aafff);border-radius:50%;color:var(--accent-bright, #a9d9ff)}.ds-play svg{width:15px;height:15px;fill:currentColor;stroke:none}.ds-year{border-left:1px solid #4aafff35;padding-left:16px;font-size:9px;letter-spacing:1px;color:var(--muted, #a3afbd)}"
+      "css": ".ds-reel{display:inline-flex;align-items:center;justify-content:center;gap:24px;min-height:54px;padding:13px 25px;border:1px solid transparent;border-radius:32px;font-family:Manrope,Arial,sans-serif;font-size:12px;font-weight:600;line-height:1.7;text-decoration:none;cursor:pointer;transition:background 200ms ease,border-color 200ms ease,color 200ms ease,transform 140ms cubic-bezier(.23,1,.32,1);background:#4aafff15;border-color:#4aafff55;color:var(--text, #edf2f7);font-weight:400;gap:16px;padding:11px 24px 11px 12px}.ds-reel:hover{background:#4aafff28;border-color:var(--accent, #4aafff)}.ds-reel:active{transform:scale(.98)}.ds-reel:focus-visible { outline:2px solid var(--accent, #4aafff); outline-offset:6px; }.ds-play{display:grid;place-items:center;width:33px;height:33px;border:1px solid var(--accent, #4aafff);border-radius:50%;color:var(--accent-bright, #a9d9ff)}.ds-play svg{width:15px;height:15px;fill:currentColor;stroke:none}.ds-year{border-left:1px solid #4aafff35;padding-left:16px;font-size:12px;letter-spacing:1px;color:var(--muted, #e3e9ef)}"
     },
     {
       "name": "Project filter",
@@ -201,7 +201,7 @@
       "refersTo": "filter-active",
       "description": "Home filter with the source-selected aria state.",
       "html": "<button class=\"ds-filter\" type=\"button\" aria-pressed=\"true\">Все</button>",
-      "css": ".ds-filter{padding:9px 18px;border:1px solid transparent;border-radius:30px;font-family:Manrope,Arial,sans-serif;font-size:11px;line-height:1.7;min-height:44px;color:var(--muted, #a3afbd);background:none;cursor:pointer}.ds-filter[aria-pressed='true']{border-color:#a9d9ff50;background:#4aafff15;color:var(--accent-bright, #a9d9ff)}.ds-filter:hover{color:var(--accent-bright, #a9d9ff)}.ds-filter:focus-visible { outline:2px solid var(--accent, #4aafff); outline-offset:6px; }"
+      "css": ".ds-filter{padding:9px 18px;border:1px solid transparent;border-radius:30px;font-family:Manrope,Arial,sans-serif;font-size:12px;line-height:1.7;min-height:44px;color:var(--muted, #e3e9ef);background:none;cursor:pointer}.ds-filter[aria-pressed='true']{border-color:#a9d9ff50;background:#4aafff0d;color:var(--accent-text, #d7edff)}.ds-filter:hover{color:var(--accent-text, #d7edff)}.ds-filter:focus-visible { outline:2px solid var(--accent, #4aafff); outline-offset:6px; }"
     },
     {
       "name": "Home navigation link",

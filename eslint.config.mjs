@@ -18,6 +18,8 @@ const eslintConfig = defineConfig([
     "public/machine-viewer.js",
     "public/pano-viewer.js",
     "public/assets/draco/**",
+    // Local drafts and copies of earlier builds (listed in .gitignore), not part of the Site.
+    "notes/**",
   ]),
   {
     files: ["components/ui/**/*.{ts,tsx}", "hooks/use-mobile.ts"],

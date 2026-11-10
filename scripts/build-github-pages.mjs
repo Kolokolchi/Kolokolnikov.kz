@@ -8,7 +8,6 @@ const root = await realpath(fileURLToPath(new URL('../', import.meta.url)));
 const source = path.join(root, 'public');
 const outputParent = path.join(root, 'out');
 const output = path.join(outputParent, 'github-pages');
-const adminUrl = 'https://korney-kolokolnikov-portfolio.cocoacrow256.chatgpt.site/admin/';
 
 async function filesIn(directory) {
   const files = [];
@@ -81,10 +80,7 @@ await writeFile(path.join(output, '.nojekyll'), '');
 
 for (const filename of sourceFiles.filter(filename => filename.endsWith('.html'))) {
   const relative = path.relative(source, filename);
-  const html = await readFile(filename, 'utf8');
-  const staticHtml = html.replace(/(<a\b[^>]*\bhref\s*=\s*)(["'])\/admin\/?\2/gi,
-    (_match, prefix, quote) => `${prefix}${quote}${adminUrl}${quote}`);
-  await writeFile(path.join(output, relative), staticHtml);
+  await writeFile(path.join(output, relative), await readFile(filename, 'utf8'));
 }
 
 const outputFiles = await filesIn(output);
