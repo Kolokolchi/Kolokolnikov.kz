@@ -14,6 +14,11 @@ const hasTail = placement => placement.pose === 'paired' || (placement.pose === 
 // The perspective-rotated client preview has no straight screen-space edge.
 const ANCHOR_SELECTORS = '.project-image-link, .motion-stage, .expertise-list, .reel-button';
 const OBSTACLE_SELECTORS = 'h1, h2, h3, p, a, button, summary, .project-image-link, .motion-stage, .client-preview, .site-header, .site-footer';
+// The scruff: top of the head between the raised paws of the glide artwork (panel 6), as a share of its box.
+const SCRUFF = { x: (1077 - 985) / 182, y: (551 - 426) / 384 };
+// How far from a surface edge a carried cat may be released and still settle on it.
+const DROP_RADIUS = 150;
+const DROP_DURATION = 170;
 
 function weightedPick(items, weight = () => 1) {
   const weights = items.map(weight);
@@ -39,7 +44,7 @@ export function initScrollCat() {
   root.dataset.scrollCat = '';
   root.dataset.state = 'idle';
   const catAction = 'type="button" data-cat-voice aria-label="Погладить котика — услышать мяу" title="Погладить котика" disabled';
-  root.innerHTML = `<div class="scroll-cat__trail" aria-hidden="true"></div><div class="scroll-cat__companion" inert><button class="scroll-cat__part scroll-cat__head" ${catAction}><span class="scroll-cat__orientation"><span class="scroll-cat__peek"></span></span></button><button class="scroll-cat__part scroll-cat__tail" ${catAction} tabindex="-1"><span class="scroll-cat__orientation"><span class="scroll-cat__tail-peek"></span></span></button><button class="scroll-cat__slider" ${catAction}></button></div>`;
+  root.innerHTML = `<div class="scroll-cat__trail" aria-hidden="true"></div><div class="scroll-cat__landing" aria-hidden="true"></div><div class="scroll-cat__companion" inert><button class="scroll-cat__part scroll-cat__head" ${catAction}><span class="scroll-cat__orientation"><span class="scroll-cat__peek"></span></span></button><button class="scroll-cat__part scroll-cat__tail" ${catAction} tabindex="-1"><span class="scroll-cat__orientation"><span class="scroll-cat__tail-peek"></span></span></button><button class="scroll-cat__slider" ${catAction}></button></div>`;
   document.body.append(root);
 
   const trail = root.querySelector('.scroll-cat__trail');
@@ -47,6 +52,7 @@ export function initScrollCat() {
   const head = root.querySelector('.scroll-cat__head');
   const tail = root.querySelector('.scroll-cat__tail');
   const slider = root.querySelector('.scroll-cat__slider');
+  const landing = root.querySelector('.scroll-cat__landing');
   const voice = createCatVoice();
   root.append(voice.audio);
   const catButtons = [...root.querySelectorAll('[data-cat-voice]')];
@@ -74,6 +80,8 @@ export function initScrollCat() {
   let anchorFrame;
   let destroyed = false;
   let glideFinished = false;
+  let carry = null;
+  let suppressSliderClick = false;
 
   function updateCatInteraction() {
     const active = Boolean(currentPlacement) && root.dataset.state === 'idle' && !glideFinished && !document.hidden && !isObscured();
@@ -84,13 +92,229 @@ export function initScrollCat() {
   catButtons.forEach(button => button.addEventListener('click', event => {
     if (button.disabled || isObscured()) return;
     event.stopPropagation();
+    // Picking the slider up already meowed; the click that follows the release adds nothing.
+    if (button === slider && suppressSliderClick) { suppressSliderClick = false; return; }
     voice.play();
   }, { signal: controller.signal }));
   slider.addEventListener('animationend', event => {
-    if (event.animationName !== 'scroll-cat-glide') return;
+    if (!['scroll-cat-glide', 'scroll-cat-reglide'].includes(event.animationName)) return;
     glideFinished = true;
     updateCatInteraction();
   }, { signal: controller.signal });
+  slider.addEventListener('pointerdown', event => {
+    if (event.button !== 0 || !event.isPrimary || carry || slider.disabled || currentPlacement?.pose !== 'glide' || root.dataset.state !== 'idle' || isObscured()) return;
+    event.preventDefault();
+    startCarry(event);
+  }, { signal: controller.signal });
+
+  // Catching the sliding cat lifts it by the scruff: it dangles from the pointer and swings with the hand.
+  // Released near a surface edge it settles there in one of its regular poses; on free side space it
+  // slides on from there; over content it loses its grip and drops away. A click without a move is
+  // still a meow, and the cat slides on.
+  function startCarry(event) {
+    const { width, height } = currentPlacement;
+    const left = parseFloat(slider.style.left);
+    const top = parseFloat(slider.style.top);
+    const transform = getComputedStyle(slider).transform;
+    const matrix = new DOMMatrixReadOnly(transform === 'none' ? undefined : transform);
+    // Where the scruff is on screen right now, mid-slide and tilted.
+    const scruff = matrix.transformPoint(new DOMPoint((SCRUFF.x - .5) * width, (SCRUFF.y - .5) * height));
+    const listeners = new AbortController();
+    carry = {
+      id: event.pointerId, x0: event.clientX, y0: event.clientY, px: event.clientX, py: event.clientY,
+      sx: left + width / 2 + scruff.x, sy: top + height / 2 + scruff.y, width, height,
+      angle: currentPlacement.tilt || 0, spin: 0, vx: 0, moveTime: performance.now(), frameTime: performance.now(),
+      moved: false, target: null, lookup: 0, frame: 0, listeners,
+    };
+    try { slider.setPointerCapture(event.pointerId); } catch {}
+    collectObstacles();
+    root.dataset.carry = '';
+    document.documentElement.classList.add('scroll-cat-carrying');
+    suppressSliderClick = true;
+    voice.play();
+    const options = { signal: listeners.signal };
+    window.addEventListener('pointermove', onCarryMove, options);
+    window.addEventListener('pointerup', onCarryEnd, options);
+    window.addEventListener('pointercancel', onCarryEnd, options);
+    window.addEventListener('keydown', key => { if (key.key === 'Escape') finishCarry('back'); }, options);
+    carry.frame = requestAnimationFrame(carryFrame);
+  }
+
+  function carryFrame(now) {
+    if (!carry) return;
+    const dt = Math.min(.05, (now - carry.frameTime) / 1000);
+    carry.frameTime = now;
+    // The scruff catches up with the hand quickly; the body hangs below it like a pendulum,
+    // trailing the hand's sideways speed and swinging back to rest.
+    const follow = 1 - Math.exp(-dt * 30);
+    carry.sx += (carry.px - carry.sx) * follow;
+    carry.sy += (carry.py - carry.sy) * follow;
+    carry.vx *= Math.exp(-dt * 7);
+    if (reducedMotion.matches) carry.angle = 0;
+    else {
+      const goal = Math.max(-32, Math.min(32, carry.vx * .024));
+      carry.spin += ((goal - carry.angle) * 120 - carry.spin * 9) * dt;
+      carry.angle += carry.spin * dt;
+    }
+    slider.style.left = `${carry.sx - SCRUFF.x * carry.width}px`;
+    slider.style.top = `${carry.sy - SCRUFF.y * carry.height}px`;
+    slider.style.setProperty('--carry-angle', `${carry.angle.toFixed(2)}deg`);
+    carry.frame = requestAnimationFrame(carryFrame);
+  }
+
+  function onCarryMove(event) {
+    if (!carry || event.pointerId !== carry.id) return;
+    const now = performance.now();
+    const speed = (event.clientX - carry.px) / Math.max(4, now - carry.moveTime) * 1000;
+    carry.vx = carry.vx * .55 + speed * .45;
+    carry.moveTime = now;
+    carry.px = event.clientX;
+    carry.py = event.clientY;
+    if (!carry.moved && Math.hypot(carry.px - carry.x0, carry.py - carry.y0) > 6) carry.moved = true;
+    // Looking for a landing place is cheap but not free: a few times a second is enough.
+    if (carry.moved && now - carry.lookup > 60) {
+      carry.lookup = now;
+      showLanding(findLanding(carry.px, carry.py));
+    }
+  }
+
+  function onCarryEnd(event) {
+    if (!carry || event.pointerId !== carry.id) return;
+    if (event.type === 'pointercancel' || !carry.moved) { finishCarry('back'); return; }
+    showLanding(findLanding(carry.px, carry.py));
+    finishCarry(carry.target ? 'land' : 'release');
+  }
+
+  function edgeOf(placement) {
+    const rect = placement.element.getBoundingClientRect();
+    if (placement.side === 'top' || placement.side === 'bottom') {
+      return { x: rect.left + rect.width * placement.fraction, y: placement.side === 'top' ? rect.top : rect.bottom };
+    }
+    return { x: placement.side === 'left' ? rect.left : rect.right, y: rect.top + rect.height * placement.fraction };
+  }
+
+  // The nearest edge of a visible surface around the hand, in a pose that fits there: a relaxed
+  // lounge or paired grip on top, a side peek, the upside-down pair below a media card.
+  function findLanding(px, py) {
+    let best = null;
+    [...document.querySelectorAll(ANCHOR_SELECTORS)].forEach((element, index) => {
+      const rect = element.getBoundingClientRect();
+      if (rect.width < 35 || rect.height < 12 || rect.bottom < 0 || rect.top > window.innerHeight) return;
+      if (px < rect.left - DROP_RADIUS || px > rect.right + DROP_RADIUS || py < rect.top - DROP_RADIUS || py > rect.bottom + DROP_RADIUS) return;
+      const media = element.matches('.project-image-link, .motion-stage, .client-preview');
+      const label = `${element.closest('section')?.id || 'hero'}:${element.className.split(' ')[0] || 'section'}:${index}`;
+      const along = { top: (px - rect.left) / rect.width, bottom: (px - rect.left) / rect.width, left: (py - rect.top) / rect.height, right: (py - rect.top) / rect.height };
+      const poses = { top: media ? ['lounge', 'paired', 'peek'] : ['peek'], bottom: media ? ['paired'] : [], left: ['peek'], right: ['peek'] };
+      for (const side of ['top', 'left', 'right', 'bottom']) {
+        const base = Math.min(.85, Math.max(.15, along[side]));
+        for (const pose of poses[side]) {
+          for (const shift of [0, -.07, .07, -.14, .14, -.21, .21]) {
+            const fraction = base + shift;
+            if (fraction < .1 || fraction > .9) continue;
+            const candidate = resolvePlacement({ side, pose, fraction, anchor: label, element, media, tilt: 0 });
+            if (!candidate) continue;
+            const edge = edgeOf(candidate);
+            const distance = Math.hypot(px - edge.x, py - edge.y);
+            if (distance < DROP_RADIUS && (!best || distance < best.distance)) best = { ...candidate, distance };
+            break;
+          }
+        }
+      }
+    });
+    if (best) delete best.distance;
+    return best;
+  }
+
+  // A short line on the edge where the cat would settle.
+  function showLanding(target) {
+    if (carry) carry.target = target;
+    if (!target) { delete landing.dataset.side; return; }
+    const edge = edgeOf(target);
+    const length = (compactScreen.matches ? .75 : 1) * (target.pose === 'lounge' ? 140 : 96);
+    const horizontal = target.side === 'top' || target.side === 'bottom';
+    landing.dataset.side = target.side;
+    Object.assign(landing.style, horizontal
+      ? { width: `${length}px`, height: '3px', transform: `translate3d(${edge.x - length / 2}px, ${edge.y - 1.5}px, 0)` }
+      : { width: '3px', height: `${length}px`, transform: `translate3d(${edge.x - 1.5}px, ${edge.y - length / 2}px, 0)` });
+  }
+
+  function stopCarrying() {
+    if (!carry) return null;
+    const done = carry;
+    carry = null;
+    cancelAnimationFrame(done.frame);
+    done.listeners.abort();
+    try { slider.releasePointerCapture(done.id); } catch {}
+    document.documentElement.classList.remove('scroll-cat-carrying');
+    delete landing.dataset.side;
+    // The click that may follow this release belongs to the grab.
+    window.setTimeout(() => { suppressSliderClick = false; }, 0);
+    return done;
+  }
+
+  function finishCarry(outcome) {
+    const done = stopCarrying();
+    if (!done) return;
+    const version = activityVersion;
+    const glidePlacement = { ...currentPlacement, anchor: 'whitespace:carried', tilt: 0 };
+    if (outcome === 'land') {
+      // A short drop towards the edge; then the usual pose rises from behind it.
+      const edge = edgeOf(done.target);
+      slider.style.transition = `left ${DROP_DURATION}ms ease-in, top ${DROP_DURATION}ms ease-in, opacity ${DROP_DURATION}ms ease-in`;
+      slider.style.left = `${edge.x - SCRUFF.x * done.width}px`;
+      slider.style.top = `${edge.y - SCRUFF.y * done.height}px`;
+      slider.style.opacity = '0';
+      window.setTimeout(() => {
+        slider.style.transition = '';
+        slider.style.opacity = '';
+        delete root.dataset.carry;
+        if (version !== activityVersion || destroyed) return;
+        settleOn(resolvePlacement(done.target));
+      }, DROP_DURATION);
+      return;
+    }
+    if (outcome === 'release') {
+      const x = done.sx + (.5 - SCRUFF.x) * done.width;
+      const y = done.sy + (.5 - SCRUFF.y) * done.height;
+      const placement = resolvePlacement({ ...glidePlacement, x, y, tilt: x < window.innerWidth / 2 ? -6 : 6 });
+      if (!placement) { dropAway(); return; }
+      glidePlacement.x = placement.x;
+      glidePlacement.y = placement.y;
+      glidePlacement.tilt = placement.tilt;
+    }
+    // Back on the glass: the slide carries on from where the cat was let go, without fading in again.
+    root.dataset.reglide = '';
+    delete root.dataset.carry;
+    parkCat(outcome === 'back' ? { ...currentPlacement } : glidePlacement);
+  }
+
+  function settleOn(target) {
+    if (!target) { parkCat(null); return; }
+    root.dataset.state = 'settling';
+    delete root.dataset.reglide;
+    parkCat(target);
+    companion.style.visibility = '';
+    catHidden = false;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (destroyed || currentPlacement !== target || root.dataset.state !== 'settling') return;
+      root.dataset.state = 'idle';
+      updateCatInteraction();
+      followAnchor();
+    }));
+  }
+
+  function dropAway() {
+    // Over content there is nothing to hold on to: it drops out of the window and the slide is over.
+    root.dataset.falling = '';
+    const finish = () => {
+      delete root.dataset.falling;
+      delete root.dataset.carry;
+      glideFinished = true;
+      parkCat(null);
+    };
+    if (reducedMotion.matches) { finish(); return; }
+    slider.addEventListener('animationend', finish, { once: true, signal: controller.signal });
+  }
 
   function catSize(pose = 'peek', side = 'top', part = 'head') {
     const base = compactScreen.matches ? 66 : window.innerWidth <= 1480 ? 84 : 96;
@@ -377,6 +601,13 @@ export function initScrollCat() {
   }
 
   function clearTrail() {
+    // Resizing, a hidden tab or an opened menu puts a carried cat down without ceremony.
+    stopCarrying();
+    delete root.dataset.carry;
+    delete root.dataset.falling;
+    delete root.dataset.reglide;
+    slider.style.transition = '';
+    slider.style.opacity = '';
     cancelAnimationFrame(anchorFrame);
     anchorFrame = null;
     window.clearTimeout(hideTimer);
@@ -418,6 +649,8 @@ export function initScrollCat() {
         return;
       }
     }
+    // A new appearance slides in with its usual fade; only a carried cat continues mid-slide.
+    delete root.dataset.reglide;
     parkCat(destination);
     plannedPlacement = null;
     delete root.dataset.destination;
@@ -560,6 +793,11 @@ export function initScrollCat() {
     const currentY = window.scrollY;
     const delta = currentY - lastY;
     lastY = currentY;
+    // A carried cat stays in the hand while the page moves under it (or is dropping away).
+    if (carry || 'carry' in root.dataset) {
+      if (carry) { collectObstacles(); showLanding(findLanding(carry.px, carry.py)); }
+      return;
+    }
     if (Math.abs(delta) < .5 || document.hidden || isObscured()) return;
     // Move the attachment and mask before the 120ms retreat, even on large jumps.
     syncAnchoredCat();

@@ -39,9 +39,10 @@
 .scroll-cat[data-pose="glide"] .scroll-cat__part { display: none; }
 .scroll-cat[data-pose="glide"] .scroll-cat__slider { display: block; }
 .scroll-cat[data-pose="glide"][data-state="idle"] .scroll-cat__slider { animation: scroll-cat-glide 2200ms linear both; }
-.scroll-cat__slider:focus-visible { animation-play-state: paused !important; }
+/* Hover or focus holds a sliding cat; a cat that lost its grip falls regardless. */
+.scroll-cat:not([data-falling]) .scroll-cat__slider:focus-visible { animation-play-state: paused !important; }
 @media (hover: hover) and (pointer: fine) {
-  .scroll-cat__slider:has(image:hover) { animation-play-state: paused !important; }
+  .scroll-cat:not([data-falling]) .scroll-cat__slider:has(image:hover) { animation-play-state: paused !important; }
 }
 .scroll-cat:not([data-state="idle"]) .scroll-cat__companion { opacity: 0; transition-duration: 120ms; }
 .scroll-cat:not([data-state="idle"]) .scroll-cat__peek { transform: translateY(90%) rotate(var(--cat-tilt, 0deg)); transition-duration: 120ms; }
@@ -72,4 +73,42 @@ body.menu-open .scroll-cat, body:has(dialog[open]) .scroll-cat { opacity: 0; }
   .scroll-cat__print { display: none; animation: none; }
   .scroll-cat:not([data-state="idle"]) .scroll-cat__peek, .scroll-cat:not([data-state="idle"]) .scroll-cat__tail-peek { transform: rotate(var(--cat-tilt, 0deg)); }
   .scroll-cat[data-pose="glide"][data-state="idle"] .scroll-cat__slider { animation: none; opacity: .85; transform: rotate(var(--cat-tilt, 0deg)); }
+}
+
+/* The sliding cat can be caught: it is lifted by the scruff (top of the head between the raised paws),
+   dangles from the pointer and swings, and settles on the surface edge it is released at. */
+.scroll-cat[data-state="idle"] .scroll-cat__slider:not(:disabled) .scroll-cat__drawing image {
+  cursor: grab; touch-action: none; -webkit-user-drag: none;
+}
+.scroll-cat[data-reglide][data-pose="glide"][data-state="idle"] .scroll-cat__slider { animation: scroll-cat-reglide 1500ms linear both; }
+.scroll-cat[data-carry][data-pose="glide"][data-state="idle"] .scroll-cat__slider {
+  animation: none; opacity: 1; pointer-events: auto; cursor: grabbing;
+  transform-origin: 50.55% 32.55%;
+  transform: rotate(var(--carry-angle, 0deg)) scale(.97, 1.05);
+  filter: drop-shadow(0 14px 12px #0009);
+}
+.scroll-cat[data-carry][data-falling][data-pose="glide"][data-state="idle"] .scroll-cat__slider {
+  animation: scroll-cat-fall 650ms cubic-bezier(.5, 0, .9, .4) forwards;
+}
+html.scroll-cat-carrying, html.scroll-cat-carrying * { cursor: grabbing !important; user-select: none; -webkit-user-select: none; }
+.scroll-cat__landing {
+  position: absolute; top: 0; left: 0; display: none;
+  border-radius: 3px; background: #a9d2ec; box-shadow: 0 0 12px #a9d2ec99;
+  animation: scroll-cat-landing 900ms ease-in-out infinite alternate;
+}
+.scroll-cat__landing[data-side] { display: block; }
+@keyframes scroll-cat-reglide {
+  0% { transform: translate3d(0, 0, 0) rotate(var(--cat-tilt, 0deg)); }
+  75% { opacity: 1; }
+  100% { opacity: 0; transform: translate3d(0, 34px, 0) rotate(var(--cat-tilt, 0deg)); }
+}
+@keyframes scroll-cat-fall {
+  12% { transform: translate3d(0, -10px, 0) rotate(var(--carry-angle, 0deg)) scale(.97, 1.05); }
+  100% { opacity: 0; transform: translate3d(0, 70vh, 0) rotate(calc(var(--carry-angle, 0deg) + 28deg)); }
+}
+@keyframes scroll-cat-landing { from { opacity: .45; } to { opacity: .95; } }
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cat[data-reglide][data-pose="glide"][data-state="idle"] .scroll-cat__slider { animation: none; opacity: .85; transform: rotate(var(--cat-tilt, 0deg)); }
+  .scroll-cat[data-carry][data-pose="glide"][data-state="idle"] .scroll-cat__slider { transform: none; }
+  .scroll-cat__landing { animation: none; opacity: .9; }
 }
