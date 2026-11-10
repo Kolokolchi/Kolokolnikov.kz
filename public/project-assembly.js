@@ -98,8 +98,10 @@ export function mountProjectAssemblies(grid) {
         const style = view.getComputedStyle(element);
         const base = style.transform === 'none' ? '' : style.transform;
         const opacity = Number(style.opacity);
+        // Before the late start the composition already shows as a faint, displaced ghost
+        // (never an empty card); scrolling settles each layer and brings it to full strength.
         const animation = element.animate([
-          { transform: `${base} translate3d(${x}px, ${y}px, 0) rotate(${angle}deg)`, opacity: 0 },
+          { transform: `${base} translate3d(${x}px, ${y}px, 0) rotate(${angle}deg)`, opacity: opacity * .18 },
           { transform: base || 'none', opacity },
         ], { duration: 1000, easing: ease, fill: 'both' });
         animation.pause();

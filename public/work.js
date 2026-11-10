@@ -1,7 +1,8 @@
 import { media } from './work-media.js';
+import { projects } from './projects.js';
 import {
   machines, blisterHistory, engineeringGallery, cgiFilters, cgiItems, motionReel, reels,
-  youtubeChannel, youtubeGroups, youtubeNoEmbed, youtubeSdThumbs, brands, decks, marquee,
+  youtubeChannel, youtubeGroups, youtubeNoEmbed, youtubeSdThumbs, brands, decks, marquee, practiceSince,
 } from './work-data.js';
 
 // Home-page galleries for engineering, 3D, motion, brands and decks.
@@ -198,20 +199,21 @@ function renderMarquee() {
 function renderStats() {
   const holder = $('[data-stats]');
   if (!holder) return;
-  const ytCount = new Set(youtubeGroups.flatMap(group => group.items.map(item => item[0]))).size;
-  // Labels agree with their numbers (1 модель, 3 модели, 5 моделей).
+  // Facts about the work itself (not about this page). Labels agree with their numbers.
+  const years = new Date().getFullYear() - practiceSince;
   const stats = [
-    [machines.length, ['WebGL-модель оборудования', 'WebGL-модели оборудования', 'WebGL-моделей оборудования']],
-    [cgiItems.length, ['работа в 3D и CGI', 'работы в 3D и CGI', 'работ в 3D и CGI']],
-    [motionReel.length + reels.length, ['моушн-ролик на странице', 'моушн-ролика на странице', 'моушн-роликов на странице']],
-    [brands.length, ['брендовая работа', 'брендовые работы', 'брендовых работ']],
-    [decks.length, ['презентация', 'презентации', 'презентаций']],
-    [ytCount, ['фильм в подборке YouTube', 'фильма в подборке YouTube', 'фильмов в подборке YouTube']],
-  ].map(([value, forms]) => [value, plural(value, forms)]);
-  for (const [value, label] of stats) {
+    [years, ['год в дизайне и видео', 'года в дизайне и видео', 'лет в дизайне и видео']],
+    [projects.length, ['сайт и приложение', 'сайта и приложения', 'сайтов и приложений']],
+    [youtubeChannel.videoCount, ['видео на YouTube-канале', 'видео на YouTube-канале', 'видео на YouTube-канале']],
+    [youtubeChannel.subscriberCount, ['подписчик на YouTube', 'подписчика на YouTube', 'подписчиков на YouTube'], '+'],
+    [decks.length, ['презентация и концепция', 'презентации и концепции', 'презентаций и концепций']],
+    [brands.length, ['работа по брендам и упаковке', 'работы по брендам и упаковке', 'работ по брендам и упаковке']],
+  ].map(([value, forms, suffix = '']) => [value, plural(value, forms), suffix]);
+  for (const [value, label, suffix] of stats) {
     const item = el('div', 'stat');
     const number = el('dd', 'stat-value', '0');
     number.dataset.count = String(value);
+    number.dataset.suffix = suffix;
     item.append(number, el('dt', '', label));
     holder.append(item);
   }
@@ -220,11 +222,12 @@ function renderStats() {
     observer.disconnect();
     for (const number of $$('[data-count]', holder)) {
       const target = Number(number.dataset.count);
-      if (reducedMotion.matches) { number.textContent = String(target); continue; }
+      const show = value => `${value.toLocaleString('ru-RU')}${number.dataset.suffix || ''}`;
+      if (reducedMotion.matches) { number.textContent = show(target); continue; }
       const start = performance.now();
       const tick = now => {
         const t = Math.min(1, (now - start) / 1100);
-        number.textContent = String(Math.round(target * (1 - Math.pow(1 - t, 3))));
+        number.textContent = show(Math.round(target * (1 - Math.pow(1 - t, 3))));
         if (t < 1) requestAnimationFrame(tick);
       };
       requestAnimationFrame(tick);
@@ -555,10 +558,14 @@ function renderDecks() {
     card.setAttribute('aria-label', `Открыть презентацию: ${deck.title}`);
     const stack = el('span', 'deck-stack');
     const cover = el('span', 'deck-cover');
-    const first = pages[0];
+    // Cover: the first page, or a chosen page number, or another media id (e.g. a film frame).
+    const pageNumber = page => Number(page.src.match(/-(\d+)\.webp$/)?.[1]);
+    const coverIndex = typeof deck.cover === 'number' ? Math.max(0, pages.findIndex(page => pageNumber(page) === deck.cover)) : 0;
+    const coverMedia = typeof deck.cover === 'string' ? asset(deck.cover) : null;
+    const first = coverMedia ? { sm: coverMedia.poster || coverMedia.sm, w: coverMedia.w, h: coverMedia.h } : pages[coverIndex];
     stack.style.setProperty('--ratio', `${first.w} / ${first.h}`);
     // Following pages sit behind the cover and fan out as the deck is dealt.
-    pages.slice(1, 3).forEach((page, i) => {
+    pages.filter((page, i) => i !== coverIndex || coverMedia).slice(0, 2).forEach((page, i) => {
       const sheet = el('span', 'deck-sheet');
       sheet.style.setProperty('--sheet', String(i + 1));
       sheet.style.backgroundImage = `url("${page.sm}")`;
@@ -573,7 +580,7 @@ function renderDecks() {
     caption.append(el('strong', '', deck.title), el('span', '', deck.note));
     card.append(stack, caption);
     const entries = pages.map((page, i) => ({ src: page.src, w: page.w, h: page.h, title: deck.title, note: i ? `${deck.note} · страница ${i + 1}` : deck.note }));
-    card.addEventListener('click', () => openLightbox(entries, 0, card));
+    card.addEventListener('click', () => openLightbox(entries, coverMedia ? 0 : coverIndex, card));
     track.append(card);
   });
   shelf.append(track);

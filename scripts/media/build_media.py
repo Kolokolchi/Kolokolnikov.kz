@@ -32,7 +32,6 @@ JOBS = [
     # Engineering: CadQuery/Fusion projects rendered by the owner.
     dict(id="eng-pour-open", src=V05 + r"\pour_02_doors_open.png"),
     dict(id="eng-pour-inside", src=V05 + r"\pour_03_inside.png"),
-    dict(id="eng-pour-service", src=V05 + r"\pour_05_service.png"),
     dict(id="eng-blister-inside", src=V05 + r"\blister_02_inside.png"),
     dict(id="eng-blister-pressing", src=V05 + r"\blister_05_pressing.png"),
     dict(id="eng-blister-strip", src=V05 + r"\blister_06_strip.png"),
@@ -47,10 +46,8 @@ JOBS = [
     # 3D, CGI, games.
     dict(id="cg-vr-canyon-1", src=W + r"\TARTIP Studio\VR\Presentation\Tex\Exemple\HighresScreenshot00002.jpg"),
     dict(id="cg-vr-canyon-2", src=W + r"\TARTIP Studio\VR\Presentation\Tex\Exemple\HighresScreenshot00004.jpg"),
-    dict(id="cg-vr-canyon-3", src=W + r"\TARTIP Studio\VR\Presentation\Tex\Exemple\HighresScreenshot00009.jpg"),
     dict(id="cg-vr-canyon-4", src=W + r"\TARTIP Studio\VR\Presentation\Tex\Exemple\HighresScreenshot00013.jpg"),
     dict(id="cg-mob-heads-1", src=GD + r"\korney-kolokolnikov-hex-1-3.jpg"),
-    dict(id="cg-mob-heads-2", src=GD + r"\korney-kolokolnikov-hex-2-2.jpg"),
     dict(id="cg-mob-worker", src=GD + r"\1415785187_1220268352.jpg"),
     dict(id="cg-mob-striker", src=GD + r"\Art_Striker_.png"),
     dict(id="cg-mob-crawler", src=GD + r"\Screenshot_24.png"),
@@ -59,11 +56,10 @@ JOBS = [
     dict(id="cg-teacup", src=W + r"\Akvitol\Package\Lable\Green\Teacup.png"),
     dict(id="cg-mobika-key", src=W + r"\TARTIP Studio\Mobika Sound\Mobika YT\Tex\S1-Qaz.jpg"),
     dict(id="cg-mobika-hotel", src=GD + r"\M&N map 2022.jpg", w=1200),
-    dict(id="cg-agro-plan", src=W + r"\Acvitol\Model\Render\Plan_Agro0007.jpg"),
 
     # Motion and film loops (silent previews; full films live on YouTube or with the owner).
     dict(id="v-mobika-opener", kind="video", src=W + r"\TARTIP Studio\Mobika Sound\Video Opener\Opening_RU.mp4", t=16),
-    dict(id="v-ztk-opener", kind="video", src=W + r"\Vladik\render\Opener to Music.mp4", ss=4, t=22, crf=28),
+    dict(id="v-ztk-opener", kind="video", src=W + r"\Vladik\render\Opener to Music.mp4", ss=4, t=22, crf=28, poster_at=1),
     dict(id="v-ztk-plasma", kind="video", src=W + r"\Vladik\Video\Interior\Opener\Plasma_cutter_cutting_titanium_logo_202605230201.mp4", t=8),
     dict(id="v-ztk-hangar", kind="video", src=W + r"\Vladik\Video\Interior\Opener\Futuristic_hangar_drone_flight_logo_202605230227 (1).mp4", t=8),
     dict(id="v-nygmet", kind="video", src=W + r"\Romadanov\Ready to work\Final Render\Nygmet.mov", ss=2, t=24, crf=28),
@@ -71,9 +67,6 @@ JOBS = [
     dict(id="v-hyper-logo", kind="video", src=W + r"\A\Video\Render\Render_4.mp4", t=7),
     dict(id="v-a4r-mud", kind="video", src=DRIVE + r"\All4Race\Video\Mud_splash_offroad_reveal_1080p_202609021744.mp4", t=8),
     dict(id="v-a4r-night", kind="video", src=DRIVE + r"\All4Race\Video\GT_cars_racing_at_night_202609021744.mp4", t=8),
-    dict(id="v-a4r-dust", kind="video", src=DRIVE + r"\All4Race\Video\Logo_emerging_from_desert_dust_202609021744.mp4", t=8),
-    dict(id="v-a4r-alley", kind="video", src=DRIVE + r"\All4Race\Video\Logo_fades_in_city_alley_202609021747.mp4", t=8),
-    dict(id="v-charyn-ue", kind="video", src=DRIVE + r"\NewCharyn_60.mp4", ss=6, t=18, crf=28),
 ]
 
 
@@ -115,7 +108,7 @@ def probe(src):
 
 
 def video_job(job, manifest, force):
-    src = job["src"]
+    src = job.get("src") or job["srcs"][0]
     (OUT / "video").mkdir(exist_ok=True)
     out = OUT / "video" / f"{job['id']}.mp4"
     poster = OUT / "video" / f"{job['id']}.webp"
@@ -128,12 +121,20 @@ def video_job(job, manifest, force):
     if seq:
         cmd += ["-framerate", str(job.get("fps", 24)), "-i", src]
     else:
-        if job.get("ss"):
-            cmd += ["-ss", str(job["ss"])]
-        cmd += ["-i", src]
-        if job.get("t"):
-            cmd += ["-t", str(job["t"])]
-    cmd += ["-an", "-vf", ",".join(vf), "-c:v", "libx264", "-preset", "slow", "-crf", str(job.get("crf", 27)),
+        if job.get("srcs"):  # join clips: same size, video only
+            for clip in job["srcs"]:
+                cmd += ["-i", clip]
+            joined = "".join(f"[{i}:v]" for i in range(len(job["srcs"])))
+            vf = [f"{joined}concat=n={len(job['srcs'])}:v=1:a=0[j]", f"[j]scale='min({width},iw)':-2:flags=lanczos,format=yuv420p"]
+            cmd += ["-filter_complex", ";".join(vf)]
+            vf = None
+        else:
+            if job.get("ss"):
+                cmd += ["-ss", str(job["ss"])]
+            cmd += ["-i", src]
+            if job.get("t"):
+                cmd += ["-t", str(job["t"])]
+    cmd += ["-an"] + (["-vf", ",".join(vf)] if vf else []) + ["-c:v", "libx264", "-preset", "slow", "-crf", str(job.get("crf", 27)),
             "-profile:v", "high", "-movflags", "+faststart"]
     if seq:
         cmd += ["-r", "24"]
@@ -157,6 +158,7 @@ def pdf_job(job, manifest, force):
     if isinstance(pages, int):  # a first page: every page from there to the end of the PDF
         from pypdf import PdfReader
         pages = list(range(pages, len(PdfReader(src).pages) + 1))
+    pages = [p for p in pages if p not in set(job.get("skip", []))]
     if not force and job["id"] in manifest and all((OUT / "decks" / f"{job['id']}-{p}.webp").exists() for p in pages):
         return
     files = []
@@ -247,54 +249,56 @@ SAF = AG + r"\TEST 360\SAF_F1\final"
 SANS = AG + r"\Sansata"
 RPK = AG + r"\RPK\artifacts\rebrand"
 DETOX = AG + r"\DETOX Rebrending\output"
-EXTRA_JOBS = [dict(id=i, kind="pdf", src=s, pages=pg, dpi=96) for i, s, pg in DECKS] + [
+# Pages never published: concrete prices, estimates and budgets, and other people's contacts.
+SKIP = {
+    "p-aura": list(range(7, 15)),       # labour, price (10 600 000 ₸), equipment and estimate basis
+    "p-360": [5, 9],                     # equipment price list and production estimate in tenge
+    "p-hyperoil": [3, 4, 5, 6, 7],       # cost price, sales plan and business model
+    "p-animation": [8],                  # service price list in USD
+    "p-vr-education": [10], "p-showroom": [9], "p-3d-scan": [9], "p-icanfly": [12], "p-iri-farm": [12],  # third-party contacts
+}
+EXTRA_JOBS = [dict(id=i, kind="pdf", src=s, pages=pg, dpi=96, skip=SKIP.get(i, [])) for i, s, pg in DECKS] + [
     # Archviz: SAF Avenue lobbies (Blender -> USD -> UE5.8 path tracer) and exterior.
     dict(id="arch-saf-lobby-1", src=SAF + r"\stills\CAM_P09.jpg"),
     dict(id="arch-saf-lobby-2", src=SAF + r"\stills\CAM_P08.jpg"),
     dict(id="arch-saf-lobby-3", src=SAF + r"\stills\CAM_P11.jpg"),
     dict(id="arch-saf-lobby-4", src=SAF + r"\stills\CAM_P13.jpg"),
     dict(id="arch-saf-pano", src=SAF + r"\panoramas_game\PANO_P09.jpg", w=4096, q=82),
-    dict(id="arch-saf-day", src=SANS + r"\3d model\Blender\Photoreal\SAF_Day.png"),
     dict(id="arch-saf-night", src=SANS + r"\3d model\Blender\Photoreal\SAF_Night.png"),
-    dict(id="arch-saf-facade", src=SANS + r"\3d model\Blender\SAF_facade_detail.png"),
     dict(id="arch-saf-north", src=SANS + r"\3d tour\ue-pt\complex_north.png"),
     dict(id="arch-saf-section", src=SANS + r"\3d tour\ue-pt\section_3.png"),
     # Brand and identity.
     dict(id="b-rpk-board", src=RPK + r"\reference\brand-board.png"),
     dict(id="b-rpk-stationery", src=RPK + r"\reference\graphite-stationery-identity.png"),
-    dict(id="b-rpk-neon", src=RPK + r"\edited\neon.png"),
-    dict(id="b-rpk-wrap", src=RPK + r"\edited\vehicle-wrap.png"),
     dict(id="b-detox-overview", src=DETOX + r"\detox-ankor-style-2026-10-16\DETOX-overview-joy.png"),
     dict(id="b-detox-archive", src=DETOX + r"\detox-new-visual-directions\04-botanical-archive.png"),
     dict(id="b-detox-sculpted", src=DETOX + r"\detox-signature-concepts\03-sculpted-d.png"),
-    dict(id="b-detox-line", src=DETOX + r"\detox-ankor-style-2026-10-16\04-botanical-line.png"),
     dict(id="b-connect", src=AG + r"\V connect CRM\Материалы проекта\Logo\Сетка из девяти стилей логотипа CONNECT.png"),
     dict(id="b-travelhub", src=AG + r"\Drive Forum\public\brand\travelhub-logo.png", w=1200),
     dict(id="b-smartlight", src=AG + r"\SmartLightControl\public\SmartLightControl_Logo.png", w=1000),
     dict(id="b-patrol", src=AG + r"\Patrol Control\public\Logo_Final.png", w=1200),
-    dict(id="b-patrol-relief", src=DRIVE + r"\Patrol Control\3d\Draw_shield_as_bas-relief_202605050239.jpeg", w=1200),
     dict(id="b-gof", src=W + r"\GraetOrdaFest\Logo\Logo 1.jpeg", w=1400),
     dict(id="b-hyper-identity", src=W + r"\A\Logo\Айдентика.jpg"),
-    dict(id="b-hyper-labels", src=W + r"\Akvitol\Package\Lable\Green\Print New\Bottle_Capsule and Tablet.jpg"),
-    dict(id="b-iri", src=W + r"\Akvitol\Logo IRI Farm-01.png", w=1400),
     dict(id="b-tartip", src=W + r"\TARTIP Studio\Logo\TARTIP LOGO-01.jpg", w=1000),
     dict(id="b-icanfly", src=W + r"\Container\Jump\Logo\I can fly Logo White.png", w=1000),
-    dict(id="b-a4r", src=DRIVE + r"\All4Race\Logo\All4Race_Logo_2.png_2K_202609021742.jpeg", w=1400),
     dict(id="b-falcon", src=AG + r"\Video Cloth\Проекты\FALCON\02_PRODUCTION\collection\FC_GROUP_HERO_v1.png", w=1400),
-    dict(id="b-tankz", src=AG + r"\Video Cloth\Проекты\TANKZ\production\keyframes\TANKZ_KF04_HOOD.png", w=1400),
     dict(id="b-gof-arena", src=AG + r"\Presentation Festival\GreatOrdaFest\assets\03-arena.png"),
     dict(id="b-togys", src=AG + r"\Presentation Festival\output\TOGYS_cover.png"),
+    dict(id="b-harmony-noir", src=AG + r"\Harmony\output\creative\renders\Harmony_05_front_right.png"),
+    dict(id="b-harmony-trio", src=AG + r"\Harmony\output\creative\Harmony_creative_comparison.png", w=1400),
+    dict(id="v-doneba", kind="video", srcs=[AG + r"\Do Neba\Video\Baby_turtle_climbing_eggshell_1efdd837.mp4",
+                                             AG + r"\Do Neba\Video\Baby_turtle_flips_onto_feet_25511d7b.mp4"], poster_at=6.5),
 ]
 YT = AG + r"\Youtube\Uploaded"
 VC = AG + r"\Video Cloth\Проекты"
 EXTRA_JOBS += [
     # Vertical AI films and product films: short silent excerpts for the reels strip.
     dict(id="r-paleo", kind="video", src=YT + r"\2 Серия Эхо Палеолита.mp4", ss=18, t=7, w=540, crf=28),
-    dict(id="r-mars", kind="video", src=YT + r"\Mars 1.mp4", ss=20, t=7, w=540, crf=28),
+    dict(id="r-mars", kind="video", src=YT + r"\Mars 1.mp4", ss=20, t=7, w=540, crf=28, poster_at=6.8),
     dict(id="r-march", kind="video", src=YT + r"\Марш смерти финал без саб.mp4", ss=6, t=7, w=540, crf=28),
     dict(id="r-gym", kind="video", src=YT + r"\DETOX GYM.mp4", ss=10, t=7, w=540, crf=28),
-    dict(id="r-falcon", kind="video", src=VC + r"\FALCON\ГОТОВЫЕ РОЛИКИ\13 — Шопер FALCON с соколом.mp4", ss=2, t=7, w=540, crf=28),
-    dict(id="r-tankz", kind="video", src=VC + r"\TANKZ\delivery\paper_to_product_30_v1\TANKZ_From_Paper_to_Product_30s_v1.mp4", ss=3, t=8, w=540, crf=28),
+    dict(id="r-falcon", kind="video", src=VC + r"\FALCON\ГОТОВЫЕ РОЛИКИ\00 — FALCON — Вся коллекция.mp4", ss=3, t=8, w=540, crf=28, poster_at=2),
+    dict(id="r-tankz", kind="video", src=VC + r"\TANKZ\delivery\TANKZ_6x15_v3\03_Orange_Inside_v3.mp4", t=8, w=540, crf=28, poster_at=1),
     dict(id="r-office", kind="video", src=YT + r"\Office Voice Music.mp4", ss=8, t=7, w=540, crf=28),
     dict(id="v-astana", kind="video", src=YT + r"\Astana Render 4K.mp4", ss=12, t=14, crf=27),
 ]

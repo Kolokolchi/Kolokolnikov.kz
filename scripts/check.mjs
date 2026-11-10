@@ -72,5 +72,9 @@ const youtubeIds=work.youtubeGroups.flatMap(group=>group.items.map(([id])=>id));
 for(const id of youtubeIds)assert.match(id,/^[\w-]{11}$/);
 for(const id of work.youtubeNoEmbed)assert.ok(youtubeIds.includes(id),`Unused no-embed id ${id}`);
 for(const file of ['machine-viewer.js','pano-viewer.js','assets/draco/draco_wasm_wrapper.js','assets/draco/draco_decoder.wasm'])assert.ok(await isFile(file),file);
+// Bento grids (grid-auto-flow: dense) must close as a full rectangle at 4, 3 and 2 columns (work.css breakpoints).
+const SPAN={wide:[2,1],tall:[1,2],square:[1,1]};
+function bentoHoles(sizes,cols){const taken=new Set();let rows=0;for(const size of sizes){const [w0,h]=SPAN[size||'wide'];const w=Math.min(w0,cols);for(let r=0;;r++){let spot=-1;for(let c=0;c+w<=cols&&spot<0;c++){let free=true;for(let dy=0;dy<h&&free;dy++)for(let dx=0;dx<w&&free;dx++)if(taken.has(`${r+dy},${c+dx}`))free=false;if(free)spot=c;}if(spot<0)continue;for(let dy=0;dy<h;dy++)for(let dx=0;dx<w;dx++)taken.add(`${r+dy},${spot+dx}`);rows=Math.max(rows,r+h);break;}}return rows*cols-taken.size;}
+for(const [name,items] of [['cgi',work.cgiItems],['brands',work.brands]])for(const cols of [4,3,2])assert.equal(bentoHoles(items.map(item=>item.size),cols),0,`Bento "${name}" leaves holes at ${cols} columns: adjust card sizes`);
 console.log(`Checked JavaScript syntax, local HTML references, ${projects.length} projects, ${demos.length} demo links and identical logo geometry. Uploaded demos are stored independently in D1/R2.`);
 console.log(`Checked ${referenced.length} gallery references, ${mediaFiles} media files, ${work.machines.length} WebGL models and ${new Set(youtubeIds).size} YouTube videos.`);

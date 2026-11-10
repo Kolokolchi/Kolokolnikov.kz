@@ -13,13 +13,6 @@
   "h": 1050,
   "file": "assets/work/eng-pour-inside.webp"
  },
- "eng-pour-service": {
-  "kind": "img",
-  "src": "D:\\Anti-Gravity\\Матрицы и оборудование\\ANKOR_MACHINES_V05\\preview\\pour_05_service.png",
-  "w": 1500,
-  "h": 1050,
-  "file": "assets/work/eng-pour-service.webp"
- },
  "eng-blister-inside": {
   "kind": "img",
   "src": "D:\\Anti-Gravity\\Матрицы и оборудование\\ANKOR_MACHINES_V05\\preview\\blister_02_inside.png",
@@ -107,13 +100,6 @@
   "h": 1080,
   "file": "assets/work/cg-vr-canyon-2.webp"
  },
- "cg-vr-canyon-3": {
-  "kind": "img",
-  "src": "D:\\Work\\TARTIP Studio\\VR\\Presentation\\Tex\\Exemple\\HighresScreenshot00009.jpg",
-  "w": 1920,
-  "h": 1063,
-  "file": "assets/work/cg-vr-canyon-3.webp"
- },
  "cg-vr-canyon-4": {
   "kind": "img",
   "src": "D:\\Work\\TARTIP Studio\\VR\\Presentation\\Tex\\Exemple\\HighresScreenshot00013.jpg",
@@ -127,13 +113,6 @@
   "w": 1920,
   "h": 1920,
   "file": "assets/work/cg-mob-heads-1.webp"
- },
- "cg-mob-heads-2": {
-  "kind": "img",
-  "src": "D:\\Work\\TARTIP Studio\\Portfolio Game Dev\\Portfolio GameDevKK Folder\\Links\\korney-kolokolnikov-hex-2-2.jpg",
-  "w": 1920,
-  "h": 1920,
-  "file": "assets/work/cg-mob-heads-2.webp"
  },
  "cg-mob-worker": {
   "kind": "img",
@@ -190,13 +169,6 @@
   "w": 1200,
   "h": 1650,
   "file": "assets/work/cg-mobika-hotel.webp"
- },
- "cg-agro-plan": {
-  "kind": "img",
-  "src": "D:\\Work\\Acvitol\\Model\\Render\\Plan_Agro0007.jpg",
-  "w": 1920,
-  "h": 1080,
-  "file": "assets/work/cg-agro-plan.webp"
  },
  "v-mobika-opener": {
   "kind": "video",
@@ -287,36 +259,6 @@
   "mb": 1.07,
   "file": "assets/work/video/v-a4r-night.mp4",
   "poster": "assets/work/video/v-a4r-night.webp"
- },
- "v-a4r-dust": {
-  "kind": "video",
-  "src": "E:\\Drive\\All4Race\\Video\\Logo_emerging_from_desert_dust_202609021744.mp4",
-  "w": 1280,
-  "h": 720,
-  "duration": 4.0,
-  "mb": 1.06,
-  "file": "assets/work/video/v-a4r-dust.mp4",
-  "poster": "assets/work/video/v-a4r-dust.webp"
- },
- "v-a4r-alley": {
-  "kind": "video",
-  "src": "E:\\Drive\\All4Race\\Video\\Logo_fades_in_city_alley_202609021747.mp4",
-  "w": 1280,
-  "h": 720,
-  "duration": 4.0,
-  "mb": 0.93,
-  "file": "assets/work/video/v-a4r-alley.mp4",
-  "poster": "assets/work/video/v-a4r-alley.webp"
- },
- "v-charyn-ue": {
-  "kind": "video",
-  "src": "E:\\Drive\\NewCharyn_60.mp4",
-  "w": 1280,
-  "h": 720,
-  "duration": 18.0,
-  "mb": 3.23,
-  "file": "assets/work/video/v-charyn-ue.mp4",
-  "poster": "assets/work/video/v-charyn-ue.webp"
  },
  "p-axium-additive": {
   "kind": "pdf",
@@ -497,12 +439,6 @@
     "file": "assets/work/decks/p-vr-education-9.webp"
    },
    {
-    "page": 10,
-    "w": 1123,
-    "h": 794,
-    "file": "assets/work/decks/p-vr-education-10.webp"
-   },
-   {
     "page": 11,
     "w": 1123,
     "h": 794,
@@ -591,36 +527,6 @@
     "w": 1123,
     "h": 794,
     "file": "assets/work/decks/p-hyperoil-2.webp"
-   },
-   {
-    "page": 3,
-    "w": 1123,
-    "h": 794,
-    "file": "assets/work/decks/p-hyperoil-3.webp"
-   },
-   {
-    "page": 4,
-    "w": 1123,
-    "h": 794,
-    "file": "assets/work/decks/p-hyperoil-4.webp"
-   },
-   {
-    "page": 5,
-    "w": 1123,
-    "h": 794,
-    "file": "assets/work/decks/p-hyperoil-5.webp"
-   },
-   {
-    "page": 6,
-    "w": 1123,
-    "h": 794,
-    "file": "assets/work/decks/p-hyperoil-6.webp"
-   },
-   {
-    "page": 7,
-    "w": 1123,
-    "h": 794,
-    "file": "assets/work/decks/p-hyperoil-7.webp"
    }
   ]
  },
@@ -693,12 +599,6 @@
     "w": 1600,
     "h": 566,
     "file": "assets/work/decks/p-icanfly-11.webp"
-   },
-   {
-    "page": 12,
-    "w": 1123,
-    "h": 794,
-    "file": "assets/work/decks/p-icanfly-12.webp"
    }
   ]
  },
@@ -771,12 +671,6 @@
     "w": 794,
     "h": 1123,
     "file": "assets/work/decks/p-iri-farm-11.webp"
-   },
-   {
-    "page": 12,
-    "w": 794,
-    "h": 1123,
-    "file": "assets/work/decks/p-iri-farm-12.webp"
    }
   ]
  },
@@ -969,12 +863,6 @@
     "w": 1123,
     "h": 794,
     "file": "assets/work/decks/p-showroom-8.webp"
-   },
-   {
-    "page": 9,
-    "w": 1123,
-    "h": 794,
-    "file": "assets/work/decks/p-showroom-9.webp"
    },
    {
     "page": 10,
@@ -1275,12 +1163,6 @@
     "w": 1600,
     "h": 566,
     "file": "assets/work/decks/p-animation-7.webp"
-   },
-   {
-    "page": 8,
-    "w": 1600,
-    "h": 566,
-    "file": "assets/work/decks/p-animation-8.webp"
    },
    {
     "page": 9,
@@ -1817,12 +1699,6 @@
     "file": "assets/work/decks/p-360-4.webp"
    },
    {
-    "page": 5,
-    "w": 1600,
-    "h": 1035,
-    "file": "assets/work/decks/p-360-5.webp"
-   },
-   {
     "page": 6,
     "w": 1600,
     "h": 1035,
@@ -1839,12 +1715,6 @@
     "w": 1600,
     "h": 1035,
     "file": "assets/work/decks/p-360-8.webp"
-   },
-   {
-    "page": 9,
-    "w": 1600,
-    "h": 1035,
-    "file": "assets/work/decks/p-360-9.webp"
    },
    {
     "page": 10,
@@ -1995,12 +1865,6 @@
     "w": 1123,
     "h": 794,
     "file": "assets/work/decks/p-3d-scan-8.webp"
-   },
-   {
-    "page": 9,
-    "w": 1123,
-    "h": 794,
-    "file": "assets/work/decks/p-3d-scan-9.webp"
    },
    {
     "page": 10,
@@ -2451,54 +2315,6 @@
     "w": 1280,
     "h": 720,
     "file": "assets/work/decks/p-aura-6.webp"
-   },
-   {
-    "page": 7,
-    "w": 1280,
-    "h": 720,
-    "file": "assets/work/decks/p-aura-7.webp"
-   },
-   {
-    "page": 8,
-    "w": 1280,
-    "h": 720,
-    "file": "assets/work/decks/p-aura-8.webp"
-   },
-   {
-    "page": 9,
-    "w": 1280,
-    "h": 720,
-    "file": "assets/work/decks/p-aura-9.webp"
-   },
-   {
-    "page": 10,
-    "w": 1280,
-    "h": 720,
-    "file": "assets/work/decks/p-aura-10.webp"
-   },
-   {
-    "page": 11,
-    "w": 1280,
-    "h": 720,
-    "file": "assets/work/decks/p-aura-11.webp"
-   },
-   {
-    "page": 12,
-    "w": 1280,
-    "h": 720,
-    "file": "assets/work/decks/p-aura-12.webp"
-   },
-   {
-    "page": 13,
-    "w": 1280,
-    "h": 720,
-    "file": "assets/work/decks/p-aura-13.webp"
-   },
-   {
-    "page": 14,
-    "w": 1280,
-    "h": 720,
-    "file": "assets/work/decks/p-aura-14.webp"
    }
   ]
  },
@@ -2675,26 +2491,12 @@
   "h": 2048,
   "file": "assets/work/arch-saf-pano.webp"
  },
- "arch-saf-day": {
-  "kind": "img",
-  "src": "D:\\Anti-Gravity\\Sansata\\3d model\\Blender\\Photoreal\\SAF_Day.png",
-  "w": 1920,
-  "h": 1280,
-  "file": "assets/work/arch-saf-day.webp"
- },
  "arch-saf-night": {
   "kind": "img",
   "src": "D:\\Anti-Gravity\\Sansata\\3d model\\Blender\\Photoreal\\SAF_Night.png",
   "w": 1920,
   "h": 1280,
   "file": "assets/work/arch-saf-night.webp"
- },
- "arch-saf-facade": {
-  "kind": "img",
-  "src": "D:\\Anti-Gravity\\Sansata\\3d model\\Blender\\SAF_facade_detail.png",
-  "w": 1800,
-  "h": 1200,
-  "file": "assets/work/arch-saf-facade.webp"
  },
  "arch-saf-north": {
   "kind": "img",
@@ -2724,20 +2526,6 @@
   "h": 1200,
   "file": "assets/work/b-rpk-stationery.webp"
  },
- "b-rpk-neon": {
-  "kind": "img",
-  "src": "D:\\Anti-Gravity\\RPK\\artifacts\\rebrand\\edited\\neon.png",
-  "w": 1536,
-  "h": 1024,
-  "file": "assets/work/b-rpk-neon.webp"
- },
- "b-rpk-wrap": {
-  "kind": "img",
-  "src": "D:\\Anti-Gravity\\RPK\\artifacts\\rebrand\\edited\\vehicle-wrap.png",
-  "w": 1536,
-  "h": 1024,
-  "file": "assets/work/b-rpk-wrap.webp"
- },
  "b-detox-overview": {
   "kind": "img",
   "src": "D:\\Anti-Gravity\\DETOX Rebrending\\output\\detox-ankor-style-2026-10-16\\DETOX-overview-joy.png",
@@ -2758,13 +2546,6 @@
   "w": 1122,
   "h": 1402,
   "file": "assets/work/b-detox-sculpted.webp"
- },
- "b-detox-line": {
-  "kind": "img",
-  "src": "D:\\Anti-Gravity\\DETOX Rebrending\\output\\detox-ankor-style-2026-10-16\\04-botanical-line.png",
-  "w": 1536,
-  "h": 1024,
-  "file": "assets/work/b-detox-line.webp"
  },
  "b-connect": {
   "kind": "img",
@@ -2794,13 +2575,6 @@
   "h": 1200,
   "file": "assets/work/b-patrol.webp"
  },
- "b-patrol-relief": {
-  "kind": "img",
-  "src": "E:\\Drive\\Patrol Control\\3d\\Draw_shield_as_bas-relief_202605050239.jpeg",
-  "w": 1024,
-  "h": 1024,
-  "file": "assets/work/b-patrol-relief.webp"
- },
  "b-gof": {
   "kind": "img",
   "src": "D:\\Work\\GraetOrdaFest\\Logo\\Logo 1.jpeg",
@@ -2814,20 +2588,6 @@
   "w": 1920,
   "h": 1440,
   "file": "assets/work/b-hyper-identity.webp"
- },
- "b-hyper-labels": {
-  "kind": "img",
-  "src": "D:\\Work\\Akvitol\\Package\\Lable\\Green\\Print New\\Bottle_Capsule and Tablet.jpg",
-  "w": 1920,
-  "h": 1061,
-  "file": "assets/work/b-hyper-labels.webp"
- },
- "b-iri": {
-  "kind": "img",
-  "src": "D:\\Work\\Akvitol\\Logo IRI Farm-01.png",
-  "w": 1400,
-  "h": 865,
-  "file": "assets/work/b-iri.webp"
  },
  "b-tartip": {
   "kind": "img",
@@ -2843,26 +2603,12 @@
   "h": 1000,
   "file": "assets/work/b-icanfly.webp"
  },
- "b-a4r": {
-  "kind": "img",
-  "src": "E:\\Drive\\All4Race\\Logo\\All4Race_Logo_2.png_2K_202609021742.jpeg",
-  "w": 1400,
-  "h": 781,
-  "file": "assets/work/b-a4r.webp"
- },
  "b-falcon": {
   "kind": "img",
   "src": "D:\\Anti-Gravity\\Video Cloth\\Проекты\\FALCON\\02_PRODUCTION\\collection\\FC_GROUP_HERO_v1.png",
   "w": 941,
   "h": 1672,
   "file": "assets/work/b-falcon.webp"
- },
- "b-tankz": {
-  "kind": "img",
-  "src": "D:\\Anti-Gravity\\Video Cloth\\Проекты\\TANKZ\\production\\keyframes\\TANKZ_KF04_HOOD.png",
-  "w": 941,
-  "h": 1672,
-  "file": "assets/work/b-tankz.webp"
  },
  "b-gof-arena": {
   "kind": "img",
@@ -2920,21 +2666,21 @@
  },
  "r-falcon": {
   "kind": "video",
-  "src": "D:\\Anti-Gravity\\Video Cloth\\Проекты\\FALCON\\ГОТОВЫЕ РОЛИКИ\\13 — Шопер FALCON с соколом.mp4",
+  "src": "D:\\Anti-Gravity\\Video Cloth\\Проекты\\FALCON\\ГОТОВЫЕ РОЛИКИ\\00 — FALCON — Вся коллекция.mp4",
   "w": 540,
   "h": 960,
-  "duration": 7.0,
-  "mb": 0.41,
+  "duration": 8.0,
+  "mb": 0.47,
   "file": "assets/work/video/r-falcon.mp4",
   "poster": "assets/work/video/r-falcon.webp"
  },
  "r-tankz": {
   "kind": "video",
-  "src": "D:\\Anti-Gravity\\Video Cloth\\Проекты\\TANKZ\\delivery\\paper_to_product_30_v1\\TANKZ_From_Paper_to_Product_30s_v1.mp4",
+  "src": "D:\\Anti-Gravity\\Video Cloth\\Проекты\\TANKZ\\delivery\\TANKZ_6x15_v3\\03_Orange_Inside_v3.mp4",
   "w": 540,
   "h": 960,
   "duration": 8.0,
-  "mb": 0.51,
+  "mb": 0.67,
   "file": "assets/work/video/r-tankz.mp4",
   "poster": "assets/work/video/r-tankz.webp"
  },
@@ -2957,5 +2703,29 @@
   "mb": 3.1,
   "file": "assets/work/video/v-astana.mp4",
   "poster": "assets/work/video/v-astana.webp"
+ },
+ "b-harmony-noir": {
+  "kind": "img",
+  "src": "D:\\Anti-Gravity\\Harmony\\output\\creative\\renders\\Harmony_05_front_right.png",
+  "w": 1800,
+  "h": 1080,
+  "file": "assets/work/b-harmony-noir.webp"
+ },
+ "b-harmony-trio": {
+  "kind": "img",
+  "src": "D:\\Anti-Gravity\\Harmony\\output\\creative\\Harmony_creative_comparison.png",
+  "w": 1400,
+  "h": 1715,
+  "file": "assets/work/b-harmony-trio.webp"
+ },
+ "v-doneba": {
+  "kind": "video",
+  "src": "D:\\Anti-Gravity\\Do Neba\\Video\\Baby_turtle_climbing_eggshell_1efdd837.mp4",
+  "w": 1280,
+  "h": 720,
+  "duration": 9.0,
+  "mb": 1.09,
+  "file": "assets/work/video/v-doneba.mp4",
+  "poster": "assets/work/video/v-doneba.webp"
  }
 }
