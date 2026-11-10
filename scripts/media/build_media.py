@@ -242,9 +242,9 @@ DECKS = [  # (id, PDF, first page): every page from there to the end of the PDF
     ("p-gof", AG + r"\Presentation Festival\GreatOrdaFest\output\Great_Orda_Fest_Qonaev_2027_with_logo.pdf", 1),
     ("p-togys", AG + r"\Presentation Festival\output\TOGYS_Astana_2027.pdf", 1),
     ("p-aura", AG + r"\Avatar\output\pdf\AURA Unreal.pdf", 2),
-    ("p-do-neba", AG + r"\Do Neba\output\do_neba\03_Storyboard.pdf", 1),
     ("p-detox", AG + r"\DETOX Rebrending\output\detox-ankor-style-2026-10-16\DETOX-four-directions-joy.pdf", 1),
 ]
+YT_ASTANA = AG + r"\Youtube\Uploaded\Astana Render 4K.mp4"
 SAF = AG + r"\TEST 360\SAF_F1\final"
 SANS = AG + r"\Sansata"
 RPK = AG + r"\RPK\artifacts\rebrand"
@@ -286,8 +286,9 @@ EXTRA_JOBS = [dict(id=i, kind="pdf", src=s, pages=pg, dpi=96, skip=SKIP.get(i, [
     dict(id="b-togys", src=AG + r"\Presentation Festival\output\TOGYS_cover.png"),
     dict(id="b-harmony-noir", src=AG + r"\Harmony\output\creative\renders\Harmony_05_front_right.png"),
     dict(id="b-harmony-trio", src=AG + r"\Harmony\output\creative\Harmony_creative_comparison.png", w=1400),
-    dict(id="v-doneba", kind="video", srcs=[AG + r"\Do Neba\Video\Baby_turtle_climbing_eggshell_1efdd837.mp4",
-                                             AG + r"\Do Neba\Video\Baby_turtle_flips_onto_feet_25511d7b.mp4"], poster_at=6.5),
+    # Astana film («Казахский язык — символ единства»): Baiterek fly-around for the home page.
+    # v-astana (an earlier segment) stays for the story page.
+    dict(id="v-astana-city", kind="video", src=YT_ASTANA, ss=74, t=13, crf=27, poster_at=6),
 ]
 YT = AG + r"\Youtube\Uploaded"
 VC = AG + r"\Video Cloth\Проекты"

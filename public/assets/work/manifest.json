@@ -2318,108 +2318,6 @@
    }
   ]
  },
- "p-do-neba": {
-  "kind": "pdf",
-  "src": "D:\\Anti-Gravity\\Do Neba\\output\\do_neba\\03_Storyboard.pdf",
-  "pages": [
-   {
-    "page": 1,
-    "w": 1587,
-    "h": 1123,
-    "file": "assets/work/decks/p-do-neba-1.webp"
-   },
-   {
-    "page": 2,
-    "w": 1587,
-    "h": 1123,
-    "file": "assets/work/decks/p-do-neba-2.webp"
-   },
-   {
-    "page": 3,
-    "w": 1587,
-    "h": 1123,
-    "file": "assets/work/decks/p-do-neba-3.webp"
-   },
-   {
-    "page": 4,
-    "w": 1587,
-    "h": 1123,
-    "file": "assets/work/decks/p-do-neba-4.webp"
-   },
-   {
-    "page": 5,
-    "w": 1587,
-    "h": 1123,
-    "file": "assets/work/decks/p-do-neba-5.webp"
-   },
-   {
-    "page": 6,
-    "w": 1587,
-    "h": 1123,
-    "file": "assets/work/decks/p-do-neba-6.webp"
-   },
-   {
-    "page": 7,
-    "w": 1587,
-    "h": 1123,
-    "file": "assets/work/decks/p-do-neba-7.webp"
-   },
-   {
-    "page": 8,
-    "w": 1587,
-    "h": 1123,
-    "file": "assets/work/decks/p-do-neba-8.webp"
-   },
-   {
-    "page": 9,
-    "w": 1587,
-    "h": 1123,
-    "file": "assets/work/decks/p-do-neba-9.webp"
-   },
-   {
-    "page": 10,
-    "w": 1587,
-    "h": 1123,
-    "file": "assets/work/decks/p-do-neba-10.webp"
-   },
-   {
-    "page": 11,
-    "w": 1587,
-    "h": 1123,
-    "file": "assets/work/decks/p-do-neba-11.webp"
-   },
-   {
-    "page": 12,
-    "w": 1587,
-    "h": 1123,
-    "file": "assets/work/decks/p-do-neba-12.webp"
-   },
-   {
-    "page": 13,
-    "w": 1587,
-    "h": 1123,
-    "file": "assets/work/decks/p-do-neba-13.webp"
-   },
-   {
-    "page": 14,
-    "w": 1587,
-    "h": 1123,
-    "file": "assets/work/decks/p-do-neba-14.webp"
-   },
-   {
-    "page": 15,
-    "w": 1587,
-    "h": 1123,
-    "file": "assets/work/decks/p-do-neba-15.webp"
-   },
-   {
-    "page": 16,
-    "w": 1587,
-    "h": 1123,
-    "file": "assets/work/decks/p-do-neba-16.webp"
-   }
-  ]
- },
  "p-detox": {
   "kind": "pdf",
   "src": "D:\\Anti-Gravity\\DETOX Rebrending\\output\\detox-ankor-style-2026-10-16\\DETOX-four-directions-joy.pdf",
@@ -2718,14 +2616,14 @@
   "h": 1715,
   "file": "assets/work/b-harmony-trio.webp"
  },
- "v-doneba": {
+ "v-astana-city": {
   "kind": "video",
-  "src": "D:\\Anti-Gravity\\Do Neba\\Video\\Baby_turtle_climbing_eggshell_1efdd837.mp4",
+  "src": "D:\\Anti-Gravity\\Youtube\\Uploaded\\Astana Render 4K.mp4",
   "w": 1280,
   "h": 720,
-  "duration": 9.0,
-  "mb": 1.09,
-  "file": "assets/work/video/v-doneba.mp4",
-  "poster": "assets/work/video/v-doneba.webp"
+  "duration": 13.0,
+  "mb": 4.08,
+  "file": "assets/work/video/v-astana-city.mp4",
+  "poster": "assets/work/video/v-astana-city.webp"
  }
 }
