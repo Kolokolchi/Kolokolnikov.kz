@@ -1,7 +1,7 @@
 import { media } from './work-media.js';
 import {
   machines, blisterHistory, engineeringGallery, cgiFilters, cgiItems, motionReel, reels,
-  youtubeChannel, youtubeGroups, youtubeNoEmbed, youtubeSdThumbs, brands, decks, timeline, marquee,
+  youtubeChannel, youtubeGroups, youtubeNoEmbed, youtubeSdThumbs, brands, decks, marquee,
 } from './work-data.js';
 
 // Home-page galleries for engineering, 3D, motion, brands and decks.
@@ -536,7 +536,7 @@ function renderYoutube() {
   draw();
 }
 
-/* ---------- Brands, decks, timeline ---------- */
+/* ---------- Brands, decks ---------- */
 function renderBrands() {
   const grid = $('[data-bento="brands"]');
   if (!grid) return;
@@ -634,15 +634,6 @@ function dealDecks(shelf, track) {
   window.addEventListener('resize', () => { measure(); update(); });
   reducedMotion.addEventListener('change', update);
 }
-function renderTimeline() {
-  const list = $('[data-timeline]');
-  if (!list) return;
-  for (const [year, title, text] of timeline) {
-    const item = el('li');
-    item.append(el('span', 'timeline-year', year), el('strong', '', title), el('p', '', text));
-    list.append(item);
-  }
-}
 
 /* ---------- Tilt for cards (fine pointers only) ---------- */
 function enableTilt() {
@@ -662,7 +653,7 @@ function enableTilt() {
   });
 }
 
-for (const step of [renderMarquee, renderStats, renderLab, renderBlisterHistory, renderCgi, renderPano, renderMotion, renderReels, renderYoutube, renderBrands, renderDecks, renderTimeline, enableTilt]) {
+for (const step of [renderMarquee, renderStats, renderLab, renderBlisterHistory, renderCgi, renderPano, renderMotion, renderReels, renderYoutube, renderBrands, renderDecks, enableTilt]) {
   try { step(); } catch (error) { console.error(step.name, error); }
 }
 // The hero reel button plays the CGI showreel in place; its link stays the no-JS fallback.

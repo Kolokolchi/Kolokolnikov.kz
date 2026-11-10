@@ -162,7 +162,7 @@ Home buttons and filters are pills; media frames have small corners. Base-page b
 
 ## Extended portfolio sections (November 2026)
 
-The home page now runs 01 Sites → 02 Engineering → 03 3D/CGI → 04 Video → 05 Brands → 06 Decks → 07 About (with timeline) → 08 Demos → 09 Contact. Styles live in `public/work.css`, behaviour in `public/work.js`, copy and ordering in `public/work-data.js`; media ids resolve through the generated `public/work-media.js`.
+The home page now runs 01 Sites → 02 Engineering → 03 3D/CGI → 04 Video → 05 Brands → 06 Decks → 07 About → 08 Demos → 09 Contact. Styles live in `public/work.css`, behaviour in `public/work.js`, copy and ordering in `public/work-data.js`; media ids resolve through the generated `public/work-media.js`.
 
 - **Reel band and stats.** Two opposing marquee rows of real work tiles under the intro, then six serif counters computed from the data file. Reduced motion stops the rows and makes them scrollable.
 - **Engineering lab.** WebGL viewer (`src/machine-viewer.js`) for CAD exports: model tabs, assembly slider that replays manifest steps, section cut, shell solid/X-ray/hidden, part tooltip with material, reset, fullscreen. A blueprint grid sits behind the section. The rendered poster stays until the first draw and returns on context loss. Wheel zoom only after the visitor clicks the model; touch keeps vertical page scrolling (`touch-action: pan-y`).

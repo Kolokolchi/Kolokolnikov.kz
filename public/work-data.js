@@ -208,18 +208,6 @@ export const decks = [
   { id: 'p-hyperoil', title: 'HyperOil', note: 'Коммерциализация технологии' },
 ];
 
-export const timeline = [
-  ['2017', 'IRI Farm', 'Брендбук, презентации и генплан агропроекта.'],
-  ['2018', 'Казахстан с высоты', 'Серия фильмов о природе и шоурил Pingwin Production.'],
-  ['2019', 'Коммерческое видео', 'Legrand, бэкстейдж Canon Kazakhstan.'],
-  ['2020–2023', 'Геймдев', 'Wargaming, Playrix, Mzzuko Games: 3D-ассеты, геймдизайн, мобы Survival H-377.'],
-  ['2021', 'CGI Showreel', 'Подборка компьютерной графики и фильмы о степи.'],
-  ['2022–2023', 'Студия TARTIP', 'Мультсериал Mobika & Notel, VR-туризм, «Елтаңба», I CAN FLY.'],
-  ['2023', 'Инженерия', 'Оборудование и технологическая документация для производства.'],
-  ['2024–2025', 'HyperOil и Ankor', 'Продукты, упаковка, фильмы о брендах.'],
-  ['2026', 'Продукты и оборудование', 'Сайты, Patrol Control, AI-фильмы, станки ANKOR, интерьеры в UE 5.8.'],
-];
-
 export const marquee = [
   ['eng-pour-open', 'Инженерия', '#engineering'], ['arch-saf-night', 'Архвиз', '#cgi'], ['b-rpk-board', 'Бренды', '#brands'],
   ['v-ztk-plasma', 'AI-видео', '#video'], ['cg-mob-heads-1', 'Персонажи', '#cgi'], ['b-gof', 'Фестивали', '#brands'],

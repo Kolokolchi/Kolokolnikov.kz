@@ -213,15 +213,6 @@
 .deck-caption strong { font-family: var(--display); font-weight: 400; font-size: 18px; }
 .deck-caption span { font-size: var(--fs-min); color: var(--muted); }
 
-/* Timeline */
-.about-section .timeline { grid-column: 1 / -1; margin-top: 40px; }
-.timeline ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 1px solid #ffffff17; counter-reset: none; }
-.timeline li { position: relative; padding: 26px 26px 26px 0; border-bottom: 1px solid #ffffff10; }
-.timeline li:nth-child(3n + 2), .timeline li:nth-child(3n + 3) { padding-left: 26px; border-left: 1px solid #ffffff10; }
-.timeline-year { display: block; font-family: var(--display); font-size: 30px; line-height: 1; letter-spacing: -1px; color: var(--accent-bright); }
-.timeline strong { display: block; margin-top: 12px; font-size: 13px; font-weight: 600; }
-.timeline p { margin-top: 6px; font-size: var(--fs-copy); line-height: 1.8; color: var(--muted); }
-
 /* Lightbox */
 .lightbox { width: 100%; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: #05080cf2; color: var(--text); }
 .lightbox::backdrop { background: #05080ccc; backdrop-filter: blur(6px); }
@@ -311,9 +302,6 @@ html.lightbox-open { overflow: hidden; }
   .yt-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 12px; }
   .yt-info strong { font-size: 15px; }
   .deck-stack { height: 220px; }
-  .timeline ol { grid-template-columns: 1fr 1fr; }
-  .timeline li, .timeline li:nth-child(3n + 2), .timeline li:nth-child(3n + 3) { padding: 20px 16px 20px 0; border-left: 0; }
-  .timeline li:nth-child(even) { padding-left: 16px; border-left: 1px solid #ffffff10; }
   .lightbox-bar { flex-wrap: wrap; gap: 12px; }
   .lightbox-caption { flex-basis: 100%; }
   .lightbox-nav { margin-left: auto; }
@@ -322,8 +310,6 @@ html.lightbox-open { overflow: hidden; }
   .stat-value { font-size: 38px; }
   .bento { grid-auto-rows: 128px; }
   .yt-grid { grid-template-columns: 1fr; }
-  .timeline ol { grid-template-columns: 1fr; }
-  .timeline li:nth-child(even) { padding-left: 0; border-left: 0; }
   .pano-thumbs { gap: 6px; }
 }
 @media (prefers-reduced-motion: reduce) {
