@@ -1,0 +1,9 @@
+contact-thanks.mp3 - «Ооо, спасибааа», played when a visitor clicks «Связаться»
+
+Korney Kolokolnikov's own voice (WhatsApp voice note, Opus 48 kHz mono,
+1.95 s), supplied 2026-11-19 as «Ооо спасибааа.ogg».
+
+Processing: trimmed to 0.02-1.60 s (drops the near-silent start and the click at the end
+of the note), 80 Hz high-pass, 8 ms fade-in and 70 ms fade-out, loudness matched to
+-18 LUFS like the cat meows (peak -2.9 dBFS), mono 44.1 kHz MP3, 96 kbps.
+MP3 rather than the original Ogg Opus, because Safari does not play Ogg everywhere.
