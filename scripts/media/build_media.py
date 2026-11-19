@@ -49,7 +49,6 @@ JOBS = [
     dict(id="cg-vr-canyon-4", src=W + r"\TARTIP Studio\VR\Presentation\Tex\Exemple\HighresScreenshot00013.jpg"),
     dict(id="cg-mob-heads-1", src=GD + r"\korney-kolokolnikov-hex-1-3.jpg"),
     dict(id="cg-mob-worker", src=GD + r"\1415785187_1220268352.jpg"),
-    dict(id="cg-mob-striker", src=GD + r"\Art_Striker_.png"),
     dict(id="cg-mob-crawler", src=GD + r"\Screenshot_24.png"),
     dict(id="cg-mob-jouker", src=GD + r"\photo_2020-06-22_01-17-07.jpg"),
     dict(id="cg-metahuman", src=GD + r"\Abay.png"),
@@ -287,7 +286,6 @@ EXTRA_JOBS = [dict(id=i, kind="pdf", src=s, pages=pg, dpi=96, skip=SKIP.get(i, [
     dict(id="b-harmony-noir", src=AG + r"\Harmony\output\creative\renders\Harmony_05_front_right.png"),
     dict(id="b-harmony-trio", src=AG + r"\Harmony\output\creative\Harmony_creative_comparison.png", w=1400),
     # Astana film («Казахский язык — символ единства»): Baiterek fly-around for the home page.
-    # v-astana (an earlier segment) stays for the story page.
     dict(id="v-astana-city", kind="video", src=YT_ASTANA, ss=74, t=13, crf=27, poster_at=6),
 ]
 YT = AG + r"\Youtube\Uploaded"
@@ -301,7 +299,6 @@ EXTRA_JOBS += [
     dict(id="r-falcon", kind="video", src=VC + r"\FALCON\ГОТОВЫЕ РОЛИКИ\00 — FALCON — Вся коллекция.mp4", ss=3, t=8, w=540, crf=28, poster_at=2),
     dict(id="r-tankz", kind="video", src=VC + r"\TANKZ\delivery\TANKZ_6x15_v3\03_Orange_Inside_v3.mp4", t=8, w=540, crf=28, poster_at=1),
     dict(id="r-office", kind="video", src=YT + r"\Office Voice Music.mp4", ss=8, t=7, w=540, crf=28),
-    dict(id="v-astana", kind="video", src=YT + r"\Astana Render 4K.mp4", ss=12, t=14, crf=27),
 ]
 
 if __name__ == "__main__":

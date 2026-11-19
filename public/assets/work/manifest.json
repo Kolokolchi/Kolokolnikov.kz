@@ -121,13 +121,6 @@
   "h": 1024,
   "file": "assets/work/cg-mob-worker.webp"
  },
- "cg-mob-striker": {
-  "kind": "img",
-  "src": "D:\\Work\\TARTIP Studio\\Portfolio Game Dev\\Portfolio GameDevKK Folder\\Links\\Art_Striker_.png",
-  "w": 1920,
-  "h": 1080,
-  "file": "assets/work/cg-mob-striker.webp"
- },
  "cg-mob-crawler": {
   "kind": "img",
   "src": "D:\\Work\\TARTIP Studio\\Portfolio Game Dev\\Portfolio GameDevKK Folder\\Links\\Screenshot_24.png",
@@ -2591,16 +2584,6 @@
   "mb": 0.56,
   "file": "assets/work/video/r-office.mp4",
   "poster": "assets/work/video/r-office.webp"
- },
- "v-astana": {
-  "kind": "video",
-  "src": "D:\\Anti-Gravity\\Youtube\\Uploaded\\Astana Render 4K.mp4",
-  "w": 1280,
-  "h": 720,
-  "duration": 14.0,
-  "mb": 3.1,
-  "file": "assets/work/video/v-astana.mp4",
-  "poster": "assets/work/video/v-astana.webp"
  },
  "b-harmony-noir": {
   "kind": "img",

@@ -69,7 +69,7 @@ for (const accent of ['blue', 'lime', 'orange']) {
 const SPOT_RULES = [
   /\.preview-bar\b/, /\.preview-footer\b/, /\.art-caption\b/, /summary::before/,
 ];
-const files = ['public/styles.css', 'public/wild.css', 'public/work.css', 'public/video.css', 'public/showcase.css', 'public/story/story.css',
+const files = ['public/styles.css', 'public/wild.css', 'public/work.css', 'public/video.css', 'public/showcase.css',
   'public/project-assembly.css', 'public/scroll-cat.css', 'app/globals.css'];
 for (const file of files) {
   const css = (await read(file)).replace(/\/\*[\s\S]*?\*\//g, '');

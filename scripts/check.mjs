@@ -16,8 +16,6 @@ for(const video of videos){
   for(const asset of [video.src,video.poster].filter(item=>item&&!item.startsWith('https://')))assert.ok((await stat(path.join(root,asset))).isFile(),asset);
 }
 for(const name of files.filter(name=>name.endsWith('.js')))execFileSync(process.execPath,['--check',path.join(root,name)]);
-// the story player lives in a subfolder (and ESLint's Next config does not flag a redeclared const in it)
-for(const name of ['story/story.js'])execFileSync(process.execPath,['--check',path.join(root,name)]);
 assert.equal(new Set(projects.map(item=>item.id)).size,projects.length,'Project IDs must be unique');
 for(const project of projects){
   const assembly=assemblyDesigns[project.id];
