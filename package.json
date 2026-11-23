@@ -11,6 +11,8 @@
     "build": "node scripts/run-framework.mjs build",
     "build:github": "node scripts/build-github-pages.mjs",
     "build:hero": "node scripts/build-hero.mjs",
+    "build:seo": "node scripts/build-seo.mjs",
+    "build:og": "node scripts/build-og.mjs",
     "start": "node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js dev --config dist/server/wrangler.json --local --persist-to .wrangler/state --ip 127.0.0.1 --inspector-port 0",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
@@ -20,7 +22,7 @@
     "check": "node scripts/check.mjs && node scripts/check-apca.mjs && tsc --noEmit && eslint . --ignore-pattern dist --ignore-pattern .next",
     "demo:import": "node scripts/publish-demo.mjs",
     "demo:publish": "node scripts/publish-demo.mjs",
-    "prebuild": "node scripts/brand.mjs && node scripts/build-hero.mjs && node scripts/check.mjs && node scripts/check-apca.mjs && tsc --noEmit"
+    "prebuild": "node scripts/brand.mjs && node scripts/build-hero.mjs && node scripts/build-seo.mjs && node scripts/check.mjs && node scripts/check-apca.mjs && tsc --noEmit"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

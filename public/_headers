@@ -1,0 +1,10 @@
+# Headers for static files of the Sites deployment (Cloudflare Workers static assets).
+# Static files are served before the worker, so build/sites-worker.ts cannot mark them.
+# The indexed copy of the portfolio is GitHub Pages (scripts/build-seo.mjs): this one stays out of search.
+# build-github-pages.mjs leaves this file out of the Pages export.
+/*
+  X-Robots-Tag: noindex, nofollow
+
+# Content-hashed assets are immutable (vinext writes this rule itself only when this file is absent).
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable

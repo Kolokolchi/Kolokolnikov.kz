@@ -25,12 +25,20 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+      - name: Generate crawlable pages, sitemap and robots
+        run: node scripts/build-seo.mjs
       - name: Check portfolio
         run: node scripts/check.mjs
       - name: Check contrast and type sizes (APCA)
         run: node scripts/check-apca.mjs
       - name: Export static portfolio
         run: node scripts/build-github-pages.mjs
+        env:
+          # Repository variables (Settings → Secrets and variables → Actions → Variables).
+          # SITE_URL: production address for canonical, og:url and sitemap; empty = the github.io address.
+          SITE_URL: ${{ vars.SITE_URL }}
+          GOOGLE_SITE_VERIFICATION: ${{ vars.GOOGLE_SITE_VERIFICATION }}
+          YANDEX_VERIFICATION: ${{ vars.YANDEX_VERIFICATION }}
       - name: Configure Pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
       - name: Upload website

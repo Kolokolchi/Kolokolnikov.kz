@@ -14,7 +14,7 @@
 .video-info>span{font-size:var(--fs-min);color:var(--muted);text-align:right}
 .video-summary{font-size:var(--fs-copy);color:var(--muted);line-height:1.8;margin-top:10px;max-width:550px}
 .video-stage{background:#07090d;border:1px solid var(--line);border-radius:10px;overflow:hidden}
-.video-stage video{display:block;width:100%;aspect-ratio:16/9;max-height:75dvh;object-fit:contain}
+.video-stage video{display:block;width:100%;height:auto;aspect-ratio:16/9;max-height:75dvh;object-fit:contain}
 .youtube-watch{position:relative;display:block;aspect-ratio:16/9;max-height:75dvh}
 .youtube-watch img{width:100%;height:100%;object-fit:contain;opacity:.8}
 .youtube-watch-label{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--accent-fill);color:var(--bg);padding:17px 25px;border-radius:6px;font-size:14px;font-weight:700;white-space:nowrap}

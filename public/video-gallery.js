@@ -8,7 +8,7 @@ function render(){
  const visible=filter==='all'&&!expanded?matching.slice(0,4):matching;
  grid.replaceChildren(...visible.map(item=>{
   const article=element('article','video-card');
-  const a=element('a','video-cover');a.href=`video.html?video=${item.id}`;a.setAttribute('aria-label',`Смотреть: ${item.title}`);
+  const a=element('a','video-cover');a.href=`video/${item.id}/`;a.setAttribute('aria-label',`Смотреть: ${item.title}`);
   const image=element('img');Object.assign(image,{src:item.poster,alt:item.title,loading:'lazy',width:1280,height:720});
   const play=element('span','video-play','▶');play.setAttribute('aria-hidden','true');
   a.append(image,play,element('span','video-duration',item.duration));

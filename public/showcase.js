@@ -51,7 +51,7 @@ if(!project){
 }else{
   document.title=`${project.name} — презентация | Korney Kolokolnikov`;
   $('#viewer-name').textContent=project.name;$('#viewer-status').textContent=`${project.type} · ${project.status}`;
-  $('#back-link').href=project.hasCase===false?'demos/':`project.html?project=${project.id}`;
+  $('#back-link').href=project.hasCase===false?'demos/':`projects/${project.id}/`;
   $('#external-link').hidden=!siteUrl;if(siteUrl)$('#external-link').href=siteUrl;
   $('[data-mode="live"]').disabled=!siteUrl;
   $('[data-mode="gallery"]').disabled=!project.gallery.length;
@@ -65,7 +65,7 @@ if(!project){
   new ResizeObserver(fitFrame).observe($('#viewer-stage'));
   setMode(siteUrl?'live':'gallery');
   $('#about-title').textContent=project.name;$('#about-type').textContent=project.type;$('#about-description').textContent=project.description;
-  $('#about-features').replaceChildren(...project.features.map(text=>{const li=document.createElement('li');li.textContent=text;return li;}));$('#case-link').href=project.hasCase===false?'demos/':`project.html?project=${project.id}`;
+  $('#about-features').replaceChildren(...project.features.map(text=>{const li=document.createElement('li');li.textContent=text;return li;}));$('#case-link').href=project.hasCase===false?'demos/':`projects/${project.id}/`;
   if(project.hasCase===false)$('#case-link').textContent='Все демонстрации ↗';
   $('#about-button').addEventListener('click',()=>$('#about-dialog').showModal());
   function setShareType(type){

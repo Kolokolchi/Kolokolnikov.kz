@@ -1,6 +1,5 @@
-import { createHeroScene } from './hero-scene.js';
-
 // Decorative motion is optional: the complete page remains readable without JS.
+// three.js (~600 KB) loads on demand, so reveals and the video preview never wait for it.
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const revealItems = [...document.querySelectorAll('[data-reveal]')];
 const revealObserver = new IntersectionObserver(entries => {
@@ -19,7 +18,11 @@ if (!reducedMotion.matches) {
 }
 
 const hero = document.querySelector('.hero');
-const heroScene = createHeroScene(document.querySelector('[data-hero-scene]'), { hero });
+let heroScene = null;
+import('./hero-scene.js').then(({ createHeroScene }) => {
+  heroScene = createHeroScene(document.querySelector('[data-hero-scene]'), { hero });
+  syncHeroMotion();
+}).catch(() => { /* The static mark stays as the hero picture. */ });
 const heroMotionToggle = document.querySelector('[data-hero-motion-toggle]');
 let heroMotionUserPaused = false;
 let heroVisible = true;

@@ -321,3 +321,19 @@ html.lightbox-open { overflow: hidden; }
   .deck-card { translate: none; rotate: none; }
   .deck-sheet { transition: none; }
 }
+
+
+/* Touch targets (see styles.css): on touch screens the 3D-viewer controls get 44 px height (their row
+   must still fit one line at 320–430 px); the round preview arrows keep their size and get an
+   invisible 44 × 44 hit area, so the caption layout does not change. */
+@media (pointer: coarse) {
+  .lab-tool, .lab-segment .lab-tool, .lab-play { min-height: 44px; }
+  .motion-step { position: relative; }
+  .motion-step::after { content: ''; position: absolute; inset: -5px; border-radius: 50%; }
+}
+/* At 320–360 px the caption text and the three preview controls do not fit one line: the arrows
+   used to be cut off by the stage edge. The controls move under the text instead. */
+@media (max-width: 360px) {
+  .motion-stage-caption { flex-wrap: wrap; row-gap: 12px; }
+  .motion-controls { margin-left: auto; }
+}

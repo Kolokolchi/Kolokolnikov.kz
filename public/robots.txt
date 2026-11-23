@@ -1,3 +1,7 @@
+# Korney Kolokolnikov — портфолио. Индексация открыта для всех поисковиков.
+# Служебные страницы (презентации, демо, 404) закрыты метатегом robots, а не здесь,
+# чтобы поисковик мог прочитать этот метатег.
 User-agent: *
-Disallow: /showcase.html
-Disallow: /project.html
+Allow: /
+
+Sitemap: https://kolokolchi.github.io/Kolokolnikov.kz/sitemap.xml

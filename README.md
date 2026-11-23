@@ -6,6 +6,15 @@
 
 Каждый push в `main` запускает `.github/workflows/pages.yml`: проверку материалов, статический экспорт и публикацию сайта. Установка зависимостей для этого экспорта не требуется. Локально: `npm run build:github`; готовые файлы находятся в `out/github-pages/`.
 
+### SEO и индексация
+
+Кейсы и видео отрисовываются в браузере из `public/projects.js` и `public/videos.js`. Для поисковиков `scripts/build-seo.mjs` собирает из тех же данных статические страницы: `projects/` (хаб) и `projects/<id>/`, `video/` и `video/<id>/`, `404.html`, `sitemap.xml`, `robots.txt`. В `index.html` и `brand.html` генератор заполняет блок между `<!-- seo:start -->` и `<!-- seo:end -->`: title, description, canonical, Open Graph, Twitter, JSON-LD. Тексты этих двух страниц лежат в `STATIC_PAGES` внутри скрипта. Старые адреса `project.html?project=` и `video.html?video=` перенаправляют на новые.
+
+- После правки `projects.js`/`videos.js` выполните `npm run build:seo`. В CI и в `npm run build` генератор запускается сам. `scripts/check.mjs` проверяет страницы: один H1, длины title (до 60) и description (120–160), canonical, OG, JSON-LD и соответствие sitemap.
+- Картинки для превью в соцсетях (1200×630) лежат в `public/assets/og/` и создаются локально: `npm run build:og [id …]`. Нужен Playwright: по умолчанию берётся из `D:\Anti-Gravity\kinetic-equipment-matrix`, другой путь задаётся в `PLAYWRIGHT_MODULE`. Если карточки нет, превью строится по скриншоту кейса.
+- Боевой адрес задаётся переменной репозитория `SITE_URL` (Settings → Secrets and variables → Actions → Variables). Если она пустая, используется `https://kolokolchi.github.io/Kolokolnikov.kz/`. `GOOGLE_SITE_VERIFICATION` и `YANDEX_VERIFICATION` добавляют на главную метатеги подтверждения Search Console и Яндекс.Вебмастера.
+- Серверная копия на Sites отдаёт `X-Robots-Tag: noindex, nofollow` (`build/sites-worker.ts`): это дубль портфолио и клиентские демо.
+
 В версии GitHub Pages демонстрации открывают исходные опубликованные сайты Ankor и «Леса-вышки». API публикации демонстраций остаётся на сервере Sites. Экспорт не меняет серверную версию, загруженные проекты или исходные материалы в `public/`.
 
 Портфолио, видеоработы и собственное пространство для демонстрации сайтов. Публичная часть находится в `public/`; API публикации демонстраций (`/api/portfolio/`) и раздел `/demos/` работают на сервере Sites. Файлы загруженных сайтов хранятся в R2, проекты и версии — в D1. Повторная публикация портфолио не удаляет загруженные версии.

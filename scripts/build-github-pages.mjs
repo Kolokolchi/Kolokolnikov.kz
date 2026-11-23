@@ -3,6 +3,8 @@ import { cp, lstat, mkdir, readFile, readdir, realpath, rm, writeFile } from 'no
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { contact, projects } from '../public/projects.js';
+import { videos } from '../public/videos.js';
+import { generateSeo, readVerification, resolveSiteUrl } from './build-seo.mjs';
 
 const root = await realpath(fileURLToPath(new URL('../', import.meta.url)));
 const source = path.join(root, 'public');
@@ -69,6 +71,8 @@ if (outputInfo) {
   await rm(output, { recursive: true });
 }
 await cp(source, output, { recursive: true, errorOnExist: true, force: false });
+// _headers configures the Sites (Cloudflare) copy only; GitHub Pages would publish it as a plain file.
+await rm(path.join(output, '_headers'), { force: true });
 
 await writeFile(path.join(output, 'demo-directory.js'), directoryScript);
 await writeFile(path.join(output, 'showcase.js'), showcaseScript);
@@ -83,8 +87,15 @@ for (const filename of sourceFiles.filter(filename => filename.endsWith('.html')
   await writeFile(path.join(output, relative), await readFile(filename, 'utf8'));
 }
 
+// Crawlable pages, canonical URLs, sitemap and robots for the deployment address. SITE_URL and the
+// Search Console / Yandex tokens come from repository variables (see .github/workflows/pages.yml).
+const siteUrl = resolveSiteUrl(process.env.SITE_URL);
+const verification = readVerification();
+const seo = await generateSeo({ publicDir: source, outDir: output, siteUrl, projects: staticProjects, videos, contact, verification });
+
 const outputFiles = await filesIn(output);
 const assetCount = outputFiles.filter(filename => path.relative(output, filename).startsWith(`assets${path.sep}`)).length;
 const htmlCount = outputFiles.filter(filename => filename.endsWith('.html')).length;
 console.log(`GitHub Pages export: out/github-pages (${outputFiles.length} files, ${htmlCount} HTML pages, ${assetCount} assets).`);
 console.log(`Preserved ${staticProjects.length} projects; ${catalog.length} demos use their original HTTPS sites. Public and server sources are unchanged.`);
+console.log(`SEO: ${seo.pages.length} indexable pages and ${seo.sitemap.length} sitemap URLs for ${siteUrl}; verification meta: ${[verification.google && 'Google', verification.yandex && 'Yandex'].filter(Boolean).join(', ') || 'none'}.`);

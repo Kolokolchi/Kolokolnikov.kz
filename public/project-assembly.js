@@ -8,7 +8,7 @@ export function createProjectAssembly(project) {
   const design = assemblyDesigns[project.id];
   const link = document.createElement('a');
   link.className = 'project-image-link';
-  link.href = `project.html?project=${encodeURIComponent(project.id)}`;
+  link.href = `projects/${encodeURIComponent(project.id)}/`;
   link.setAttribute('aria-label', `Подробнее: ${project.name}`);
   link.style.setProperty('--preview-ratio', design.width / design.height);
   link.style.setProperty('--assembly-paper', design.paper);
