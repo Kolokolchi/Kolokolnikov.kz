@@ -300,6 +300,33 @@ EXTRA_JOBS += [
     dict(id="r-tankz", kind="video", src=VC + r"\TANKZ\delivery\TANKZ_6x15_v3\03_Orange_Inside_v3.mp4", t=8, w=540, crf=28, poster_at=1),
     dict(id="r-office", kind="video", src=YT + r"\Office Voice Music.mp4", ss=8, t=7, w=540, crf=28),
 ]
+# New works, 23 November 2026 (CONTENT-SOURCES.md, «Новые работы»).
+TEMPLE = AG + r"\3Д храм\renders"
+V06 = EQ + r"\ANKOR_MACHINES_V06\preview"
+CAPTURES = str(ROOT / "artifacts" / "captures")  # screenshots taken for the portfolio (git-ignored, kept on disk)
+EXTRA_JOBS += [
+    # Old wooden church in Almaty: procedural Blender model, 3ds Max export, 1:100 resin print files.
+    dict(id="arch-temple", src=TEMPLE + r"\02_south_west.jpg", crop=(0.04, 0.06, 0.96, 0.86)),  # keeps the cross inside wide cards
+    dict(id="arch-temple-gables", src=TEMPLE + r"\10_west_gables.jpg"),
+    dict(id="arch-temple-print", src=TEMPLE + r"\05_resin_1-100_parts.jpg"),
+    dict(id="arch-temple-compare", src=TEMPLE + r"\compare\pair_182659.jpg"),
+    # SAF Avenue in WebGL2 (D:\Anti-Gravity\WebGL\saf-avenue\dist), captured at 1920x1080 on RTX, settings panel hidden.
+    dict(id="arch-saf-webgl", src=CAPTURES + r"\webgl-saf\drone.jpg"),
+    dict(id="arch-saf-webgl-golden", src=CAPTURES + r"\webgl-saf\golden.jpg"),
+    # NYGMET, second film (Google Flow / Nano Banana Pro, edit and colour in DaVinci Resolve): courtyard life excerpt.
+    dict(id="v-nygmet-film", kind="video", src=AG + r"\Sensata Video\Final Render\NYGMET — Второй фильм v5.mp4", ss=33, t=20, crf=27, poster_at=3.5),
+    # ANKOR V05 pour machine film (Blender Cycles) and V06 engineering sections.
+    dict(id="eng-pour-film", kind="video", src=EQ + r"\ANKOR_MACHINES_V05\animation\ANKOR_V05_заливка_без_титров.mp4", ss=48, t=20, crf=27, poster_at=16),
+    dict(id="eng-v06-valve", src=V06 + r"\func_pour_valve_v05_v06.png", w=1430),
+    dict(id="eng-v06-pour-cycle", src=V06 + r"\func_pour_cycle.png", w=1650),
+    dict(id="eng-v06-blister-cycle", src=V06 + r"\func_blister_cycle.png", w=1430),
+    dict(id="eng-v06-fusion", src=V06 + r"\fusion_pour_v06.png"),
+    # SpaceRoom: Alucobond wall panels, Fusion sheet metal unfolded and nested for CNC routing.
+    dict(id="eng-spaceroom-sheets", src=AG + r"\SpaceRoom\Fusion\preview\listy_obzor.png", w=2000),
+    # Brands: RMX Solutions mark (own concept «Точный стык»), Lynk & Co 900 exhibition stand in Almaty.
+    dict(id="b-rmx", src=CAPTURES + r"\rmx\brand-preview@2x.png", crop=(0.5, 0.265, 0.96, 0.65)),  # Maxat Site\dist\brand\brand-preview.svg at 2x
+    dict(id="b-lynkco", src=AG + r"\Maxat image\output\lynkco-almaty-real-photos\B_KOKTOBE_SNOW\preview\collage.png", w=2000, crop=(0.015, 0.09, 0.985, 0.95)),
+]
 
 if __name__ == "__main__":
     main()

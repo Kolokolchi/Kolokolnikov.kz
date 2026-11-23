@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=1440"><title>Воду в сток — native assembly scene</title><style>
+*{box-sizing:border-box}html,body{margin:0;width:1440px;height:1000px;overflow:hidden}body{position:relative;-webkit-font-smoothing:antialiased}h1,h2,p{margin:0}img{display:block}button{font:inherit}*{animation:none!important;transition:none!important}
+@font-face{font-family:Manrope;src:url('../assets/assembly/vodostok/manrope-0.woff2') format('woff2');font-weight:400}
+@font-face{font-family:Manrope;src:url('../assets/assembly/vodostok/manrope-1.woff2') format('woff2');font-weight:500}
+@font-face{font-family:Manrope;src:url('../assets/assembly/vodostok/manrope-2.woff2') format('woff2');font-weight:600}
+@font-face{font-family:Manrope;src:url('../assets/assembly/vodostok/manrope-3.woff2') format('woff2');font-weight:700}
+@font-face{font-family:Manrope;src:url('../assets/assembly/vodostok/manrope-4.woff2') format('woff2');font-weight:800}
+body{background:#fff;color:#142331;font-family:Manrope,Arial,sans-serif}
+svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* Stationary backdrop: header bar, hero photograph with its shade, the white calculator sheet and empty card frames. */
+.header{position:absolute;inset:0 0 auto;height:69px;background:#101e29;border-bottom:1px solid #ffffff29;z-index:3}
+.hero-photo{position:absolute;left:0;top:69px;width:1440px;height:295px;object-fit:cover;object-position:50% 56%}
+.hero-shade{position:absolute;left:0;top:69px;width:1440px;height:295px;background:linear-gradient(90deg,#0c1b27f5 0%,#0b1a26de 17%,#0d1e2aad 32%,#0d1e2a12 50%,#0f1d2900 65%,#101e298a 80%,#101e29f5 100%)}
+.sheet{position:absolute;left:0;top:346px;width:1440px;height:654px;background:#fff;border-radius:24px 24px 0 0}
+.card{position:absolute;top:438px;height:468px;background:#fff;border:1px solid #dbe3ec;border-radius:14px}
+.c1{left:45px;width:348px}.c2{left:405px;width:630px}.c3{left:1047px;width:348px}
+.plan-body{position:absolute;left:419px;top:490px;width:602px;height:359px;border:1px solid #e5eaf0;border-radius:8px;overflow:hidden}
+.graph{position:absolute;left:0;top:0;width:430px;height:357px;background:#fcfdff linear-gradient(#cddbea59 1px,transparent 1px) 0 0/24px 24px,linear-gradient(90deg,#cddbea59 1px,transparent 1px) 0 0/24px 24px}
+.model{position:absolute;left:0;top:56px;width:430px;height:301px;background:#f0f3f5}
+.fields-bg{position:absolute;left:430px;top:0;width:170px;height:357px;background:#f5f7fa}
+/* Foreground: real interface text, controls and the project's own renders. */
+.logo{position:absolute;left:45px;top:14px;display:flex;align-items:center;gap:9px;color:#fff;z-index:4}
+.logo img{width:39px;height:39px}.logo strong{display:block;font-size:23px;font-weight:800;letter-spacing:-.05em;line-height:1.16}.logo small{display:block;color:#b7c8d5;font-size:10px;line-height:1.6}
+.nav{position:absolute;left:333px;top:14px;display:flex;gap:8px;z-index:4}
+.nav span{display:flex;align-items:center;min-height:40px;padding:0 12px;border-radius:6px;color:#eaf1f6;font-size:13px;font-weight:700}
+.nav .on{background:#1545a0;color:#fff}
+.cart{position:absolute;left:1273px;top:13px;width:122px;height:42px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:7px;background:#095bfa;color:#fff;font-size:13px;font-weight:700;z-index:4}
+.cart svg{width:17px;height:17px}
+.title{position:absolute;left:45px;top:100px;width:540px;color:#fff;font-size:43.2px;font-weight:800;letter-spacing:-.051em;line-height:.99}
+.title em{color:#a8d8ff;font-style:normal}
+.lead{position:absolute;left:45px;top:196px;width:368px;color:#edf3f8;font-size:15px;font-weight:500;line-height:1.45}
+.cta{position:absolute;left:45px;top:273px;width:264px;height:45px;display:flex;align-items:center;justify-content:center;gap:10px;border-radius:7px;background:#095bfa;color:#fff;font-size:15px;font-weight:700}
+.cta svg{width:18px;height:18px}.cta svg:last-child{margin-left:9px}
+.finish{position:absolute;left:1105px;width:290px;height:76px;display:grid;grid-template-columns:36% minmax(0,1fr) 16px;align-items:center;gap:12px;padding-right:15px;border:1px solid #99a9b6b3;border-radius:10px;background:#1c2d3aeb;overflow:hidden;color:#fff}
+.finish.on{border-color:#8dc7ff;box-shadow:inset 0 0 0 1px #8dc7ff}
+.f1{top:86px}.f2{top:172px}.f3{top:258px}
+.swatch{align-self:stretch;display:grid;place-items:center}
+.swatch img{width:100%;height:72px;padding:4px;object-fit:contain;filter:drop-shadow(0 3px 3px #07111d4a)}
+.finish strong{display:block;font-size:14.4px;font-weight:700;line-height:1.28}.finish small{display:block;margin-top:4px;color:#ccd7df;font-size:11px}
+.radio{width:16px;height:16px;border:1.5px solid #ccd7df;border-radius:50%;display:grid;place-items:center}
+.on .radio{background:#1264f5;border-color:#7abaff}.on .radio:after{content:'';width:7px;height:7px;border-radius:50%;background:#fff}
+.calc-head{position:absolute;left:45px;top:365px;display:flex;gap:12px;align-items:flex-start}
+.app-icon{width:46px;height:48px;margin-top:5px;display:grid;place-items:center;border-radius:12px;background:#eaf2ff;color:#095bfa}.app-icon svg{width:22px;height:22px}
+.calc-head h2{font-size:30.24px;font-weight:800;letter-spacing:-.05em;line-height:1.14}
+.calc-head p{margin-top:5px;color:#526273;font-size:13px}
+.totals{position:absolute;left:1168px;top:372px;display:flex;gap:22px}
+.totals small{display:block;color:#5d6e7d;font-size:12px}.totals strong{display:block;margin-top:3px;font-size:19px;font-weight:600}
+.panel-title{position:absolute;display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700}
+.panel-title svg{width:17px;height:17px;color:#1557b6}
+.houses{position:absolute;left:59px;top:490px;width:320px;display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.house{position:relative;height:115px;border:1px solid #dce5ee;border-radius:8px;background:#fff;padding:11px 3px 0;text-align:center;font-size:12px;font-weight:700}
+.house img{width:149px;height:75px;margin:0 auto 6px;object-fit:contain}
+.house.on{border:2px solid #2455df;background:#f2f6ff;padding-top:10px}
+.house.on:after{content:'';position:absolute;right:7px;top:5px;width:18px;height:18px;border-radius:50%;background:#2455df url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m6 12 4 4 8-8' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat}
+.custom{position:absolute;left:59px;top:856px;width:320px;height:36px;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid #dce5ee;border-radius:7px;color:#1557b6;font-size:15px;font-weight:700}
+.custom svg{width:15px;height:15px}
+.views{position:absolute;left:430px;top:500px;display:flex;gap:2px;padding:3px;border-radius:8px;background:#eef2f6}
+.views span{display:flex;align-items:center;gap:6px;min-height:32px;padding:4px 11px;border:1px solid transparent;border-radius:5px;color:#455a6b;font-size:12px;font-weight:700}
+.views .on{background:#fff;border-color:#ced9ea;color:#1252c0}.views svg{width:14px;height:14px}
+.house3d{position:absolute;left:463px;top:575px;width:344px;filter:brightness(1.037);mix-blend-mode:multiply}
+.dim{position:absolute;padding:2px 4px;border:1px solid #d5dfe5;border-radius:5px;background:#f9fbfcef;color:#415a6c;font-size:10px;line-height:1.3}
+.tools{position:absolute;left:803px;top:554px;width:40px;padding:4px 0;display:grid;gap:3px;justify-items:center;border:1px solid #dce3e7;border-radius:10px;background:#ffffffed;color:#455a6b}
+.tools span{width:30px;height:30px;display:grid;place-items:center;border-radius:7px}.tools svg{width:16px;height:16px}.tools .on{background:#e6efff;color:#1252c0}
+.help{position:absolute;left:430px;top:825px;color:#74828c;font-size:11px}
+.fields{position:absolute;left:863px;top:567px;width:145px}
+.fields h4{margin:0 0 9px;font-size:13px;font-weight:700}
+.field{display:grid;grid-template-columns:66px 78px;align-items:center;margin-bottom:6px;color:#526273;font-size:10px;line-height:1.3}
+.field b{height:33px;display:flex;align-items:center;padding:0 9px;border:1px solid #d6dfe8;border-radius:6px;background:#fff;color:#142331;font-size:13px;font-weight:600}
+.fields .auto{display:block;margin-top:9px;color:#1557b6;font-size:12px;font-weight:700}
+.tip{position:absolute;left:419px;top:857px;width:602px;height:35px;display:flex;align-items:center;gap:8px;padding:0 12px;border-radius:7px;background:#eef4fb;color:#465a70;font-size:11px}
+.tip svg{width:15px;height:15px}
+.settings{position:absolute;left:1061px;top:486px;width:320px;display:flex;justify-content:space-between;align-items:center}
+.select{height:30px;display:flex;align-items:center;gap:10px;padding:0 9px 0 11px;border:1px solid #cfd8e2;border-radius:6px;font-size:11px;font-weight:600}.select svg{width:12px;height:12px}
+.dots{display:flex;gap:7px}.dots i{width:18px;height:18px;border-radius:50%;border:1px solid #cdd5dd}
+.dots i:nth-child(1){background:#5b3a2c;box-shadow:0 0 0 2px #fff,0 0 0 3.5px #2455df}.dots i:nth-child(2){background:#eef0f2}.dots i:nth-child(3){background:#3e4449}
+.parts{position:absolute;left:1061px;top:522px;width:320px;margin:0;padding:0;list-style:none}
+.parts li{height:29px;display:grid;grid-template-columns:43px 1fr auto;align-items:center;border-bottom:1px solid #edf1f5;font-size:13px}
+.parts img{width:36px;height:28px;object-fit:contain}
+.parts b{font-weight:600}.parts small{color:#526273;font-size:11px}
+.more{position:absolute;left:1061px;top:760px;color:#1557b6;font-size:10px;font-weight:700}
+.full{position:absolute;left:45px;top:931px;display:flex;align-items:center;gap:9px;color:#34516a;font-size:13px;font-weight:700}.full svg{width:17px;height:17px}
+.add,.wa{position:absolute;top:921px;height:42px;display:flex;align-items:center;justify-content:center;gap:9px;border-radius:8px;font-size:13px;font-weight:700}
+.add{left:951px;width:181px;background:#095bfa;color:#fff}.wa{left:1143px;width:252px;border:1px solid #50976b;color:#205f39}
+.add svg,.wa svg{width:17px;height:17px}
+.check{position:absolute;left:45px;top:978px;color:#496074;font-size:13px}
+</style></head><body><!-- Native «Воду в сток» source: github-pages-publish build (index.html home hero, home calculator, images/home, images/products renders, Manrope OFL). Prices and the client's phone number are deliberately left out. The hero photograph is one stationary element. -->
+<div class="header"></div>
+<img class="hero-photo" src="../assets/assembly/vodostok/hero.webp" alt="Водосточная система на фасаде частного дома"><div class="hero-shade"></div>
+<div class="sheet"></div><div class="card c1"></div><div class="card c2"></div><div class="card c3"></div>
+<div class="plan-body"><div class="graph"></div><div class="model"></div><div class="fields-bg"></div></div>
+
+<div class="logo" data-assembly-layer data-from="-35,-20,0" data-order="0"><img src="../assets/assembly/vodostok/logo.svg" alt=""><span><strong>Воду в сток</strong><small>Водосточные системы</small></span></div>
+<nav class="nav" data-assembly-layer data-from="0,-24,0" data-order="1"><span class="on">Главная</span><span>Каталог</span><span>Калькулятор</span><span>Как выбрать</span><span>Монтаж</span><span>Доставка</span><span>Контакты</span></nav>
+<div class="cart" data-assembly-layer data-from="35,-20,0" data-order="2"><svg viewBox="0 0 24 24"><path d="M6 8h12l-1 12H7L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>Комплект</div>
+<h1 class="title" data-assembly-layer data-from="-50,30,0" data-order="3">Подберите водосток<br><em>для своего дома</em></h1>
+<p class="lead" data-assembly-layer data-from="-40,34,0" data-order="4">Задайте размеры дома и посмотрите, где пройдут желоба и трубы. Калькулятор составит комплект в тенге.</p>
+<div class="cta" data-assembly-layer data-from="-25,40,0" data-order="5"><svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M16 14v4M16 10h.01M12 10h.01M8 10h.01M12 14h.01M8 14h.01M12 18h.01M8 18h.01"/></svg>Рассчитать комплект<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+<div class="finish f1 on" data-assembly-layer data-from="60,-10,0" data-order="4"><span class="swatch" style="background:linear-gradient(135deg,#756155,transparent 125%)"><img src="../assets/assembly/vodostok/gutter-brown.webp" alt=""></span><span><strong>Коричневый</strong><small>RAL 8017</small></span><i class="radio"></i></div>
+<div class="finish f2" data-assembly-layer data-from="70,0,0" data-order="5"><span class="swatch" style="background:linear-gradient(135deg,#c6cbd0,transparent 125%)"><img src="../assets/assembly/vodostok/gutter-white.webp" alt=""></span><span><strong>Белый</strong><small>RAL 9003</small></span><i class="radio"></i></div>
+<div class="finish f3" data-assembly-layer data-from="80,10,0" data-order="6"><span class="swatch" style="background:linear-gradient(135deg,#6d7a85,transparent 125%)"><img src="../assets/assembly/vodostok/gutter-graphite.webp" alt=""></span><span><strong>Графит</strong><small>RAL 7024</small></span><i class="radio"></i></div>
+
+<header class="calc-head" data-assembly-layer data-from="-30,24,0" data-order="6"><span class="app-icon"><svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M16 14v4M16 10h.01M12 10h.01M8 10h.01M12 14h.01M8 14h.01M12 18h.01M8 18h.01"/></svg></span><div><h2>Калькулятор водосточной системы</h2><p>Подберите комплект по форме и размерам вашего дома.</p></div></header>
+<div class="totals" data-assembly-layer data-from="30,24,0" data-order="7"><span><small>Площадь водосбора</small><strong>117 м²</strong></span><span><small>Длина желобов</small><strong>26 м</strong></span></div>
+<div data-assembly-layer data-from="-40,40,0" data-order="8">
+  <div class="panel-title" style="left:59px;top:456px"><svg viewBox="0 0 24 24"><path d="m3 11 9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>Выберите тип дома</div>
+  <div class="houses"><div class="house"><img src="../assets/assembly/vodostok/roof-mono.webp" alt="">Односкатный</div><div class="house on"><img src="../assets/assembly/vodostok/roof-gable.webp" alt="">Двускатный</div><div class="house"><img src="../assets/assembly/vodostok/roof-hip.webp" alt="">Вальмовый</div><div class="house"><img src="../assets/assembly/vodostok/roof-tent.webp" alt="">Шатровый</div><div class="house"><img src="../assets/assembly/vodostok/roof-l.webp" alt="">Г-образный</div><div class="house"><img src="../assets/assembly/vodostok/roof-u.webp" alt="">П-образный</div></div>
+  <div class="custom"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4Z"/></svg>Нарисовать свой план</div>
+</div>
+<div data-assembly-layer data-from="0,-26,0" data-order="9">
+  <div class="panel-title" style="left:419px;top:456px"><svg viewBox="0 0 24 24"><path d="m4 15 11-11 5 5-11 11Z"/><path d="m8 11 2 2M11 8l2 2M14 5l2 2"/></svg>Дом и размеры</div>
+  <div class="views"><span class="on"><svg viewBox="0 0 24 24"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9Z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></svg>3D-дом</span><span><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="1" stroke-dasharray="3 3"/></svg>План</span></div>
+</div>
+<div data-assembly-layer data-from="0,60,-4" data-order="10">
+  <img class="house3d" src="../assets/assembly/vodostok/roof-gable.webp" alt="3D-модель двускатного дома">
+  <span class="dim" style="left:496px;top:678px">H 4 м</span><span class="dim" style="left:565px;top:745px">12 м</span><span class="dim" style="left:720px;top:750px">8 м</span>
+</div>
+<div class="tools" data-assembly-layer data-from="24,0,0" data-order="11"><span><svg viewBox="0 0 24 24"><path d="M12 6v12M6 12h12"/></svg></span><span><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></span><span class="on"><svg viewBox="0 0 24 24"><path d="m4 15 11-11 5 5-11 11Z"/><path d="m8 11 2 2M11 8l2 2"/></svg></span><span><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4"/></svg></span></div>
+<p class="help" data-assembly-layer data-from="0,20,0" data-order="11">Тяните мышью для вращения · колесо — масштаб</p>
+<div class="fields" data-assembly-layer data-from="30,30,0" data-order="12"><h4>Размеры, м</h4><div class="field">Длина<b>12</b></div><div class="field">Ширина<b>8</b></div><div class="field">Высота карниза<b>4</b></div><div class="field">Воронки<b>2</b></div><span class="auto">Автоподбор воронок</span></div>
+<div class="tip" data-assembly-layer data-from="0,30,0" data-order="12"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>Длину и ширину укажите по наружным стенам. Свес кровли — 0,5 м.</div>
+<div data-assembly-layer data-from="50,30,0" data-order="13">
+  <div class="panel-title" style="left:1061px;top:456px">Результат расчёта</div>
+  <div class="settings"><span class="select">Сталь · 125/90<svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span><span class="dots"><i></i><i></i><i></i></span></div>
+  <ul class="parts">
+    <li><img src="../assets/assembly/vodostok/gutter-brown.webp" alt=""><span>Желоб полукруглый · 3 м</span><span><b>10</b> <small>шт.</small></span></li>
+    <li><img src="../assets/assembly/vodostok/gutter-brown.webp" alt=""><span>Соединитель желоба</span><span><b>8</b> <small>шт.</small></span></li>
+    <li><img src="../assets/assembly/vodostok/bracket-brown.webp" alt=""><span>Держатель желоба карнизный</span><span><b>46</b> <small>шт.</small></span></li>
+    <li><img src="../assets/assembly/vodostok/corner-brown.webp" alt=""><span>Воронка выпускная</span><span><b>2</b> <small>шт.</small></span></li>
+    <li><img src="../assets/assembly/vodostok/gutter-brown.webp" alt=""><span>Заглушка желоба</span><span><b>4</b> <small>шт.</small></span></li>
+    <li><img src="../assets/assembly/vodostok/pipe-brown.webp" alt=""><span>Труба круглая · 3 м</span><span><b>4</b> <small>шт.</small></span></li>
+    <li><img src="../assets/assembly/vodostok/pipe-brown.webp" alt=""><span>Колено сливное</span><span><b>2</b> <small>шт.</small></span></li>
+    <li><img src="../assets/assembly/vodostok/pipe-brown.webp" alt=""><span>Колено трубы</span><span><b>4</b> <small>шт.</small></span></li>
+  </ul>
+  <span class="more">Все позиции (10) ⌄</span>
+</div>
+<div data-assembly-layer data-from="0,34,0" data-order="14">
+  <span class="full"><svg viewBox="0 0 24 24"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9Z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></svg>Расставить трубы и уточнить расчёт ↗</span>
+  <span class="add"><svg viewBox="0 0 24 24"><path d="M6 8h12l-1 12H7L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>Добавить в заявку</span>
+  <span class="wa"><svg viewBox="0 0 24 24"><path d="M4 20l1.3-4A8 8 0 1 1 8 18.8Z"/></svg>Получить расчёт в WhatsApp</span>
+  <span class="check">Параметры расчёта и монтаж</span>
+</div>
+</body></html>

@@ -135,4 +135,49 @@ Ankor: локальный проект `D:\Anti-Gravity\Ankor\ankor-redesign`, R
 - **Счётчики:** вместо счёта элементов страницы — годы практики (с 2017), сайты и приложения, видео и подписчики YouTube (100 и 2 700+, страница канала 6.11.2026), презентации, работы по брендам.
 - **Сетки:** размеры карточек подобраны так, что 3D и бренды закрываются без дыр на 4, 3 и 2 колонках; `scripts/check.mjs` это проверяет.
 
-Не добавлено: Izum Production — перенос существующего сайта izumerch.kz на Next.js, не собственный дизайн.
+Не добавлено: Izum Production (корень папки) — перенос существующего сайта izumerch.kz на Next.js, не собственный дизайн. Собственный сайт Izum на сетке знака добавлен 23 ноября 2026 (ниже).
+
+## Новые работы (23 ноября 2026)
+
+Просмотрены папки `D:\Anti-Gravity`, изменённые после ревизии 11 ноября. Исходные проекты не изменялись; медиа собирает `scripts/media/build_media.py` (блок «New works»). Кадры, снятые специально для портфолио, лежат в `artifacts/captures/` (вне git).
+
+### Сайты и продукты
+
+- **GARILLA_GARAGE** (`garilla`): `D:\Anti-Gravity\Garilla Garage\website`, опубликован https://kolokolchi.github.io/garilla-garage/ (страницы `noindex`). Сцена сборки — по `src\components\Hero.tsx`, `Navbar.tsx`, `ui.tsx`, `src\index.css`; фото `public\images\hero\ford-f350-wide.webp`, логотип `public\images\brand\logo-circle-transparent.png`. Шрифты Golos Text, JetBrains Mono, Sofia Sans Extra Condensed, Unbounded — Google Fonts, OFL. Модель Defender 110 в 3D-стенде — meeww, Sketchfab, CC BY 4.0 (`tools\blender\sources\defender110\SOURCE.md`), подпись автора стоит в галерее. Фото, логотип, цифры и отзывы принадлежат клиенту; телефон и имена из отзывов в кадры не взяты.
+- **Izum Design & Production** (`izum`): `D:\Anti-Gravity\Izum Site Production`, опубликован https://kolokolchi.github.io/izum-grid/ (`noindex`). Собственный дизайн: сетка страниц выведена из пропорций знака IZUM; схема внутренних страниц повторяет референс zrobim.by. Конструктор перенесён из `D:\Anti-Gravity\Izum Production\site`. Знак `img\izum-logo-2x.png` и фото цеха принадлежат клиенту; кадры оборота изделий — генерация Google Flow, а не фото. Gotham Pro в сцену не копировался (лицензия не ясна), вместо него Montserrat (OFL). Часть 3D-моделей конструктора — CLO-SET CONNECT, файлы GLB в портфолио не выкладываются. Телефон, e-mail и логотипы клиентов Izum в кадры не попали.
+- **Воду в сток** (`vodostok`): сборка `D:\Anti-Gravity\Andrey Site Tube\github-pages-publish`, опубликован https://kolokolchi.github.io/vodu-v-stok-site/ (`noindex`); исходники в приватном репозитории `vodu-v-stok`, в кейсе указан только публичный репозиторий сборки. Сцена — по `images\home\`, `images\products\*-384.webp`, `images\logo.svg`, шрифт Manrope (OFL). На всех кадрах скрыты суммы в тенге (`.hc-price`) и WhatsApp клиента (`.water-contact`). Иконки товаров в сцене — ИИ-рендеры проекта; на кадре калькулятора мелкие иконки — фото производителя. Ветка с этажами (`vodostok-floors`) не опубликована и не показана.
+- **RMX Solutions** (`rmx`): сборка `D:\Anti-Gravity\Maxat Site\dist`, нигде не опубликована (raumax.kz не менялся). Знак «Точный стык», палитра и вёрстка — собственные. Фото объектов (GAC MOTOR, Chevrolet и др.) — заказчика; кадр первого экрана — ИИ-ретушь, подписан «фото с ретушью». Телефон заказчика в кадры не попал. PDF-презентация, сертификаты и `artifacts\pdf-page-*` не публикуются.
+- **Sensata 360°** (`sensata-tours`): `D:\Anti-Gravity\Sensata 3d Tour` — собственный движок туров (`06_Modern_Tour_Engine`, Three.js + React) и редактор Sensata 360° Studio (`09_Desktop_App_Source`, .NET 8 + WebView2, установщик Inno Setup). Витрина https://kolokolchi.github.io/sensata-360-tours/ (`noindex`, делалась для заказчика): 5 ЖК, 105 сцен 360° (20 + 24 + 24 + 19 + 18 по `11_GitHub_Showcase/*/tour.json`). Публикация на хост заказчика подписывается Ed25519, самотест 23.11.2026 — 49 из 49. Панорамы, рендеры и аэросъёмка — материалы заказчика (в исходном туре указан Mir3d.kz); моя работа — движок, интерфейс и Studio. Репозиторий витрины публичный, но содержит только сборку с медиа заказчика, поэтому в кейсе не указан. Кадр Studio снят на копии проекта в scratchpad с изолированным `LOCALAPPDATA`; вкладка публикации с ключами не снималась. Квартирные туры 3DVista и брендинг Mir3d не показаны.
+- **Qysym Lab** (`qysym`): `D:\Anti-Gravity\Maxat App\app\index.html` (через file://), спецификация `APP-SPEC.md`. Логистическая регрессия на датасете Kaggle cardio_train (70 000 записей, после очистки 68 566), ROC-AUC 0,69; учебная демонстрация, не медицинский инструмент. KZ/RU, офлайн, APK 1.0.0 — не опубликован. Содержание — школьный проект заказчика; `Tex\` и ключи подписи APK не тронуты. Интерфейс использует системный шрифт.
+
+### 3D и CGI
+
+- Деревянный храм в Алматы (`arch-temple*`): `D:\Anti-Gravity\3Д храм\renders` (02, 10, 05 и `compare\pair_182659.jpg`). Процедурная модель в Blender: 49 объектов, 208 554 полигона (`3dsmax\export_log.json`). Печать 1:100 на Elegoo Saturn 4 Ultra 16K: полая модель из двух частей, стенка 2,2 мм; файлы подготовлены, факт печати не подтверждён. Фото в паре «фото / модель» — из `Tex\IMG_20230701_*`, авторство съёмки не подтверждено. Иконописные изображения из `Tex\Temple_assets` не публикуются.
+- SAF Avenue в браузере (`arch-saf-webgl*`): сборка `D:\Anti-Gravity\WebGL\saf-avenue\dist`, кадры 1920×1080 сняты в Chrome на RTX 4090 с выключенной панелью настроек (`artifacts/captures/webgl-saf/`). Небо и облака — движок Cloudscape (MIT, © Michael Cook), здания и дороги — © участники OpenStreetMap (ODbL), рельеф — Tilezen Terrain Tiles (SRTM/NASA, USGS, NOAA); строка атрибуции видна в кадре. Клон `D:\Anti-Gravity\WebGL\cloudscape` — чужой проект, не публикуется. Модель ЖК эскизная, подпись говорит о веб-технологии, а не о фотореализме.
+
+### Видео
+
+- NYGMET — второй фильм (`v-nygmet-film`): `D:\Anti-Gravity\Sensata Video\Final Render\NYGMET — Второй фильм v5.mp4` (87 с, 1080p, 23.11.2026), на сайте — беззвучный фрагмент 33–53 с (двор, семья, лобби). ИИ-кадры Google Flow (Omni 1.2 Flash, Nano Banana Pro), часть клипов из первого фильма (Higgsfield), монтаж и цвет в DaVinci Resolve, музыка Suno. Структура и раскадровка повторяют чужой рекламный ролик-референс, поэтому в подписи нет слова «режиссура». Согласование заказчиком (Sensata Group) не записано. Черновой фильм 1 и аниматик 2:30 не публикуются.
+
+### Инженерия
+
+- Ролик станка заливки (`eng-pour-film`): `D:\Anti-Gravity\Матрицы и оборудование\ANKOR_MACHINES_V05\animation\ANKOR_V05_заливка_без_титров.mp4`, фрагмент 48–68 с. Это V05, у которого был глухой канал клапана; исправленная версия — V06.
+- ANKOR V06 (`eng-v06-*`): `ANKOR_MACHINES_V06\preview` — разрезы `func_pour_valve_v05_v06.png`, `func_pour_cycle.png`, `func_blister_cycle.png` и снимок Fusion `fusion_pour_v06.png`. Цифровая модель: станки не собраны и не испытаны. Чертежи, `RELEASE\запрос_цехам.pdf`, `docs\*.csv`, STEP/DXF и прошивка не публикуются.
+- Панели SpaceRoom (`eng-spaceroom-sheets`): `D:\Anti-Gravity\SpaceRoom\Fusion\preview\listy_obzor.png` — развёртки из алюкобонда 3 мм и раскладка на 8 листов 1220×3050. Изготовление не подтверждено; музей не называется. CDR заказчика, раскладка из старого ТЗ и фото образца не публикуются.
+
+### Бренды
+
+- RMX Solutions (`b-rmx`): знак «Точный стык», `D:\Anti-Gravity\Maxat Site\dist\brand\brand-preview.svg`, отрисован в 2× (`artifacts/captures/rmx/`). Собственные контуры, не трассировка (`artifacts\logo-notes.json`).
+- Lynk & Co 900 (`b-lynkco`): стенд из пяти панелей, `D:\Anti-Gravity\Maxat image\output\lynkco-almaty-real-photos\B_KOKTOBE_SNOW\preview\collage.png`. Логотип и шрифт — бренда Lynk & Co, фото — Pexels/Unsplash (авторы в `PHOTO_SOURCES.json`). Стенд не напечатан, окончательные габариты не известны. `Research\`, эскизы заказчика и файлы шрифта не публикуются.
+- Чтобы сетка брендов закрывалась без дыр, TravelHUB, «RPK — деловой набор» и «Great Orda Fest — арена» стали квадратными карточками.
+
+### Не добавлено
+
+- `kinetic-equipment-matrix` — на главном экране модель экстрактора, а экстракторы не публикуются (решение 6 ноября 2026).
+- `Баян\СГР Косметика` — только документы госрегистрации (рецептура, СТ с БИН).
+- `SAF_Blender` — после 11 ноября новых визуальных материалов нет.
+
+### Требует подтверждения владельца
+
+- Согласие клиентов на показ: GARILLA_GARAGE, Izum, «Воду в сток», RMX Solutions, Qysym Lab, Sensata Group (туры 360° и фильм NYGMET).
+- Авторство фото храма 2023 года в паре «фото / модель».

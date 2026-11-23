@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=1440"><title>GARILLA_GARAGE — native assembly scene</title><style>
+@font-face{font-family:'Sofia Sans Extra Condensed';src:url('../assets/assembly/garilla/sofia-xcond-cyrillic.woff2') format('woff2');font-weight:600 900;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:'Sofia Sans Extra Condensed';src:url('../assets/assembly/garilla/sofia-xcond-latin.woff2') format('woff2');font-weight:600 900;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215}
+@font-face{font-family:Unbounded;src:url('../assets/assembly/garilla/unbounded-cyrillic.woff2') format('woff2');font-weight:500 900;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:Unbounded;src:url('../assets/assembly/garilla/unbounded-latin.woff2') format('woff2');font-weight:500 900;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215}
+@font-face{font-family:'Golos Text';src:url('../assets/assembly/garilla/golos-cyrillic.woff2') format('woff2');font-weight:400 700;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:'Golos Text';src:url('../assets/assembly/garilla/golos-latin.woff2') format('woff2');font-weight:400 700;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215}
+@font-face{font-family:'JetBrains Mono';src:url('../assets/assembly/garilla/jetbrains-mono-cyrillic.woff2') format('woff2');font-weight:400 700;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:'JetBrains Mono';src:url('../assets/assembly/garilla/jetbrains-mono-latin.woff2') format('woff2');font-weight:400 700;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215}
+*{box-sizing:border-box}html,body{margin:0;width:1440px;height:1000px;overflow:hidden}body{position:relative;background:#050505;color:#f9f8f8;font-family:'Golos Text',Inter,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased}h1,p,dl,dd{margin:0}img{display:block}svg{display:block}*{animation:none!important;transition:none!important}
+.mono{font-family:'JetBrains Mono',ui-monospace,monospace}.wide{font-family:Unbounded,'Arial Black',sans-serif}.display{font-family:'Sofia Sans Extra Condensed','Arial Narrow',Impact,sans-serif}
+/* Photo panel: the original hero photograph, cut along the logo's slant. Stationary backdrop. */
+.panel{position:absolute;left:389px;top:0;width:1051px;height:636px}
+.panel-cut{position:absolute;inset:0;overflow:hidden;clip-path:polygon(21% 0,100% 0,100% 100%,0 100%)}
+.panel-cut img{width:100%;height:100%;object-fit:cover;object-position:64% 50%;transform:scale(1.03);filter:contrast(1.12) saturate(.85) brightness(.86)}
+.panel-cut::before,.panel-cut::after{content:'';position:absolute;inset:0;z-index:1}
+.panel-cut::before{background:linear-gradient(90deg,rgba(5,5,5,.85),rgba(5,5,5,.2) 50%,transparent)}
+.panel-cut::after{background:linear-gradient(180deg,rgba(5,5,5,.7),transparent 50%,rgba(5,5,5,.35))}
+.slash{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+/* Navbar */
+.nav{position:absolute;left:48px;right:48px;top:0;height:76px;display:flex;align-items:center;justify-content:space-between;gap:16px;z-index:4}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img{width:48px;height:48px}
+.wordmark{font-weight:900;font-size:15px;letter-spacing:.02em;color:#ede4d0;line-height:1;white-space:nowrap}
+.red{color:#f6261a}.bone{color:#ede4d0}
+.status{margin-top:6px;display:flex;align-items:center;gap:6px;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#a09f9c;line-height:1}
+.status i{width:6px;height:6px;border-radius:50%;background:#f5b31a}
+.links{display:flex;align-items:center;gap:28px}
+.links span{padding:8px 0;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:rgba(237,228,208,.7);white-space:nowrap}
+.actions{display:flex;align-items:center;gap:12px}
+.cut{--cut:10px;clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut))}
+.phone{width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.1);color:#ede4d0}
+.phone svg,.btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:12px;font-weight:700;text-transform:uppercase;font-size:12px;letter-spacing:.08em;line-height:16px;padding:20px 28px;white-space:nowrap}
+.btn-red{background:#f6261a;color:#fff}.btn-ghost{background:rgba(255,255,255,.1);color:#ede4d0}
+.nav .btn{padding:14px 20px}
+/* Hero copy */
+.gps{position:absolute;left:48px;top:116px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:rgba(237,228,208,.85);line-height:16px;z-index:3}
+.gps div:first-child{display:flex;align-items:center;gap:10px}.gps b{width:8px;height:8px;background:#f6261a}
+.gps div+div{margin-top:8px;color:rgba(237,228,208,.6);line-height:1.625}
+.title{position:absolute;left:48px;font-weight:900;text-transform:uppercase;font-size:244.8px;line-height:.78;letter-spacing:-.015em;white-space:nowrap;z-index:2}
+.t1{top:282px;color:#ede4d0}.t2{top:482px;color:#f6261a}
+.lead{position:absolute;left:48px;top:713px;width:652px;z-index:3}
+.lead .wide{font-weight:700;font-size:20px;line-height:1.375;text-transform:uppercase;color:#ede4d0}
+.lead p{margin-top:12px;max-width:576px;font-size:16px;line-height:1.625;color:rgba(237,228,208,.7)}
+.lead strong{color:#ede4d0;font-weight:600}
+.cta{position:absolute;right:48px;top:800px;display:flex;gap:12px;z-index:3}
+.badge{position:absolute;left:1193px;top:544px;width:184px;height:184px;filter:drop-shadow(0 10px 24px rgba(0,0,0,.65));z-index:3}
+.badge svg{position:absolute;inset:0;width:100%;height:100%}
+.badge img{position:absolute;left:17%;top:17%;width:66%;height:66%}
+/* Stats plate */
+.stats{position:absolute;left:0;right:0;top:892px;border-top:1px solid rgba(255,255,255,.12);z-index:3}
+.stats dl{margin:0 48px;display:grid;grid-template-columns:repeat(4,1fr)}
+.stats dl>div{padding:20px 12px 20px 24px}.stats dl>div:first-child{padding-left:0}
+.stats dl>div+div{border-left:1px solid rgba(255,255,255,.12)}
+.stats dt{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#f6261a;line-height:16px}
+.stats dd{margin-top:4px;display:flex;align-items:flex-end;gap:16px}
+.stats .v{font-weight:900;font-size:51.2px;line-height:.9;color:#ede4d0;white-space:nowrap}
+.stats .v small{font-size:.55em;color:#a09f9c;margin-right:4px;vertical-align:.3em}.stats .v em{font-style:normal;font-size:.6em;color:#f6261a;margin-left:4px;vertical-align:.2em}
+.stats .s{padding-bottom:6px;font-size:12px;line-height:1.375;color:#a09f9c;max-width:152px}
+</style></head><body><!-- Native GARILLA_GARAGE source: website/src/components/Hero.tsx, Navbar.tsx, ui.tsx, index.css (theme «Трафарет и шагрень»). The hero photograph and its slanted cut are one stationary element. Fonts: Google Fonts (OFL). -->
+<div class="panel" aria-hidden="true"><div class="panel-cut"><img src="../assets/assembly/garilla/hero-ford-f350.webp" alt=""></div><svg class="slash" viewBox="0 0 100 100" preserveAspectRatio="none"><line x1="21" y1="0" x2="0" y2="100" stroke="#F6261A" stroke-width="5" vector-effect="non-scaling-stroke"/><line x1="22.6" y1="0" x2="1.6" y2="100" stroke="#EDE4D0" stroke-opacity=".45" stroke-width="1" vector-effect="non-scaling-stroke"/></svg></div>
+<div class="nav">
+<div class="brand" data-assembly-layer data-from="-36,-20,0" data-order="0"><img src="../assets/assembly/garilla/logo-circle.webp" alt="GARILLA_GARAGE"><div><div class="wordmark wide">GARILLA<span class="red">_</span>GARAGE</div><div class="status mono"><i></i><span>Сегодня: 09:00–20:00</span></div></div></div>
+<div class="links mono" data-assembly-layer data-from="0,-24,0" data-order="1"><span>Покрытия</span><span>Услуги</span><span>3D-стенд</span><span>Процесс</span><span>Проекты</span><span>Автотуризм</span><span>Отзывы</span><span>Контакты</span></div>
+<div class="actions" data-assembly-layer data-from="36,-20,0" data-order="2"><span class="phone cut"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span><span class="btn btn-red cut wide">Смета за 30 сек<svg viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></svg></span></div>
+</div>
+<div class="gps mono" data-assembly-layer data-from="-40,18,0" data-order="3"><div><b></b><span>44.9838° N, 38.9507° E</span></div><div>Внедорожное тюнинг-ателье • Яблоновский / Краснодар</div></div>
+<h1 class="title t1 display" data-assembly-layer data-from="-70,30,0" data-order="4">Обрети</h1>
+<div class="title t2 display" data-assembly-layer data-from="-90,40,0" data-order="5">характер<span class="bone">.</span></div>
+<div class="badge" data-assembly-layer data-from="60,40,-50" data-order="6"><svg viewBox="0 0 200 200" style="transform:rotate(62deg)"><defs><path id="ring" d="M100,100 m-86,0 a86,86 0 1,1 172,0 a86,86 0 1,1 -172,0"/></defs><circle cx="100" cy="100" r="99" fill="#0A0A0A"/><text fill="#EDE4D0" font-size="12.5" font-weight="700" style="font-family:Unbounded,sans-serif;letter-spacing:.12em"><textPath href="#ring" textLength="534" lengthAdjust="spacing">#ОБРЕТИХАРАКТЕР ✕ СТРОИМ ✕ КРАСИМ ✕ УЛУЧШАЕМ ✕</textPath></text></svg><img src="../assets/assembly/garilla/logo-circle.webp" alt=""></div>
+<div class="lead" data-assembly-layer data-from="-44,32,0" data-order="7"><div class="wide">Защити авто <span class="red">от рамы до крыши</span></div><p>Наносим защитное покрытие <strong>RAPTOR U-POL</strong>, возвращаем к жизни рамные внедорожники «от рамы», делаем антикор <strong>DINITROL</strong> и комплектуем авто для настоящего автотуризма. Строим, красим, улучшаем.</p></div>
+<div class="cta" data-assembly-layer data-from="40,36,0" data-order="8"><span class="btn btn-red cut wide">Рассчитать стоимость<svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7v10H7"/></svg></span><span class="btn btn-ghost cut wide"><svg viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>Написать в WhatsApp</span></div>
+<div class="stats" data-assembly-layer data-from="0,34,0" data-order="9"><dl>
+<div><dt class="mono">в Instagram</dt><dd><span class="v display">13.6K+</span><span class="s">1 439+ живых публикаций</span></dd></div>
+<div><dt class="mono">Яндекс Карты</dt><dd><span class="v display">4.3<em>★</em></span><span class="s">37 оценок — честная репутация</span></dd></div>
+<div><dt class="mono">Товарный знак</dt><dd><span class="v display"><small>№</small>849944</span><span class="s">Роспатент, действует до 2031</span></dd></div>
+<div><dt class="mono">Без выходных</dt><dd><span class="v display">7/7</span><span class="s">10 минут от центра Краснодара</span></dd></div>
+</dl></div>
+</body></html>

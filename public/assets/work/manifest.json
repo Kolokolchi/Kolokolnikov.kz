@@ -2608,5 +2608,116 @@
   "mb": 4.08,
   "file": "assets/work/video/v-astana-city.mp4",
   "poster": "assets/work/video/v-astana-city.webp"
+ },
+ "arch-temple": {
+  "kind": "img",
+  "src": "D:\\Anti-Gravity\\3Д храм\\renders\\02_south_west.jpg",
+  "w": 1472,
+  "h": 1040,
+  "file": "assets/work/arch-temple.webp"
+ },
+ "arch-temple-gables": {
+  "kind": "img",
+  "src": "D:\\Anti-Gravity\\3Д храм\\renders\\10_west_gables.jpg",
+  "w": 1300,
+  "h": 1220,
+  "file": "assets/work/arch-temple-gables.webp"
+ },
+ "arch-temple-print": {
+  "kind": "img",
+  "src": "D:\\Anti-Gravity\\3Д храм\\renders\\05_resin_1-100_parts.jpg",
+  "w": 1500,
+  "h": 1200,
+  "file": "assets/work/arch-temple-print.webp"
+ },
+ "arch-temple-compare": {
+  "kind": "img",
+  "src": "D:\\Anti-Gravity\\3Д храм\\renders\\compare\\pair_182659.jpg",
+  "w": 908,
+  "h": 1000,
+  "file": "assets/work/arch-temple-compare.webp"
+ },
+ "arch-saf-webgl": {
+  "kind": "img",
+  "src": "D:\\Anti-Gravity\\Kolokolnikov.kz\\portfolio\\artifacts\\captures\\webgl-saf\\drone.jpg",
+  "w": 1920,
+  "h": 1080,
+  "file": "assets/work/arch-saf-webgl.webp"
+ },
+ "arch-saf-webgl-golden": {
+  "kind": "img",
+  "src": "D:\\Anti-Gravity\\Kolokolnikov.kz\\portfolio\\artifacts\\captures\\webgl-saf\\golden.jpg",
+  "w": 1920,
+  "h": 1080,
+  "file": "assets/work/arch-saf-webgl-golden.webp"
+ },
+ "v-nygmet-film": {
+  "kind": "video",
+  "src": "D:\\Anti-Gravity\\Sensata Video\\Final Render\\NYGMET — Второй фильм v5.mp4",
+  "w": 1280,
+  "h": 720,
+  "duration": 20.0,
+  "mb": 3.98,
+  "file": "assets/work/video/v-nygmet-film.mp4",
+  "poster": "assets/work/video/v-nygmet-film.webp"
+ },
+ "eng-pour-film": {
+  "kind": "video",
+  "src": "D:\\Anti-Gravity\\Матрицы и оборудование\\ANKOR_MACHINES_V05\\animation\\ANKOR_V05_заливка_без_титров.mp4",
+  "w": 1280,
+  "h": 720,
+  "duration": 20.0,
+  "mb": 1.14,
+  "file": "assets/work/video/eng-pour-film.mp4",
+  "poster": "assets/work/video/eng-pour-film.webp"
+ },
+ "eng-v06-valve": {
+  "kind": "img",
+  "src": "D:\\Anti-Gravity\\Матрицы и оборудование\\ANKOR_MACHINES_V06\\preview\\func_pour_valve_v05_v06.png",
+  "w": 1430,
+  "h": 1485,
+  "file": "assets/work/eng-v06-valve.webp"
+ },
+ "eng-v06-pour-cycle": {
+  "kind": "img",
+  "src": "D:\\Anti-Gravity\\Матрицы и оборудование\\ANKOR_MACHINES_V06\\preview\\func_pour_cycle.png",
+  "w": 1650,
+  "h": 1045,
+  "file": "assets/work/eng-v06-pour-cycle.webp"
+ },
+ "eng-v06-blister-cycle": {
+  "kind": "img",
+  "src": "D:\\Anti-Gravity\\Матрицы и оборудование\\ANKOR_MACHINES_V06\\preview\\func_blister_cycle.png",
+  "w": 1430,
+  "h": 1705,
+  "file": "assets/work/eng-v06-blister-cycle.webp"
+ },
+ "eng-v06-fusion": {
+  "kind": "img",
+  "src": "D:\\Anti-Gravity\\Матрицы и оборудование\\ANKOR_MACHINES_V06\\preview\\fusion_pour_v06.png",
+  "w": 1500,
+  "h": 1000,
+  "file": "assets/work/eng-v06-fusion.webp"
+ },
+ "eng-spaceroom-sheets": {
+  "kind": "img",
+  "src": "D:\\Anti-Gravity\\SpaceRoom\\Fusion\\preview\\listy_obzor.png",
+  "w": 2000,
+  "h": 1422,
+  "file": "assets/work/eng-spaceroom-sheets.webp"
+ },
+ "b-rmx": {
+  "kind": "img",
+  "src": "D:\\Anti-Gravity\\Kolokolnikov.kz\\portfolio\\artifacts\\captures\\rmx\\brand-preview@2x.png",
+  "w": 1104,
+  "h": 655,
+  "file": "assets/work/b-rmx.webp"
+ },
+ "b-lynkco": {
+  "kind": "img",
+  "src": "D:\\Anti-Gravity\\Maxat image\\output\\lynkco-almaty-real-photos\\B_KOKTOBE_SNOW\\preview\\collage.png",
+  "w": 2000,
+  "h": 718,
+  "file": "assets/work/b-lynkco.webp"
  }
 }

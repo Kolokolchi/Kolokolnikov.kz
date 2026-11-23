@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=1440"><title>Izum Design &amp; Production — native assembly scene</title><style>
+@font-face{font-family:Montserrat;src:url('../assets/assembly/rpk/Montserrat-Variable-Cyrillic.woff2') format('woff2');font-weight:100 900;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:Montserrat;src:url('../assets/assembly/rpk/Montserrat-Variable-Latin.woff2') format('woff2');font-weight:100 900;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308-0309,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+*{box-sizing:border-box}html,body{margin:0;width:1440px;height:1000px;overflow:hidden}body{position:relative;background:#fff;color:#0d0d0d;font:400 15px/1.6 Montserrat,'Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased}h1,p{margin:0}img,svg{display:block}*{animation:none!important;transition:none!important}
+/* Grid from the Izum mark: hairlines of the rails and the header, then the monoline I · U · Z · M · V. Stationary backdrop. */
+.hair{position:absolute;background:rgba(13,13,13,.14)}
+.lines{position:absolute;inset:0;width:1440px;height:1000px;fill:none;stroke:#0d0d0d;stroke-width:2;z-index:3}
+/* Left rail */
+.logo{position:absolute;left:32px;top:18px;width:51px;height:62px;z-index:5}
+.menu{position:absolute;left:0;top:420px;width:115px;display:grid;justify-items:center;gap:16px;padding:22px 0;z-index:5}
+.glyph{width:30px;overflow:visible;fill:none;stroke:#0d0d0d;stroke-width:2.6}
+.glyph circle{stroke:none;fill:rgba(13,13,13,.3)}.glyph circle.on{fill:#0d0d0d;transform-box:fill-box;transform-origin:center;transform:scale(1.75)}
+.vt{writing-mode:vertical-rl;transform:rotate(180deg);font-weight:500;font-size:11px;letter-spacing:.36em;text-transform:uppercase}
+/* Right rail */
+.order{position:absolute;left:1325px;top:0;width:115px;height:98px;display:grid;place-items:center;background:#ffd400;font-weight:700;font-size:11px;letter-spacing:.22em;text-transform:uppercase;z-index:5}
+.mk{position:absolute;left:1325px;top:385px;width:115px;display:grid;justify-items:center;gap:16px;padding:22px 0;z-index:5}
+.mk svg{width:30px;overflow:visible;fill:none;stroke:#0d0d0d;stroke-width:2.6}
+.wa{position:absolute;left:1325px;top:902px;width:115px;height:98px;display:grid;place-content:center;justify-items:center;gap:6px;font-weight:500;font-size:9px;letter-spacing:.2em;text-transform:uppercase;z-index:5}
+.wa svg{width:26px;fill:none;stroke:#0d0d0d;stroke-width:1.8;stroke-linejoin:round}
+/* Copy hanging on the stem of I */
+.copy{position:absolute;left:400px;top:120px;width:640px;z-index:4}
+.eyebrow{font-weight:500;font-size:11px;line-height:1.4;letter-spacing:.24em;text-transform:uppercase;color:rgba(13,13,13,.52)}
+.hd{margin-top:20px;display:grid;justify-items:start;gap:.1em;text-transform:uppercase;font-size:54px;line-height:1.06}
+.hd-a{font-weight:300;letter-spacing:.07em}.hd-b{font-weight:700;letter-spacing:.01em}
+.hd::after{content:'';width:130px;height:8px;margin-top:.5em;background:linear-gradient(90deg,#ffed00 0 25%,#009fe3 25% 50%,#e5007d 50% 75%,#0d0d0d 75% 100%)}
+.lead{position:absolute;left:400px;top:344px;width:440px;font-size:16px;line-height:1.65;color:rgba(13,13,13,.74);z-index:4}
+.btn{position:absolute;left:400px;top:475px;height:52px;padding:0 30px;display:inline-flex;align-items:center;border:2px solid #0d0d0d;background:#0d0d0d;color:#fff;font-weight:700;font-size:11px;letter-spacing:.2em;text-transform:uppercase;z-index:4}
+/* Item caption at the foot of column I */
+.meta{position:absolute;left:115px;top:404px;width:252px;padding:0 26px 0 8px;display:grid;justify-items:end;text-align:right;z-index:4}
+.count{font-weight:500;font-size:10px;line-height:16px;letter-spacing:.24em;color:rgba(13,13,13,.52)}
+.item{margin-top:8px;font-weight:700;font-size:16px;line-height:1.25;letter-spacing:.1em;text-transform:uppercase}
+.set{margin-top:6px;font-weight:500;font-size:9px;line-height:1.5;letter-spacing:.16em;text-transform:uppercase;color:rgba(13,13,13,.52)}
+.nav{display:flex;gap:6px;margin-top:14px}.nav span{width:38px;height:38px;display:grid;place-items:center;border:2px solid #0d0d0d;background:#fff}
+.nav svg{width:14px;fill:none;stroke:#0d0d0d;stroke-width:2.4}
+/* Z: photo under the diagonal; M: yellow plate and the photo in the V */
+.cut{position:absolute;overflow:hidden;background:#f4f2ec}
+.cut img{width:100%;height:100%;object-fit:cover}
+.z{left:697px;top:98px;width:628px;height:451px;clip-path:polygon(78.53% 0,100% 0,100% 100%,12.69% 100%);z-index:2}
+.z img{object-position:50% 48%}
+.m{position:absolute;left:697px;top:549px;width:628px;height:451px;z-index:2}
+.plate{position:absolute;inset:0;background:#ffd400;clip-path:polygon(0 0,49.95% 68%,100% 0,100% 100%,0 100%)}
+.v{inset:0;clip-path:polygon(0 0,100% 0,49.95% 68%)}
+.cap{position:absolute;left:0;right:0;bottom:26px;display:grid;justify-items:center;gap:6px;text-align:center}
+.cap b{font-weight:500;font-size:10px;line-height:16px;letter-spacing:.26em}.cap span{font-weight:700;font-size:16px;line-height:1.6;letter-spacing:.14em;text-transform:uppercase}
+/* U: the garment inside the arch and eight colour dots */
+.shadow{position:absolute;left:251px;top:957px;width:231px;height:27px;background:radial-gradient(closest-side,rgba(13,13,13,.2),rgba(13,13,13,0));z-index:2}
+.garment{position:absolute;left:211px;top:599px;width:312px;height:379px;object-fit:contain;z-index:2}
+.dots{position:absolute;left:115px;top:549px;width:503px;height:451px;z-index:4}
+.dots i{position:absolute;width:24px;height:24px;margin:-12px 0 0 -12px;border:2px solid #0d0d0d;border-radius:50%}
+.dots i.on{box-shadow:0 0 0 4px #fff,0 0 0 6px #0d0d0d}
+</style></head><body><!-- Native Izum source: «Izum на сетке знака» (D:\Anti-Gravity\Izum Site Production) — index.html, css/site.css; hero lines as built by js/site.js at 1440×1000. Photos and the garment frame are the original project files. Gotham Pro is replaced by Montserrat (OFL) here: its licence for redistribution is not confirmed. -->
+<i class="hair" style="left:115px;top:0;width:1px;height:1000px"></i><i class="hair" style="left:1324px;top:0;width:1px;height:1000px"></i><i class="hair" style="left:0;top:97px;width:1440px;height:1px"></i>
+<svg class="lines" viewBox="0 0 1440 1000" aria-hidden="true"><path d="M366.8 0V549.0"/><path d="M115.2 1000.0V675.9A126.9 126.9 0 0 1 242.1 549.0H490.9A126.9 126.9 0 0 1 617.8 675.9V1000.0"/><path d="M747.3 98.0H1189.9L776.2 549.0"/><path d="M696.5 1000.0V549.0H1324.8V1000.0"/><path d="M696.5 549.0L1010.3 855.7L1324.8 549.0"/></svg>
+<img class="logo" src="../assets/assembly/izum/izum-logo-2x.png" alt="Izum Design &amp; Production" data-assembly-layer data-from="-30,-24,0" data-order="0">
+<div class="menu" data-assembly-layer data-from="-34,0,0" data-order="1"><svg class="glyph" viewBox="0 -15 39.5 61.5" aria-hidden="true"><path d="M19.8-15V2.75M2.75 46.5V12.75a10 10 0 0 1 10-10h14a10 10 0 0 1 10 10V46.5"/><circle class="on" cx="14.55" cy="13.3" r="1.7"/><circle cx="14.55" cy="23.2" r="1.7"/><circle cx="14.55" cy="33.2" r="1.7"/><circle cx="14.55" cy="43.2" r="1.7"/><circle cx="25.05" cy="13.3" r="1.7"/><circle cx="25.05" cy="23.2" r="1.7"/><circle cx="25.05" cy="33.2" r="1.7"/><circle cx="25.05" cy="43.2" r="1.7"/></svg><span class="vt">Меню</span></div>
+<div class="order" data-assembly-layer data-from="30,-24,0" data-order="2">Заказать</div>
+<div data-assembly-layer data-from="34,24,0" data-order="3"><div class="mk"><svg viewBox="0 0 39.5 49.5" aria-hidden="true"><path d="M2.75 46.5V12.75a10 10 0 0 1 10-10h14a10 10 0 0 1 10 10V46.5"/><path d="M19.75 17.5v15M12.25 25h15"/></svg><span class="vt">Конструктор</span></div><div class="wa"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 27l1.6-5.6A11 11 0 1 1 11 25.5z"/><path d="M11.6 11.2c.4 4.6 4 8.4 8.8 8.8"/></svg><span>WhatsApp</span></div></div>
+<div class="copy" data-assembly-layer data-from="-40,22,0" data-order="4"><p class="eyebrow">Алматы · собственное производство</p><h1 class="hd"><span class="hd-a">Мы не агентство.</span><span class="hd-b">Мы — продакшн.</span></h1></div>
+<p class="lead" data-assembly-layer data-from="-44,28,0" data-order="5">Шьём одежду партиями, делаем корпоративный мерч и наносим логотипы — на собственной швейной и печатной базе. Один подрядчик вместо нескольких.</p>
+<span class="btn" data-assembly-layer data-from="-30,34,0" data-order="6">Рассчитать заказ</span>
+<div class="meta" data-assembly-layer data-from="-36,20,0" data-order="7"><span class="count">01 / 08</span><b class="item">Худи</b><span class="set">Одежда · пошив оптом</span><div class="nav"><span><svg viewBox="0 0 24 24"><path d="M15 4l-8 8 8 8"/></svg></span><span><svg viewBox="0 0 24 24"><path d="M9 4l8 8-8 8"/></svg></span></div></div>
+<div class="cut z" data-assembly-layer data-from="60,-40,0" data-order="8"><img src="../assets/assembly/izum/dtf-32-800.webp" alt="Участок DTF-печати"></div>
+<div class="m" data-assembly-layer data-from="50,50,0" data-order="9"><div class="plate"></div><div class="cut v"><img src="../assets/assembly/izum/dtf-34-800.webp" alt="Красные детали кроя с принтами под термопрессом"></div><p class="cap"><b>03 / 05</b><span>DTF-печать</span></p></div>
+<i class="shadow" aria-hidden="true"></i>
+<img class="garment" src="../assets/assembly/izum/hoodie-020.webp" alt="Худи Izum" data-assembly-layer data-from="0,56,0" data-order="10">
+<div class="dots" aria-hidden="true" data-assembly-layer data-from="0,30,0" data-order="11"><i class="on" style="left:11%;top:28.6%;background:#ffd400"></i><i style="left:11%;top:49.9%;background:#e3262d"></i><i style="left:11%;top:71.4%;background:#ff6a13"></i><i style="left:11%;top:92.9%;background:#ff4f9a"></i><i style="left:89%;top:28.6%;background:#7a3cff"></i><i style="left:89%;top:49.9%;background:#1f55ff"></i><i style="left:89%;top:71.4%;background:#12a150"></i><i style="left:89%;top:92.9%;background:#f6f4ee"></i></div>
+</body></html>

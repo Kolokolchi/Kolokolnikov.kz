@@ -34,6 +34,11 @@ export const blisterHistory = [
 ];
 
 export const engineeringGallery = [
+  { id: 'eng-pour-film', title: 'Станок заливки в работе', note: 'Blender Cycles: заливка пяти гнёзд, фрагмент ролика', video: true },
+  { id: 'eng-v06-valve', title: 'V05 → V06: клапан заливки', note: 'Разрез: куда доходит масло до и после исправления' },
+  { id: 'eng-v06-pour-cycle', title: 'Цикл заливки V06', note: 'Набор дозы 3,6 мл и выдача в гнездо матрицы' },
+  { id: 'eng-v06-blister-cycle', title: 'Блистер V06: три состояния', note: 'Нагрев плёнки, формование, запайка' },
+  { id: 'eng-v06-fusion', title: 'Станок заливки V06 во Fusion 360', note: 'Сборка с подвижными соединениями' },
   { id: 'eng-pour-inside', title: 'Станок заливки изнутри', note: 'Бак, клапан, поршень и стол подачи' },
   { id: 'eng-ankor-cycle', title: 'Рабочий цикл дозатора', note: 'Blender, 1440 кадров, ускорено вдвое', video: true },
   { id: 'eng-blister-pressing', title: 'Блистер: прессование', note: 'Ящик внутри, плита опущена' },
@@ -43,6 +48,7 @@ export const engineeringGallery = [
   { id: 'eng-casting', title: 'Станция отливки', note: 'ANKOR Lab V01' },
   { id: 'eng-doser-cycle', title: 'Дозатор V03', note: '67 деталей, 141 экземпляр' },
   { id: 'eng-force-path', title: 'Силовая цепь пресса', note: 'Схема из инженерного пакета' },
+  { id: 'eng-spaceroom-sheets', title: 'Панели из алюкобонда', note: 'Fusion 360: развёртки 16 панелей и раскладка на 8 листов 1220 × 3050' },
 ];
 
 export const cgiFilters = [['all', 'Всё'], ['arch', 'Архвиз'], ['vr', 'VR и игры'], ['char', 'Персонажи'], ['anim', 'Анимация']];
@@ -51,13 +57,19 @@ export const cgiItems = [
   { id: 'arch-saf-lobby-1', cat: 'arch', size: 'tall', title: 'SAF Avenue — лобби', note: 'Blender → USD → Unreal Engine 5.8, path tracing' },
   { id: 'cg-mobika-key', cat: 'anim', size: 'wide', title: 'Mobika & Notel', note: 'Мультсериал студии TARTIP, 10 серий в 4K' },
   { id: 'cg-vr-canyon-1', cat: 'vr', size: 'square', title: 'Welcome to Kazakhstan VR', note: 'Unreal Engine, VR-туризм TARTIP' },
+  { id: 'arch-temple', cat: 'arch', size: 'wide', title: 'Деревянный храм в Алматы', note: 'Цифровая копия: процедурная модель в Blender, 208 тыс. полигонов' },
   { id: 'v-astana-city', cat: 'anim', size: 'wide', title: 'Астана — символ единства', note: 'AI-фильм о казахском языке и народах Казахстана, 4K', video: true },
+  { id: 'arch-saf-webgl', cat: 'arch', size: 'wide', title: 'SAF Avenue в браузере', note: 'WebGL2: рельеф Алатау, 14 тыс. зданий OpenStreetMap, объёмные облака' },
+  { id: 'arch-temple-compare', cat: 'arch', size: 'tall', title: 'Храм: фото и модель', note: 'Сверка модели с натурой, тот же ракурс' },
   { id: 'cg-mob-heads-1', cat: 'char', size: 'square', title: 'Мобы H-377', note: 'ZBrush, исследование формы головы' },
   { id: 'cg-metahuman', cat: 'char', size: 'wide', title: 'Фотореалистичный персонаж', note: 'MetaHuman, Unreal Engine' },
   { id: 'arch-saf-night', cat: 'arch', size: 'wide', title: 'SAF Avenue — ночь', note: 'Фотореалистичный рендер, Blender Cycles' },
   { id: 'arch-saf-lobby-2', cat: 'arch', size: 'tall', title: 'SAF Avenue — галерея лобби', note: 'Восемь камер и 360°-панорамы' },
+  { id: 'arch-temple-gables', cat: 'arch', size: 'tall', title: 'Резьба фронтонов', note: 'Подзоры, щипцы и луковица — геометрия, а не текстура' },
   { id: 'cg-mob-worker', cat: 'char', size: 'square', title: 'Worker — вселенная H-377', note: 'Скульпт и текстуры' },
+  { id: 'arch-saf-webgl-golden', cat: 'arch', size: 'wide', title: 'SAF Avenue — закат в WebGL', note: 'Солнце по дате и времени, interior mapping за 26 тыс. окон' },
   { id: 'cg-vr-canyon-2', cat: 'vr', size: 'square', title: 'Каньон на закате', note: 'Unreal Engine, скриншот высокого разрешения' },
+  { id: 'arch-temple-print', cat: 'arch', size: 'tall', title: 'Храм для печати 1:100', note: 'Полая модель из двух частей для Elegoo Saturn 4 Ultra 16K' },
   { id: 'cg-teacup', cat: 'arch', size: 'wide', title: 'Упаковка HyperOil', note: 'Предметная визуализация, Cinema 4D' },
   { id: 'cg-mob-crawler', cat: 'char', size: 'square', title: 'Наземный моб', note: 'ZBrush, детализация' },
   { id: 'arch-saf-north', cat: 'arch', size: 'wide', title: 'Квартал с севера', note: 'Unreal Engine, path tracer' },
@@ -67,7 +79,7 @@ export const cgiItems = [
 
 export const motionReel = [
   { id: 'v-ztk-opener', title: 'ZTK — опенер', kicker: 'AI-видео · промышленность', note: 'Генеративное видео и монтаж под музыку, 2:56' },
-  { id: 'v-nygmet', title: 'NYGMET', kicker: 'Промо жилого комплекса', note: 'Анимация архитектурных визуализаций и монтаж' },
+  { id: 'v-nygmet-film', title: 'NYGMET — жизнь во дворе', kicker: 'AI-фильм · жилой комплекс', note: 'Google Flow и Nano Banana Pro, монтаж, цвет и музыка, 1:27' },
   { id: 'v-mobika-opener', title: 'Mobika & Notel', kicker: 'Анимационный сериал', note: 'Заставка мультсериала студии TARTIP' },
   { id: 'v-astana-city', title: 'Астана — символ единства', kicker: 'AI-фильм', note: 'Байтерек, кольца света и народы Казахстана, 4K' },
   { id: 'v-a4r-mud', title: 'All4Race — грязь', kicker: 'AI-анимация логотипа', note: 'Серия из восьми заставок' },
@@ -76,6 +88,7 @@ export const motionReel = [
   { id: 'v-a4r-night', title: 'All4Race — ночная гонка', kicker: 'AI-видео', note: 'GT на ночной трассе' },
   { id: 'v-ztk-hangar', title: 'ZTK — ангар', kicker: 'AI-видео', note: 'Пролёт дрона через цех' },
   { id: 'v-hyper-logo', title: 'HYPER', kicker: 'Анимация логотипа', note: 'Семейство HyperOil и HyperSorb' },
+  { id: 'v-nygmet', title: 'NYGMET', kicker: 'Промо жилого комплекса', note: 'Анимация архитектурных визуализаций и монтаж' },
   { id: 'gorilla', src: 'assets/video/gorilla.mp4', poster: 'assets/video/gorilla.jpg', title: 'Gorilla Groove Stage', kicker: 'Сценическая анимация', note: 'Неоновые линии и световые импульсы вокруг знака' },
   { id: 'rose', src: 'assets/video/rose.mp4', poster: 'assets/video/rose.jpg', title: 'Rose', kicker: 'Анимация для экранов', note: 'Золотая типографика, частицы и дым' },
   { id: 'yurt', src: 'assets/video/yurt.mp4', poster: 'assets/video/yurt.jpg', title: 'Юрта — Домбра', kicker: 'Панорамная анимация', note: 'Композиция 9216 × 2304 для широкого экрана', wide: true },
@@ -151,18 +164,20 @@ export const brands = [
   { id: 'b-detox-sculpted', size: 'tall', title: 'Ankor DETOX', note: 'Новые направления упаковки' },
   { id: 'b-harmony-noir', size: 'wide', title: 'Ankor Harmony', note: 'Упаковка «Ботанический нуар», 3D-рендер' },
   { id: 'b-gof', size: 'square', title: 'Great Orda Fest', note: 'Логотип автофестиваля' },
+  { id: 'b-rmx', size: 'square', title: 'RMX Solutions', note: 'Знак «Точный стык»: три профиля буквы R' },
   { id: 'b-patrol', size: 'square', title: 'Patrol Control', note: 'Знак приложения для Nissan Patrol Y61', dark: true },
   { id: 'b-connect', size: 'square', title: 'V Connect', note: 'Девять стилей знака CRM' },
+  { id: 'b-lynkco', size: 'wide', title: 'Lynk & Co 900 — стенд', note: 'Пять панелей выставочного стенда в Алматы' },
   { id: 'b-hyper-identity', size: 'square', title: 'HYPER', note: 'Айдентика производства облепихового масла' },
   { id: 'b-detox-archive', size: 'square', title: 'DETOX — ботанический архив', note: 'Направление упаковки' },
   { id: 'b-harmony-trio', size: 'tall', title: 'Harmony — три направления', note: 'Креатив и развёртка с ножом под блистер на 10 штук' },
-  { id: 'b-travelhub', size: 'wide', title: 'TravelHUB', note: 'Знак сообщества автопутешествий' },
+  { id: 'b-travelhub', size: 'square', title: 'TravelHUB', note: 'Знак сообщества автопутешествий' },
   { id: 'b-falcon', size: 'tall', title: 'FALCON', note: 'Коллекция мерча и продуктовые фильмы' },
-  { id: 'b-rpk-stationery', size: 'wide', title: 'RPK — деловой набор', note: 'Графитовая айдентика' },
+  { id: 'b-rpk-stationery', size: 'square', title: 'RPK — деловой набор', note: 'Графитовая айдентика' },
   { id: 'b-smartlight', size: 'square', title: 'Smart Light Control', note: 'Знак пульта света', dark: true },
   { id: 'b-tartip', size: 'square', title: 'TARTIP', note: 'Знак креативной студии' },
   { id: 'b-icanfly', size: 'square', title: 'I CAN FLY', note: 'VR-симулятор вингсьюта', dark: true },
-  { id: 'b-gof-arena', size: 'wide', title: 'Great Orda Fest — арена', note: 'Визуал концепции фестиваля' },
+  { id: 'b-gof-arena', size: 'square', title: 'Great Orda Fest — арена', note: 'Визуал концепции фестиваля' },
 ];
 
 export const decks = [
@@ -199,4 +214,6 @@ export const marquee = [
   ['cg-mobika-key', 'Анимация', '#cgi'], ['arch-saf-lobby-1', 'Интерьеры', '#cgi'], ['b-patrol', 'Айдентика', '#brands'],
   ['v-nygmet', 'Промо', '#video'], ['eng-sealing-exploded', 'Механика', '#engineering'], ['b-harmony-noir', 'Упаковка', '#brands'],
   ['cg-metahuman', 'MetaHuman', '#cgi'], ['v-a4r-mud', 'Моушн', '#video'], ['b-connect', 'Логотипы', '#brands'],
+  ['arch-temple', 'Наследие', '#cgi'], ['v-nygmet-film', 'AI-фильм', '#video'], ['arch-saf-webgl', 'WebGL', '#cgi'],
+  ['eng-v06-valve', 'Разрезы', '#engineering'], ['b-lynkco', 'Выставки', '#brands'], ['arch-temple-print', '3D-печать', '#cgi'],
 ];
