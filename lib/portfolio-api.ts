@@ -1,4 +1,4 @@
-import {authorize,database} from './portfolio-auth';
+import {publisherKey,database} from './portfolio-auth';
 import {validSlug,validPath,validateManifest,sha256,adaptFile,contentType,LIMITS} from '../lib/demo-format.mjs';
 // Rows as the queries below read them (drizzle/0000_productive_shatterstar.sql)
 type ProjectRow={slug:string;title:string;description:string;active_version:string|null;hidden:number;created_at:string;updated_at:string};
@@ -33,7 +33,8 @@ export async function portfolioApi(request:Request,env:Cloudflare.Env,parts:stri
    const catalog=results.filter(p=>!p.hidden&&p.active_version).map(p=>({id:p.slug,title:p.title,description:p.description,path:`${p.slug}/`}));
    return json(catalog);
   }
-  if(!await authorize(request,env))return json({error:'Войдите в аккаунт владельца.',code:'unauthorized'},401);
+  // Management needs the publisher key; the owner's browser session is deliberately not enough (portfolio-auth.ts).
+  if(!await publisherKey(request,env))return json({error:'Нужен ключ издателя (scripts/publish-demo.mjs).',code:'unauthorized'},401);
   if(resource==='session'&&method==='GET')return json({authorized:true});
   if(resource==='projects'&&method==='GET'&&!id){
    const [{results:projects},{results:versions}]=await Promise.all([db.prepare('SELECT * FROM demo_projects ORDER BY updated_at DESC').all<ProjectRow>(),db.prepare('SELECT id,project,label,status,visible,source,file_count,total_bytes,created_at FROM demo_versions ORDER BY created_at DESC').all<Omit<VersionRow,'manifest_hash'>>()]);

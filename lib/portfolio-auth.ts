@@ -18,17 +18,21 @@ export async function ownerAllowed(user:User|null,env:Cloudflare.Env){
  }
  return row?.subject===user.userId;
 }
-export async function authorize(request:Request,env:Cloudflare.Env){
+// The publisher key (scripts/publish-demo.mjs sends it as X-Portfolio-Key), compared in constant time.
+// It is the only credential of the management API: uploaded demos run their own scripts on this origin,
+// so a signed-in owner's browser must not be able to change anything on the owner's behalf.
+export async function publisherKey(request:Request,env:Cloudflare.Env){
  const supplied=request.headers.get('X-Portfolio-Key');
- if(supplied&&env.PORTFOLIO_UPLOAD_KEY){
-  const encode=new TextEncoder();const [a,b]=await Promise.all([crypto.subtle.digest('SHA-256',encode.encode(supplied)),crypto.subtle.digest('SHA-256',encode.encode(env.PORTFOLIO_UPLOAD_KEY))]);
-  let difference=0;const other=new Uint8Array(b);new Uint8Array(a).forEach((value,i)=>difference|=value^other[i]);if(difference===0)return true;
- }
+ if(!supplied||!env.PORTFOLIO_UPLOAD_KEY)return false;
+ const encode=new TextEncoder();const [a,b]=await Promise.all([crypto.subtle.digest('SHA-256',encode.encode(supplied)),crypto.subtle.digest('SHA-256',encode.encode(env.PORTFOLIO_UPLOAD_KEY))]);
+ let difference=0;const other=new Uint8Array(b);new Uint8Array(a).forEach((value,i)=>difference|=value^other[i]);return difference===0;
+}
+// Read access to drafts and hidden demos: the publisher key or the owner's Sites session. The session only
+// ever reads (GET/HEAD), so a demo's scripts can at most see other drafts while the owner has them open.
+export async function authorize(request:Request,env:Cloudflare.Env){
+ if(await publisherKey(request,env))return true;
+ if(!['GET','HEAD'].includes(request.method))return false;
  const userId=request.headers.get('oai-authenticated-user-id'),email=request.headers.get('oai-authenticated-user-email');
  if(!userId||!email)return false;
- if(!['GET','HEAD'].includes(request.method)){
-  if(request.headers.get('Origin')!==new URL(request.url).origin)return false;
-  if(request.headers.get('Sec-Fetch-Site')==='cross-site')return false;
- }
  return ownerAllowed({userId,email},env);
 }
