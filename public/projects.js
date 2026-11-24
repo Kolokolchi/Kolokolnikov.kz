@@ -113,6 +113,8 @@ export const projects = [
     features:['Сохранение исходного дизайна комплекса','Русская и казахская версии','Фотогалереи и интерактивные блоки','Адаптация статической публикации'],
     tags:['Адаптация','Недвижимость','RU / KZ'], image:'assets/projects/saf-landing.webp',
     url:'https://kolokolchi.github.io/SAF_Landing/',repository:'https://github.com/Kolokolchi/SAF_Landing',
+    // Its Tilda scripts read window.parent and sessionStorage; in an opaque origin the «Скачать буклет» popup stops opening.
+    frameSameOrigin:true,
     gallery:[{src:'assets/projects/saf-landing.webp',caption:'Первый экран опубликованного сайта SAF Avenue'}]
   },
   {

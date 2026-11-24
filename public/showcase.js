@@ -11,6 +11,11 @@ if(params.has('demo')){
   }catch{project=undefined;}
 }
 const siteUrl=project?.demoUrl||project?.url;
+// The frame gives a project site an opaque origin: its scripts cannot reach this page, its storage or other pages of
+// the origin (on GitHub Pages every project shares kolokolchi.github.io with the portfolio). Two cases keep their
+// own origin: the Sites demos under /demos/, which the owner's session opens, and a project marked frameSameOrigin
+// in projects.js because its site breaks without one.
+const keepsOrigin=url=>{const target=new URL(url,location.href);return project?.frameSameOrigin===true||(target.origin===location.origin&&target.pathname.startsWith('/demos/'));};
 let mode='live',device='desktop',screen=0,frameStarted=false,toastTimer;
 function toast(message){$('#toast').textContent=message;$('#toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').hidden=true,3500);}
 function fitFrame(){
@@ -40,7 +45,7 @@ function setMode(value){
   $('#frame-viewport').hidden=mode!=='live';$('#gallery-view').hidden=mode!=='gallery';
   document.querySelectorAll('[data-device]').forEach(button=>button.disabled=mode!=='live');
   if(mode==='live'){
-    if(!frameStarted){$('#project-frame').src=siteUrl;frameStarted=true;}
+    if(!frameStarted){const frame=$('#project-frame');if(keepsOrigin(siteUrl))frame.sandbox.add('allow-same-origin');frame.src=siteUrl;frameStarted=true;}
     $('#viewer-caption').textContent=project.demoUrl?'Интерактивный просмотр. Сайт можно открыть отдельной страницей или посмотреть на разных экранах.':'Работающая версия проекта. Если сайт не отображается, нажмите «Открыть отдельно» или выберите «Экраны».';
     requestAnimationFrame(fitFrame);
   }else{renderGallery();$('#device-size').textContent='Снимки';}
