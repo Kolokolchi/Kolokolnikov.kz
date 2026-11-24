@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { contact, projects } from '../public/projects.js';
 import { videos } from '../public/videos.js';
 import { generateSeo, readVerification, resolveSiteUrl } from './build-seo.mjs';
+import { applyContentSecurityPolicy, contentSecurityPolicy } from './csp.mjs';
 
 const root = await realpath(fileURLToPath(new URL('../', import.meta.url)));
 const source = path.join(root, 'public');
@@ -93,9 +94,19 @@ const siteUrl = resolveSiteUrl(process.env.SITE_URL);
 const verification = readVerification();
 const seo = await generateSeo({ publicDir: source, outDir: output, siteUrl, projects: staticProjects, videos, contact, verification });
 
+// Every exported page, generated ones included, gets the Content-Security-Policy (scripts/csp.mjs).
+// The showcase opens the live project sites in a frame, so their origins come from the project list.
+const frameOrigins = [...new Set(staticProjects.filter(project => project.url).map(project => new URL(project.url).origin))].sort();
+const policy = contentSecurityPolicy({ frameOrigins });
 const outputFiles = await filesIn(output);
+const htmlFiles = outputFiles.filter(filename => filename.endsWith('.html'));
+for (const filename of htmlFiles) {
+  const relative = path.relative(output, filename);
+  await writeFile(filename, applyContentSecurityPolicy(await readFile(filename, 'utf8'), policy, relative));
+}
 const assetCount = outputFiles.filter(filename => path.relative(output, filename).startsWith(`assets${path.sep}`)).length;
-const htmlCount = outputFiles.filter(filename => filename.endsWith('.html')).length;
+const htmlCount = htmlFiles.length;
 console.log(`GitHub Pages export: out/github-pages (${outputFiles.length} files, ${htmlCount} HTML pages, ${assetCount} assets).`);
 console.log(`Preserved ${staticProjects.length} projects; ${catalog.length} demos use their original HTTPS sites. Public and server sources are unchanged.`);
+console.log(`Content-Security-Policy in ${htmlCount} pages; frames allowed from ${frameOrigins.join(', ') || 'this site only'} and YouTube.`);
 console.log(`SEO: ${seo.pages.length} indexable pages and ${seo.sitemap.length} sitemap URLs for ${siteUrl}; verification meta: ${[verification.google && 'Google', verification.yandex && 'Yandex'].filter(Boolean).join(', ') || 'none'}.`);
